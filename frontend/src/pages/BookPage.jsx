@@ -9,6 +9,7 @@ export default function BookPage() {
   const navigate = useNavigate();
   const [book, setBook] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [userStatus, setUserStatus] = useState(null);
 
   useEffect(() => {
     const fetchBook = async () => {
@@ -60,9 +61,24 @@ export default function BookPage() {
           </div>
           
           <div style={{ margin: '24px 0', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-            <button className="btn-primary">Читаю</button>
-            <button className="btn-secondary">Прочитано</button>
-            <button className="btn-outline">Буду читать</button>
+            <button 
+              className={userStatus === 'reading' ? 'btn-primary' : 'btn-outline'}
+              onClick={() => setUserStatus('reading')}
+            >
+              Читаю
+            </button>
+            <button 
+              className={userStatus === 'read' ? 'btn-primary' : 'btn-outline'}
+              onClick={() => setUserStatus('read')}
+            >
+              Прочитано
+            </button>
+            <button 
+              className={userStatus === 'want_to_read' ? 'btn-primary' : 'btn-outline'}
+              onClick={() => setUserStatus('want_to_read')}
+            >
+              Буду читать
+            </button>
           </div>
           
           <div style={{ marginTop: '32px' }}>

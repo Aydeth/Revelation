@@ -1,12 +1,15 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import './Feed.css';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 export default function Feed() {
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [pendingBookId, setPendingBookId] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchBooks = async () => {
@@ -25,38 +28,94 @@ export default function Feed() {
     fetchBooks();
   }, []);
 
-  if (loading) return <div style={{ textAlign: 'center', marginTop: '50px' }}>Загрузка книг...</div>;
+  // Группировка книг по годам
+  const booksByYear = books.reduce((acc, book) => {
+    const year = book.publication_year || 'Неизвестно';
+    if (!acc[year]) acc[year] = [];
+    acc[year].push(book);
+    return acc;
+  }, {});
+
+  const sortedYears = Object.keys(booksByYear).sort((a, b) => {
+    if (a === 'Неизвестно') return 1;
+    if (b === 'Неизвестно') return -1;
+    return parseInt(b) - parseInt(a);
+  });
+
+  const handleMouseDown = (bookId, e) => {
+    // Создаём ripple эффект
+    const card = e.currentTarget;
+    const ripple = document.createElement('span');
+    ripple.className = 'ripple';
+    const rect = card.getBoundingClientRect();
+    const size = Math.max(card.clientWidth, card.clientHeight);
+    ripple.style.width = ripple.style.height = `${size}px`;
+    ripple.style.left = `${e.clientX - rect.left - size / 2}px`;
+    ripple.style.top = `${e.clientY - rect.top - size / 2}px`;
+    
+    // Удаляем старые ripple элементы
+    const oldRipples = card.querySelectorAll('.ripple');
+    oldRipples.forEach(r => r.remove());
+    
+    card.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 500);
+    
+    setPendingBookId(bookId);
+  };
+
+  const handleMouseUp = (bookId) => {
+    if (pendingBookId === bookId) {
+      navigate(`/book/${bookId}`);
+      setPendingBookId(null);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    setPendingBookId(null);
+  };
+
+  if (loading) return <div className="loading">Загрузка книг...</div>;
 
   return (
-    <div className="container" style={{ padding: '20px 0' }}>
-      <h1 style={{ fontSize: '28px', marginBottom: '24px', fontWeight: '600' }}>Лента книг</h1>
-      <div style={{ 
-        display: 'grid', 
-        gap: '24px', 
-        gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))' 
-      }}>
-        {books.map(book => (
-          <Link to={`/book/${book.id}`} key={book.id} style={{ textDecoration: 'none' }}>
-            <div className="book-card">
-              <img 
-                src={book.cover_url || 'https://via.placeholder.com/300x450?text=No+Cover'} 
-                alt={book.title}
-                style={{ width: '100%', height: '320px', objectFit: 'cover' }}
-              />
-              <div style={{ padding: '12px' }}>
-                <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '4px', color: '#1A1A1A' }}>
-                  {book.title}
-                </h3>
-                <p style={{ color: '#666', fontSize: '14px', marginBottom: '8px' }}>{book.author}</p>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: '#888', fontSize: '13px' }}>{book.publication_year}</span>
-                  <span style={{ color: '#003BFF', fontWeight: '500', fontSize: '14px' }}>
-                    ★ {book.rating_avg || 'Нет оценок'}
-                  </span>
+    <div className="feed-container">
+      <div className="feed-header">
+        <h1>Библиотека</h1>
+      </div>
+      
+      <div className="books-list">
+        {sortedYears.map(year => (
+          <div key={year}>
+            <div className="year-divider">{year}</div>
+            {booksByYear[year].map(book => (
+              <div
+                key={book.id}
+                className="book-card"
+                onMouseDown={(e) => handleMouseDown(book.id, e)}
+                onMouseUp={() => handleMouseUp(book.id)}
+                onMouseLeave={handleMouseLeave}
+              >
+                <div className="book-cover">
+                  {book.cover_url ? (
+                    <img src={book.cover_url} alt={book.title} />
+                  ) : (
+                    <div className="cover-placeholder">{book.title[0]}</div>
+                  )}
+                </div>
+                <div className="book-main">
+                  <div className="book-title">{book.title}</div>
+                  <div className="book-author">{book.author}</div>
+                  <div className="book-rating">
+                    <span className="rating-stars">
+                      {'★'.repeat(Math.floor(book.rating_avg || 0))}
+                      {'☆'.repeat(5 - Math.floor(book.rating_avg || 0))}
+                    </span>
+                    <span className="rating-value">{book.rating_avg || 'Нет оценок'}</span>
+                  </div>
+                  <div className="book-date">{book.publication_year}</div>
                 </div>
               </div>
-            </div>
-          </Link>
+            ))}
+          </div>
         ))}
       </div>
     </div>
