@@ -15,6 +15,7 @@ const pool = new Pool({
 
 // Регистрация
 router.post('/register', async (req, res) => {
+  console.log('📝 Register endpoint hit'); // Добавим лог для диагностики
   const { username, email, password } = req.body;
   
   if (!username || !email || !password) {
@@ -36,16 +37,18 @@ router.post('/register', async (req, res) => {
     
     res.json({ user: result.rows[0], token });
   } catch (err) {
+    console.error('Registration error:', err);
     if (err.code === '23505') {
       res.status(400).json({ error: 'Username or email already exists' });
     } else {
-      res.status(500).json({ error: 'Server error' });
+      res.status(500).json({ error: 'Server error: ' + err.message });
     }
   }
 });
 
 // Логин
 router.post('/login', async (req, res) => {
+  console.log('🔐 Login endpoint hit');
   const { username, password } = req.body;
   
   try {
@@ -73,8 +76,9 @@ router.post('/login', async (req, res) => {
     
     res.json({ user: { id: user.id, username: user.username, email: user.email }, token });
   } catch (err) {
-    res.status(500).json({ error: 'Server error' });
+    console.error('Login error:', err);
+    res.status(500).json({ error: 'Server error: ' + err.message });
   }
 });
 
-module.exports = router;
+module.exports = router; // 👈 Убедись, что эта строка есть
