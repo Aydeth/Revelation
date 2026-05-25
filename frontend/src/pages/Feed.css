@@ -3,7 +3,6 @@
   padding: 20px 0;
 }
 
-/* Секция поиска */
 .search-section {
   margin-bottom: 20px;
 }
@@ -25,14 +24,12 @@
   background-color: #FFFFFF;
 }
 
-/* Список книг */
 .books-list {
   display: flex;
   flex-direction: column;
   gap: 0;
 }
 
-/* Карточка книги — с border-radius 12px, без бордера, с плавной анимацией */
 .book-card {
   display: flex;
   padding: 20px 0;
@@ -54,12 +51,10 @@
   background-color: #F9F9F9;
 }
 
-/* Плавное уменьшение при нажатии — сильнее и с правильной кривой */
 .book-card:active {
-  transform: scale(0.90);
+  transform: scale(0.95);
 }
 
-/* Обложка */
 .book-cover {
   width: 80px;
   height: 120px;
@@ -91,7 +86,6 @@
   justify-content: center;
 }
 
-/* Информация о книге */
 .book-main {
   flex: 1;
 }
@@ -132,7 +126,6 @@
   font-size: 13px;
 }
 
-/* Ripple эффект */
 .ripple {
   position: absolute;
   background: rgba(0, 0, 0, 0.08);
@@ -149,7 +142,6 @@
   }
 }
 
-/* Пустая библиотека */
 .empty-library {
   text-align: center;
   padding: 60px 20px;
@@ -166,20 +158,32 @@
   font-size: 14px;
 }
 
-/* Адаптив */
+/* Адаптив для планшетов и телефонов */
 @media (max-width: 768px) {
   .feed-container {
     padding: 16px 0;
   }
   
   .book-card {
-    gap: 15px;
-    padding: 15px 0;
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px;
+    align-items: center;
+    text-align: center;
   }
   
   .book-cover {
-    width: 60px;
-    height: 90px;
+    width: 120px;
+    height: 180px;
+    margin-bottom: 8px;
+  }
+  
+  .book-main {
+    text-align: center;
+  }
+  
+  .book-rating {
+    justify-content: center;
   }
   
   .book-title {
@@ -193,5 +197,37 @@
   .search-input {
     padding: 10px 14px;
     font-size: 14px;
+  }
+}
+
+/* Адаптив для очень маленьких телефонов */
+@media (max-width: 480px) {
+  .book-cover {
+    width: 100px;
+    height: 150px;
+  }
+  
+  .book-card {
+    padding: 12px;
+  }
+  
+  .book-title {
+    font-size: 15px;
+  }
+  
+  .book-author {
+    font-size: 12px;
+  }
+  
+  .rating-stars {
+    font-size: 12px;
+  }
+  
+  .rating-value {
+    font-size: 11px;
+  }
+  
+  .book-date {
+    font-size: 11px;
   }
 }
