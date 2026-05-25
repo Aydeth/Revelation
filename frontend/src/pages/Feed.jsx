@@ -6,7 +6,8 @@ import './Feed.css';
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 export default function Feed() {
-  const [books, setBooks] = useState([]);
+  const [allBooks, setAllBooks] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const [pendingBookId, setPendingBookId] = useState(null);
   const navigate = useNavigate();
@@ -18,7 +19,7 @@ export default function Feed() {
         const response = await axios.get(`${API_URL}/api/books`, {
           headers: { Authorization: `Bearer ${token}` }
         });
-        setBooks(response.data);
+        setAllBooks(response.data);
       } catch (err) {
         console.error('Error fetching books:', err);
       } finally {
@@ -28,22 +29,16 @@ export default function Feed() {
     fetchBooks();
   }, []);
 
-  // Группировка книг по годам
-  const booksByYear = books.reduce((acc, book) => {
-    const year = book.publication_year || 'Неизвестно';
-    if (!acc[year]) acc[year] = [];
-    acc[year].push(book);
-    return acc;
-  }, {});
-
-  const sortedYears = Object.keys(booksByYear).sort((a, b) => {
-    if (a === 'Неизвестно') return 1;
-    if (b === 'Неизвестно') return -1;
-    return parseInt(b) - parseInt(a);
+  // Фильтрация книг по поисковому запросу
+  const filteredBooks = allBooks.filter(book => {
+    const searchLower = searchTerm.toLowerCase();
+    return (
+      book.title.toLowerCase().includes(searchLower) ||
+      book.author.toLowerCase().includes(searchLower)
+    );
   });
 
   const handleMouseDown = (bookId, e) => {
-    // Создаём ripple эффект
     const card = e.currentTarget;
     const ripple = document.createElement('span');
     ripple.className = 'ripple';
@@ -53,7 +48,6 @@ export default function Feed() {
     ripple.style.left = `${e.clientX - rect.left - size / 2}px`;
     ripple.style.top = `${e.clientY - rect.top - size / 2}px`;
     
-    // Удаляем старые ripple элементы
     const oldRipples = card.querySelectorAll('.ripple');
     oldRipples.forEach(r => r.remove());
     
@@ -78,45 +72,55 @@ export default function Feed() {
 
   return (
     <div className="feed-container">
-      <div className="feed-header">
-        <h1>Библиотека</h1>
+      {/* Поиск */}
+      <div className="search-section">
+        <input
+          type="text"
+          className="search-input"
+          placeholder="Search by title or author..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
       </div>
-      
+
+      {/* Список книг */}
       <div className="books-list">
-        {sortedYears.map(year => (
-          <div key={year}>
-            <div className="year-divider">{year}</div>
-            {booksByYear[year].map(book => (
-              <div
-                key={book.id}
-                className="book-card"
-                onMouseDown={(e) => handleMouseDown(book.id, e)}
-                onMouseUp={() => handleMouseUp(book.id)}
-                onMouseLeave={handleMouseLeave}
-              >
-                <div className="book-cover">
-                  {book.cover_url ? (
-                    <img src={book.cover_url} alt={book.title} />
-                  ) : (
-                    <div className="cover-placeholder">{book.title[0]}</div>
-                  )}
-                </div>
-                <div className="book-main">
-                  <div className="book-title">{book.title}</div>
-                  <div className="book-author">{book.author}</div>
-                  <div className="book-rating">
-                    <span className="rating-stars">
-                      {'★'.repeat(Math.floor(book.rating_avg || 0))}
-                      {'☆'.repeat(5 - Math.floor(book.rating_avg || 0))}
-                    </span>
-                    <span className="rating-value">{book.rating_avg || 'Нет оценок'}</span>
-                  </div>
-                  <div className="book-date">{book.publication_year}</div>
-                </div>
-              </div>
-            ))}
+        {filteredBooks.length === 0 ? (
+          <div className="empty-library">
+            <p className="empty-title">No books found</p>
+            <p className="empty-subtitle">Try changing your search parameters</p>
           </div>
-        ))}
+        ) : (
+          filteredBooks.map(book => (
+            <div
+              key={book.id}
+              className="book-card"
+              onMouseDown={(e) => handleMouseDown(book.id, e)}
+              onMouseUp={() => handleMouseUp(book.id)}
+              onMouseLeave={handleMouseLeave}
+            >
+              <div className="book-cover">
+                {book.cover_url ? (
+                  <img src={book.cover_url} alt={book.title} />
+                ) : (
+                  <div className="cover-placeholder">{book.title[0]}</div>
+                )}
+              </div>
+              <div className="book-main">
+                <div className="book-title">{book.title}</div>
+                <div className="book-author">{book.author}</div>
+                <div className="book-rating">
+                  <span className="rating-stars">
+                    {'★'.repeat(Math.floor(book.rating_avg || 0))}
+                    {'☆'.repeat(5 - Math.floor(book.rating_avg || 0))}
+                  </span>
+                  <span className="rating-value">{book.rating_avg || 'No ratings'}</span>
+                </div>
+                <div className="book-date">{book.publication_year}</div>
+              </div>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );

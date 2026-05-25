@@ -13,6 +13,8 @@ body {
 
 button {
   font-family: inherit;
+  transition: none;
+  transform: none;
 }
 
 .container {
@@ -54,7 +56,8 @@ a:hover {
   border-radius: 8px;
   font-weight: 500;
   cursor: pointer;
-  transition: opacity 0.2s;
+  position: relative;
+  overflow: hidden;
 }
 
 .btn-primary:hover {
@@ -83,10 +86,21 @@ a:hover {
   padding: 10px 20px;
   border-radius: 8px;
   cursor: pointer;
-  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
 }
 
 .btn-outline:hover {
   border-color: #003BFF;
   color: #003BFF;
+}
+
+.btn-primary .ripple,
+.btn-outline .ripple,
+.footer-link .ripple {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.btn-outline .ripple {
+  background: rgba(0, 59, 255, 0.1);
 }
