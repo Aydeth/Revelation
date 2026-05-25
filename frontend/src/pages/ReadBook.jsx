@@ -4,7 +4,7 @@ import axios from 'axios';
 import './ReadBook.css';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-const SAVE_INTERVAL = 60000;
+const SAVE_INTERVAL = 60000; // 60 секунд
 
 export default function ReadBook() {
   const { id } = useParams();
@@ -12,16 +12,14 @@ export default function ReadBook() {
   const [book, setBook] = useState(null);
   const [loading, setLoading] = useState(true);
   const [progress, setProgress] = useState(0);
-  const [savedProgress, setSavedProgress] = useState(0);
   const contentRef = useRef(null);
   const saveIntervalRef = useRef(null);
   const isSavingRef = useRef(false);
-  const hasRestoredRef = useRef(false); // Флаг: восстанавливали ли уже позицию
+  const restoredRef = useRef(false);
 
-  // Сохранение прогресса на сервер
-  const saveProgress = useCallback(async (position, isFinal = false) => {
+  // Сохранение прогресса
+  const saveProgress = useCallback(async (position) => {
     if (isSavingRef.current) return;
-    if (position === savedProgress && !isFinal) return;
     
     isSavingRef.current = true;
     try {
@@ -30,25 +28,31 @@ export default function ReadBook() {
         { position },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      setSavedProgress(position);
       console.log(`💾 Прогресс сохранён: ${position}%`);
     } catch (err) {
-      console.error('Ошибка сохранения прогресса:', err);
+      console.error('Ошибка сохранения:', err);
     } finally {
       isSavingRef.current = false;
     }
-  }, [id, savedProgress]);
+  }, [id]);
 
-  // При выходе — сохраняем и идём на страницу книги
-  const handleExit = useCallback(async () => {
-    if (saveIntervalRef.current) {
-      clearInterval(saveIntervalRef.current);
+  // Восстановление позиции прокрутки по сохранённому прогрессу
+  const restoreScrollPosition = useCallback((savedProgress) => {
+    if (!contentRef.current || restoredRef.current) return;
+    
+    const element = contentRef.current;
+    const scrollHeight = element.scrollHeight;
+    const clientHeight = element.clientHeight;
+    
+    if (scrollHeight > clientHeight && savedProgress > 0) {
+      const targetScroll = (savedProgress / 100) * (scrollHeight - clientHeight);
+      element.scrollTop = targetScroll;
+      console.log(`🔄 Восстановлена позиция: ${savedProgress}%, scrollTop = ${targetScroll}`);
+      restoredRef.current = true;
     }
-    await saveProgress(progress, true);
-    navigate(`/book/${id}`);
-  }, [progress, saveProgress, id, navigate]);
+  }, []);
 
-  // Загрузка книги
+  // Загрузка книги и прогресса
   useEffect(() => {
     const fetchBook = async () => {
       try {
@@ -56,76 +60,91 @@ export default function ReadBook() {
         const response = await axios.get(`${API_URL}/api/books/${id}/read`, {
           headers: { Authorization: `Bearer ${token}` }
         });
-        setBook(response.data);
-        const savedPos = response.data.progress || 0;
-        setProgress(savedPos);
-        setSavedProgress(savedPos);
+        
+        const bookData = response.data;
+        setBook(bookData);
+        setProgress(bookData.progress || 0);
+        
+        console.log(`📖 Загружена книга: ${bookData.title}, прогресс: ${bookData.progress || 0}%`);
+        
       } catch (err) {
-        console.error('Error fetching book:', err);
+        console.error('Ошибка загрузки:', err);
         navigate('/');
       } finally {
         setLoading(false);
       }
     };
-    fetchBook();
-
-    document.body.classList.add('read-mode');
     
-    const handleBeforeUnload = () => {
-      saveProgress(progress, true);
-    };
-    window.addEventListener('beforeunload', handleBeforeUnload);
+    fetchBook();
+    document.body.classList.add('read-mode');
     
     return () => {
       document.body.classList.remove('read-mode');
-      window.removeEventListener('beforeunload', handleBeforeUnload);
       if (saveIntervalRef.current) clearInterval(saveIntervalRef.current);
     };
   }, [id, navigate]);
 
-  // Восстановление позиции прокрутки — ТОЛЬКО ОДИН РАЗ
+  // Восстанавливаем позицию после того, как DOM обновился
   useEffect(() => {
-    if (contentRef.current && !loading && progress > 0 && !hasRestoredRef.current) {
-      hasRestoredRef.current = true;
+    if (!loading && contentRef.current && !restoredRef.current) {
+      // Даём время на полный рендер текста
+      const timeoutId = setTimeout(() => {
+        restoreScrollPosition(progress);
+      }, 200);
       
-      // Даём время на рендер
-      setTimeout(() => {
-        if (contentRef.current) {
-          const element = contentRef.current;
-          const scrollHeight = element.scrollHeight;
-          const clientHeight = element.clientHeight;
-          const targetScroll = (progress / 100) * (scrollHeight - clientHeight);
-          element.scrollTop = targetScroll;
-          console.log(`🔄 Восстановлена позиция: ${progress}%`);
-        }
-      }, 150);
+      return () => clearTimeout(timeoutId);
     }
-  }, [loading, progress]);
+  }, [loading, progress, restoreScrollPosition]);
 
   // Автосохранение каждую минуту
   useEffect(() => {
     if (!loading && book) {
       saveIntervalRef.current = setInterval(() => {
-        if (progress !== savedProgress) {
-          saveProgress(progress);
+        if (contentRef.current) {
+          const element = contentRef.current;
+          const scrollPercent = (element.scrollTop / (element.scrollHeight - element.clientHeight)) * 100;
+          const currentProgress = Math.floor(Math.min(99, Math.max(0, scrollPercent)));
+          
+          if (currentProgress !== progress) {
+            setProgress(currentProgress);
+            saveProgress(currentProgress);
+          }
         }
       }, SAVE_INTERVAL);
     }
+    
     return () => {
       if (saveIntervalRef.current) clearInterval(saveIntervalRef.current);
     };
-  }, [loading, book, progress, savedProgress, saveProgress]);
+  }, [loading, book, progress, saveProgress]);
 
-  // Обработка скролла — только обновляем процент
-  const handleScroll = () => {
+  // Обработка скролла с сохранением
+  const handleScroll = useCallback(() => {
     if (!contentRef.current) return;
     
     const element = contentRef.current;
     const scrollPercent = (element.scrollTop / (element.scrollHeight - element.clientHeight)) * 100;
-    const newProgress = Math.min(99, Math.max(0, Math.floor(scrollPercent)));
+    const currentProgress = Math.floor(Math.min(99, Math.max(0, scrollPercent)));
     
-    setProgress(newProgress);
-  };
+    setProgress(currentProgress);
+  }, []);
+
+  // Выход из читалки
+  const handleExit = useCallback(async () => {
+    if (saveIntervalRef.current) {
+      clearInterval(saveIntervalRef.current);
+    }
+    
+    // Сохраняем финальный прогресс
+    if (contentRef.current) {
+      const element = contentRef.current;
+      const scrollPercent = (element.scrollTop / (element.scrollHeight - element.clientHeight)) * 100;
+      const finalProgress = Math.floor(Math.min(99, Math.max(0, scrollPercent)));
+      await saveProgress(finalProgress);
+    }
+    
+    navigate(`/book/${id}`);
+  }, [id, navigate, saveProgress]);
 
   if (loading) return <div className="loading">Загрузка книги...</div>;
   if (!book) return null;
