@@ -4,7 +4,7 @@ import axios from 'axios';
 import './ReadBook.css';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-const SAVE_INTERVAL = 60000; // 60 секунд (1 минута)
+const SAVE_INTERVAL = 60000; // 60 секунд
 
 export default function ReadBook() {
   const { id } = useParams();
@@ -16,12 +16,11 @@ export default function ReadBook() {
   const contentRef = useRef(null);
   const saveIntervalRef = useRef(null);
   const isSavingRef = useRef(false);
+  const isRestoringRef = useRef(false); // Флаг восстановления позиции
 
   // Сохранение прогресса на сервер
   const saveProgress = useCallback(async (position, isFinal = false) => {
     if (isSavingRef.current) return;
-    
-    // Не сохраняем, если прогресс не изменился
     if (position === savedProgress) return;
     
     isSavingRef.current = true;
@@ -39,7 +38,7 @@ export default function ReadBook() {
     }
   }, [id, savedProgress]);
 
-  // Принудительное сохранение при выходе
+  // При выходе
   const handleExit = useCallback(async () => {
     if (saveIntervalRef.current) {
       clearInterval(saveIntervalRef.current);
@@ -48,7 +47,7 @@ export default function ReadBook() {
     navigate(`/book/${id}`);
   }, [progress, saveProgress, id, navigate]);
 
-  // Загрузка книги и прогресса
+  // Загрузка книги
   useEffect(() => {
     const fetchBook = async () => {
       try {
@@ -69,10 +68,8 @@ export default function ReadBook() {
     };
     fetchBook();
 
-    // Блокируем скролл body при открытии читалки
     document.body.classList.add('read-mode');
     
-    // Обработчик закрытия/обновления страницы
     const handleBeforeUnload = () => {
       saveProgress(progress, true);
     };
@@ -83,9 +80,27 @@ export default function ReadBook() {
       window.removeEventListener('beforeunload', handleBeforeUnload);
       if (saveIntervalRef.current) clearInterval(saveIntervalRef.current);
     };
-  }, [id, navigate, progress, saveProgress]);
+  }, [id, navigate]);
 
-  // Настройка автоматического сохранения каждую минуту
+  // Восстановление позиции прокрутки ТОЛЬКО один раз при загрузке
+  useEffect(() => {
+    if (contentRef.current && !loading && progress > 0 && !isRestoringRef.current) {
+      isRestoringRef.current = true;
+      
+      // Небольшая задержка для полного рендера
+      setTimeout(() => {
+        if (contentRef.current) {
+          const element = contentRef.current;
+          const scrollHeight = element.scrollHeight;
+          const clientHeight = element.clientHeight;
+          const targetScroll = (progress / 100) * (scrollHeight - clientHeight);
+          element.scrollTop = targetScroll;
+        }
+      }, 100);
+    }
+  }, [loading, progress]);
+
+  // Настройка автосохранения
   useEffect(() => {
     if (!loading && book) {
       saveIntervalRef.current = setInterval(() => {
@@ -99,18 +114,7 @@ export default function ReadBook() {
     };
   }, [loading, book, progress, savedProgress, saveProgress]);
 
-  // Восстановление позиции прокрутки
-  useEffect(() => {
-    if (contentRef.current && !loading && progress > 0) {
-      const element = contentRef.current;
-      const scrollHeight = element.scrollHeight;
-      const clientHeight = element.clientHeight;
-      const targetScroll = (progress / 100) * (scrollHeight - clientHeight);
-      element.scrollTop = targetScroll;
-    }
-  }, [loading, progress]);
-
-  // Обработка скролла — просто обновляем процент, без задержек
+  // Обработка скролла — только обновляем процент, НЕ восстанавливаем позицию
   const handleScroll = () => {
     if (!contentRef.current) return;
     
