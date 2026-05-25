@@ -5,7 +5,8 @@ import MyBooks from './pages/MyBooks';
 import Profile from './pages/Profile';
 import LoginRegister from './pages/LoginRegister';
 import BookPage from './pages/BookPage';
-import logo from './assets/Icon.svg'; // ← импорт локального логотипа
+import ReadBook from './pages/ReadBook';
+import logo from './assets/Icon.svg';
 import './App.css';
 
 function App() {
@@ -42,6 +43,7 @@ function App() {
             <Route path="/my-books" element={user ? <MyBooks /> : <Navigate to="/login" />} />
             <Route path="/profile" element={user ? <Profile /> : <Navigate to="/login" />} />
             <Route path="/book/:id" element={user ? <BookPage /> : <Navigate to="/login" />} />
+            <Route path="/read/:id" element={user ? <ReadBook /> : <Navigate to="/login" />} />
           </Routes>
         </main>
 

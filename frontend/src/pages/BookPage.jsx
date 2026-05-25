@@ -86,7 +86,11 @@ export default function BookPage() {
             <p style={{ lineHeight: '1.6', color: '#333' }}>{book.description || 'Описание отсутствует'}</p>
           </div>
           
-          <button className="btn-primary" style={{ width: '100%', marginTop: '32px', padding: '14px' }}>
+          <button 
+            className="btn-primary" 
+            style={{ width: '100%', marginTop: '32px', padding: '14px' }}
+            onClick={() => navigate(`/read/${id}`)}
+          >
             Читать книгу
           </button>
         </div>

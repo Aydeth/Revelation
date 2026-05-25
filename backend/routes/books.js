@@ -1,5 +1,6 @@
 const express = require('express');
 const { Pool } = require('pg');
+const { getBookText } = require('../utils/bookParser');
 const router = express.Router();
 
 const pool = new Pool({
@@ -8,7 +9,7 @@ const pool = new Pool({
   host: process.env.DB_HOST,
   port: process.env.DB_PORT,
   database: process.env.DB_NAME,
-  ssl: { rejectUnauthorized: false }
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
 });
 
 // Получить все книги (для ленты)
@@ -26,7 +27,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Получить одну книгу по ID
+// Получить одну книгу по ID (без текста)
 router.get('/:id', async (req, res) => {
   const { id } = req.params;
   try {
@@ -46,11 +47,80 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// (Позже) Установить статус книги для пользователя
+// ПОЛУЧИТЬ ТЕКСТ КНИГИ ДЛЯ ЧТЕНИЯ
+router.get('/:id/read', async (req, res) => {
+  const { id } = req.params;
+  const userId = req.user?.userId;
+  
+  try {
+    // Получаем информацию о книге и путь к файлу
+    const bookResult = await pool.query(`
+      SELECT title, author, file_path 
+      FROM books 
+      WHERE id = $1
+    `, [id]);
+    
+    if (bookResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Book not found' });
+    }
+    
+    const book = bookResult.rows[0];
+    const text = getBookText(book.file_path);
+    
+    // Получаем прогресс пользователя
+    let progress = 0;
+    if (userId) {
+      const progressResult = await pool.query(`
+        SELECT last_read_position 
+        FROM user_book_status 
+        WHERE user_id = $1 AND book_id = $2
+      `, [userId, id]);
+      progress = progressResult.rows[0]?.last_read_position || 0;
+    }
+    
+    res.json({
+      id: parseInt(id),
+      title: book.title,
+      author: book.author,
+      text: text,
+      progress: progress
+    });
+  } catch (err) {
+    console.error('Error fetching book text:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// СОХРАНИТЬ ПРОГРЕСС ЧТЕНИЯ
+router.post('/:id/progress', async (req, res) => {
+  const { id } = req.params;
+  const { position } = req.body;
+  const userId = req.user?.userId;
+  
+  if (!userId) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  
+  try {
+    await pool.query(`
+      INSERT INTO user_book_status (user_id, book_id, last_read_position, updated_at)
+      VALUES ($1, $2, $3, CURRENT_TIMESTAMP)
+      ON CONFLICT (user_id, book_id) 
+      DO UPDATE SET last_read_position = $3, updated_at = CURRENT_TIMESTAMP
+    `, [userId, id, position]);
+    
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Error saving progress:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Установить статус книги
 router.post('/:id/status', async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
-  const userId = req.user?.userId; // Будет после добавления middleware для JWT
+  const userId = req.user?.userId;
   
   if (!userId) {
     return res.status(401).json({ error: 'Unauthorized' });
