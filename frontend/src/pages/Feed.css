@@ -35,14 +35,14 @@
 /* Карточка книги — с border-radius 12px, без бордера, с плавной анимацией */
 .book-card {
   display: flex;
-  padding: 20px;
+  padding: 20px 0;
   gap: 25px;
   align-items: flex-start;
   cursor: pointer;
   position: relative;
   overflow: hidden;
   background-color: transparent;
-  transition: background-color 0.2s ease, transform 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+  transition: all 0.25s ease;
   border: none;
   border-radius: 12px;
   transform: scale(1);
@@ -56,8 +56,7 @@
 
 /* Плавное уменьшение при нажатии — сильнее и с правильной кривой */
 .book-card:active {
-  transform: scale(0.96);
-  transition: transform 0.1s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+  transform: scale(0.75);
 }
 
 /* Обложка */
@@ -175,7 +174,7 @@
   
   .book-card {
     gap: 15px;
-    padding: 15px;
+    padding: 15px 0;
   }
   
   .book-cover {
