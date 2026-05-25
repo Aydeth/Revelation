@@ -10,37 +10,22 @@ export default function ReadBook() {
   const navigate = useNavigate();
   const [book, setBook] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [progress, setProgress] = useState(0);
   const contentRef = useRef(null);
   const saveTimeoutRef = useRef(null);
-  const initialLoadRef = useRef(true);
+  const restoredRef = useRef(false);
+  const scrollListenerRef = useRef(null);
 
-  // Загрузка книги и прогресса
+  // Загрузка книги
   useEffect(() => {
     const fetchBook = async () => {
       try {
         const token = localStorage.getItem('token');
-        
-        if (!token) {
-          console.error('❌ Нет токена, редирект на логин');
-          navigate('/login');
-          return;
-        }
-        
         const response = await axios.get(`${API_URL}/api/books/${id}/read`, {
-          headers: { 
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
+          headers: { Authorization: `Bearer ${token}` }
         });
-        
-        const bookData = response.data;
-        setBook(bookData);
-        setProgress(bookData.progress || 0);
-        console.log(`📖 Загружена: ${bookData.title}, прогресс: ${bookData.progress || 0}%`);
-        
+        setBook(response.data);
       } catch (err) {
-        console.error('❌ Ошибка загрузки:', err.response?.status, err.response?.data);
+        console.error('Ошибка:', err);
         navigate('/');
       } finally {
         setLoading(false);
@@ -56,48 +41,40 @@ export default function ReadBook() {
     };
   }, [id, navigate]);
 
-  // Сохранение прогресса на сервер
+  // Восстановление скролла (один раз после рендера)
+  useEffect(() => {
+    if (!loading && contentRef.current && book && !restoredRef.current) {
+      const savedProgress = book.progress || 0;
+      
+      if (savedProgress > 0) {
+        const element = contentRef.current;
+        const scrollHeight = element.scrollHeight;
+        const clientHeight = element.clientHeight;
+        const targetScroll = (savedProgress / 100) * (scrollHeight - clientHeight);
+        element.scrollTop = targetScroll;
+        console.log(`🔄 Восстановлен скролл: ${savedProgress}%`);
+      }
+      restoredRef.current = true;
+    }
+  }, [loading, book]);
+
+  // Сохранение прогресса
   const saveProgress = async (position) => {
     try {
       const token = localStorage.getItem('token');
-      
-      if (!token) {
-        console.error('❌ Токен не найден');
-        return;
-      }
-      
       await axios.post(`${API_URL}/api/books/${id}/progress`, 
         { position },
-        { 
-          headers: { 
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          } 
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
-      console.log(`💾 Прогресс сохранён: ${position}%`);
+      console.log(`💾 Сохранено: ${position}%`);
     } catch (err) {
-      console.error('❌ Ошибка сохранения:', err.response?.status, err.response?.data);
+      console.error('❌ Ошибка:', err.response?.status);
     }
   };
 
-  // Восстановление позиции после загрузки (только один раз)
-  useEffect(() => {
-    if (!loading && contentRef.current && progress > 0 && initialLoadRef.current) {
-      const element = contentRef.current;
-      const scrollHeight = element.scrollHeight;
-      const clientHeight = element.clientHeight;
-      const targetScroll = (progress / 100) * (scrollHeight - clientHeight);
-      
-      element.scrollTop = targetScroll;
-      console.log(`🔄 Восстановлен скролл: ${progress}%`);
-      initialLoadRef.current = false;
-    }
-  }, [loading, progress]);
-
   // Обработка скролла
   const handleScroll = () => {
-    if (!contentRef.current || !initialLoadRef.current) return;
+    if (!contentRef.current || !restoredRef.current) return;
     
     const element = contentRef.current;
     const scrollHeight = element.scrollHeight;
@@ -106,31 +83,33 @@ export default function ReadBook() {
     if (scrollHeight <= clientHeight) return;
     
     const scrollPercent = element.scrollTop / (scrollHeight - clientHeight);
-    const currentProgress = Math.floor(Math.min(99, Math.max(0, scrollPercent * 100)));
+    const currentProgress = Math.floor(scrollPercent * 100);
     
-    // Обновляем состояние только если значение изменилось
-    if (currentProgress !== progress) {
-      setProgress(currentProgress);
+    // Сохраняем только если прогресс изменился
+    if (currentProgress !== book?.progress) {
+      // Обновляем состояние книги
+      setBook(prev => ({ ...prev, progress: currentProgress }));
       
-      // Сохраняем с задержкой 1.5 секунды после остановки скролла
+      // Сохраняем с задержкой
       if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
       saveTimeoutRef.current = setTimeout(() => {
         saveProgress(currentProgress);
-      }, 1500);
+      }, 1000);
     }
   };
 
-  // Выход с сохранением
+  // Выход
   const handleExit = async () => {
     if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
-    await saveProgress(progress);
+    if (book?.progress > 0) {
+      await saveProgress(book.progress);
+    }
     navigate(`/book/${id}`);
   };
 
-  if (loading) return <div className="loading">Загрузка книги...</div>;
+  if (loading) return <div className="loading">Загрузка...</div>;
   if (!book) return null;
 
-  // Разбиваем текст на главы
   const chapters = book.text?.split(/\n(?=ГЛАВА|ЧАСТЬ)/) || [];
 
   return (
@@ -144,7 +123,7 @@ export default function ReadBook() {
           <p>{book.author}</p>
         </div>
         <div className="progress-indicator">
-          {progress}%
+          {book.progress || 0}%
         </div>
       </div>
 
