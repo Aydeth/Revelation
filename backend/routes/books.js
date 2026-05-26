@@ -12,7 +12,11 @@ const pool = new Pool({
   ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
 });
 
-// Получить все книги (для ленты)
+const CHARS_PER_PAGE = 2000; // Количество символов на страницу
+
+// ============================================
+// 1. ПОЛУЧИТЬ ВСЕ КНИГИ (для ленты)
+// ============================================
 router.get('/', async (req, res) => {
   try {
     const result = await pool.query(`
@@ -27,7 +31,9 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Получить одну книгу по ID (без текста)
+// ============================================
+// 2. ПОЛУЧИТЬ КНИГУ ПО ID (без текста)
+// ============================================
 router.get('/:id', async (req, res) => {
   const { id } = req.params;
   try {
@@ -47,12 +53,16 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// ПОЛУЧИТЬ ТЕКСТ КНИГИ ДЛЯ ЧТЕНИЯ
-router.get('/:id/read', async (req, res) => {
-  const { id } = req.params;
+// ============================================
+// 3. ПОЛУЧИТЬ СТРАНИЦУ КНИГИ (с разбивкой)
+// ============================================
+router.get('/:id/page/:pageNum', async (req, res) => {
+  const { id, pageNum } = req.params;
   const userId = req.user?.userId;
+  const pageNumber = parseInt(pageNum);
   
   try {
+    // Получаем информацию о книге
     const bookResult = await pool.query(`
       SELECT title, author, file_path 
       FROM books 
@@ -64,34 +74,62 @@ router.get('/:id/read', async (req, res) => {
     }
     
     const book = bookResult.rows[0];
-    const text = getBookText(book.file_path);
+    const fullText = getBookText(book.file_path);
+    
+    // Разбиваем текст на страницы
+    const totalChars = fullText.length;
+    const totalPages = Math.ceil(totalChars / CHARS_PER_PAGE);
+    
+    // Проверяем, что страница существует
+    if (pageNumber < 1 || pageNumber > totalPages) {
+      return res.status(404).json({ error: 'Page not found' });
+    }
+    
+    // Вырезаем нужную страницу
+    const start = (pageNumber - 1) * CHARS_PER_PAGE;
+    const end = Math.min(start + CHARS_PER_PAGE, totalChars);
+    const pageText = fullText.substring(start, end);
     
     // Получаем прогресс пользователя
-    let progress = 0;
+    let savedPage = 1;
+    let savedPercent = 0;
+    
     if (userId) {
       const progressResult = await pool.query(`
         SELECT last_read_position 
         FROM user_book_status 
         WHERE user_id = $1 AND book_id = $2
       `, [userId, id]);
-      progress = progressResult.rows[0]?.last_read_position || 0;
-      console.log(`📖 Прогресс для книги ${id}, пользователь ${userId}: ${progress}%`);
+      
+      if (progressResult.rows[0] && progressResult.rows[0].last_read_position) {
+        const rawProgress = progressResult.rows[0].last_read_position;
+        // Прогресс хранится как "страница.процент" (например "3.45")
+        const progressStr = String(rawProgress);
+        const parts = progressStr.split('.');
+        savedPage = parseInt(parts[0]) || 1;
+        savedPercent = parts[1] ? parseFloat(`0.${parts[1]}`) : 0;
+      }
     }
     
     res.json({
       id: parseInt(id),
       title: book.title,
       author: book.author,
-      text: text,
-      progress: progress
+      pageNumber: pageNumber,
+      totalPages: totalPages,
+      text: pageText,
+      savedPage: savedPage,
+      savedPercent: savedPercent
     });
   } catch (err) {
-    console.error('Error fetching book text:', err);
+    console.error('Error fetching page:', err);
     res.status(500).json({ error: 'Server error' });
   }
 });
 
-// СОХРАНИТЬ ПРОГРЕСС ЧТЕНИЯ
+// ============================================
+// 4. СОХРАНИТЬ ПРОГРЕСС ЧТЕНИЯ (страница.процент)
+// ============================================
 router.post('/:id/progress', async (req, res) => {
   const { id } = req.params;
   const { position } = req.body;
@@ -101,22 +139,29 @@ router.post('/:id/progress', async (req, res) => {
     return res.status(401).json({ error: 'Unauthorized' });
   }
   
+  // Проверяем формат позиции (должен быть "страница.процент")
+  if (!position || typeof position !== 'string') {
+    return res.status(400).json({ error: 'Invalid position format' });
+  }
+  
   try {
     await pool.query(`
-      INSERT INTO user_book_status (user_id, book_id, last_read_position, updated_at)
-      VALUES ($1, $2, $3, CURRENT_TIMESTAMP)
+      INSERT INTO user_book_status (user_id, book_id, last_read_position, updated_at, status)
+      VALUES ($1, $2, $3, CURRENT_TIMESTAMP, 'reading')
       ON CONFLICT (user_id, book_id) 
-      DO UPDATE SET last_read_position = $3, updated_at = CURRENT_TIMESTAMP
+      DO UPDATE SET last_read_position = $3, updated_at = CURRENT_TIMESTAMP, status = 'reading'
     `, [userId, id, position]);
     
-    res.json({ success: true });
+    res.json({ success: true, progress: position });
   } catch (err) {
     console.error('Error saving progress:', err);
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Database error: ' + err.message });
   }
 });
 
-// Установить статус книги
+// ============================================
+// 5. УСТАНОВИТЬ СТАТУС КНИГИ (read/reading/want_to_read)
+// ============================================
 router.post('/:id/status', async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
@@ -124,6 +169,10 @@ router.post('/:id/status', async (req, res) => {
   
   if (!userId) {
     return res.status(401).json({ error: 'Unauthorized' });
+  }
+  
+  if (!status || !['read', 'reading', 'want_to_read'].includes(status)) {
+    return res.status(400).json({ error: 'Invalid status' });
   }
   
   try {
@@ -137,6 +186,32 @@ router.post('/:id/status', async (req, res) => {
     res.json({ success: true });
   } catch (err) {
     console.error('Error saving status:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// ============================================
+// 6. ПОЛУЧИТЬ ПРОГРЕСС КНИГИ ДЛЯ ПОЛЬЗОВАТЕЛЯ
+// ============================================
+router.get('/:id/progress', async (req, res) => {
+  const { id } = req.params;
+  const userId = req.user?.userId;
+  
+  if (!userId) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  
+  try {
+    const result = await pool.query(`
+      SELECT last_read_position 
+      FROM user_book_status 
+      WHERE user_id = $1 AND book_id = $2
+    `, [userId, id]);
+    
+    const progress = result.rows[0]?.last_read_position || '1.0';
+    res.json({ progress: progress });
+  } catch (err) {
+    console.error('Error fetching progress:', err);
     res.status(500).json({ error: 'Server error' });
   }
 });

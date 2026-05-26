@@ -45,6 +45,8 @@ function App() {
             <Route path="/book/:id" element={user ? <BookPage /> : <Navigate to="/login" />} />
             <Route path="/read/:id" element={user ? <ReadBook /> : <Navigate to="/login" />} />
             <Route path="/profile" element={user ? <Profile setUser={setUser} /> : <Navigate to="/login" />} />
+            <Route path="/read/:id/:pageNum" element={user ? <ReadBook /> : <Navigate to="/login" />} />
+            <Route path="/read/:id" element={user ? <ReadBook /> : <Navigate to="/login" />} />
           </Routes>
         </main>
 
