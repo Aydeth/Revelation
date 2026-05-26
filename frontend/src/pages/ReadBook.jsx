@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate }react-router-dom';
 import axios from 'axios';
 import './ReadBook.css';
 
@@ -13,6 +13,7 @@ export default function ReadBook() {
   const [progress, setProgress] = useState(0);
   const contentRef = useRef(null);
   const restoredRef = useRef(false);
+  const rafRef = useRef(null);
 
   // Загрузка книги
   useEffect(() => {
@@ -37,6 +38,7 @@ export default function ReadBook() {
     
     return () => {
       document.body.classList.remove('read-mode');
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
   }, [id, navigate]);
 
@@ -53,7 +55,7 @@ export default function ReadBook() {
     }
   }, [loading, progress]);
 
-  // Сохранение прогресса на сервер
+  // Сохранение прогресса
   const saveProgress = async (position) => {
     try {
       const token = localStorage.getItem('token');
@@ -63,30 +65,35 @@ export default function ReadBook() {
       );
       console.log(`💾 Сохранено: ${position}%`);
     } catch (err) {
-      console.error('❌ Ошибка сохранения:', err.response?.status);
+      console.error('❌ Ошибка:', err.response?.status);
     }
   };
 
-  // Обработка скролла — только обновляем процент (НЕ сохраняем)
+  // Обработка скролла через requestAnimationFrame (без лагов)
   const handleScroll = () => {
-    if (!contentRef.current) return;
+    if (rafRef.current) return;
     
-    const element = contentRef.current;
-    const scrollHeight = element.scrollHeight;
-    const clientHeight = element.clientHeight;
-    
-    if (scrollHeight <= clientHeight) return;
-    
-    const scrollPercent = element.scrollTop / (scrollHeight - clientHeight);
-    // Округляем до одного знака после запятой
-    const currentProgress = Math.round(scrollPercent * 1000) / 10;
-    
-    if (currentProgress !== progress) {
-      setProgress(currentProgress);
-    }
+    rafRef.current = requestAnimationFrame(() => {
+      if (!contentRef.current) return;
+      
+      const element = contentRef.current;
+      const scrollHeight = element.scrollHeight;
+      const clientHeight = element.clientHeight;
+      
+      if (scrollHeight <= clientHeight) return;
+      
+      const scrollPercent = element.scrollTop / (scrollHeight - clientHeight);
+      const currentProgress = Math.round(scrollPercent * 1000) / 10;
+      
+      if (currentProgress !== progress) {
+        setProgress(currentProgress);
+      }
+      
+      rafRef.current = null;
+    });
   };
 
-  // Выход — сохраняем финальный прогресс
+  // Выход
   const handleExit = async () => {
     if (progress > 0) {
       await saveProgress(progress);
@@ -94,11 +101,10 @@ export default function ReadBook() {
     navigate(`/book/${id}`);
   };
 
-  // Сохранение при закрытии вкладки
+  // Сохранение при закрытии
   useEffect(() => {
     const handleBeforeUnload = () => {
       if (progress > 0) {
-        // Используем sendBeacon для надёжной отправки перед закрытием
         const token = localStorage.getItem('token');
         if (token) {
           const url = `${API_URL}/api/books/${id}/progress`;
