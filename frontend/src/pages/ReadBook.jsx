@@ -1,11 +1,10 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { ArrowLeft, ChevronLeft, ChevronRight, Settings } from 'lucide-react';
 import './ReadBook.css';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-const CHARS_PER_PAGE = 2000;
 
 export default function ReadBook() {
   const { id, pageNum } = useParams();
@@ -14,54 +13,49 @@ export default function ReadBook() {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(parseInt(pageNum) || 1);
   const [totalPages, setTotalPages] = useState(0);
+  const [isChangingPage, setIsChangingPage] = useState(false);
   const contentRef = useRef(null);
-  const restoredRef = useRef(false);
 
   // Загрузка страницы
-  useEffect(() => {
-    const fetchPage = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        const response = await axios.get(`${API_URL}/api/books/${id}/page/${currentPage}`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        
-        const data = response.data;
-        setBook(data);
-        setTotalPages(data.totalPages);
-        
-        // Всегда начинаем с 0%
-        restoredRef.current = false;
-        
-      } catch (err) {
-        console.error('Ошибка:', err);
-        navigate('/');
-      } finally {
-        setLoading(false);
+  const fetchPage = useCallback(async (page) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`${API_URL}/api/books/${id}/page/${page}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      const data = response.data;
+      setBook(data);
+      setTotalPages(data.totalPages);
+      
+      // После загрузки — скролл в начало
+      if (contentRef.current) {
+        contentRef.current.scrollTop = 0;
       }
-    };
-    
-    fetchPage();
+    } catch (err) {
+      console.error('Ошибка:', err);
+      navigate('/');
+    } finally {
+      setLoading(false);
+      setIsChangingPage(false);
+    }
+  }, [id, navigate]);
+
+  // Загрузка при монтировании или смене страницы
+  useEffect(() => {
+    setLoading(true);
+    fetchPage(currentPage);
     document.body.classList.add('read-mode');
     
     return () => {
       document.body.classList.remove('read-mode');
     };
-  }, [id, currentPage, navigate]);
-
-  // Скролл всегда в начало при смене страницы
-  useEffect(() => {
-    if (!loading && contentRef.current) {
-      contentRef.current.scrollTop = 0;
-      restoredRef.current = true;
-    }
-  }, [currentPage, loading]);
+  }, [currentPage, fetchPage]);
 
   // Сохранение прогресса (только номер страницы)
   const saveProgress = async (page) => {
     try {
       const token = localStorage.getItem('token');
-      // Сохраняем как "страница.0" (0% всегда)
       const positionValue = `${page}.0`;
       await axios.post(`${API_URL}/api/books/${id}/progress`, 
         { position: positionValue },
@@ -75,7 +69,8 @@ export default function ReadBook() {
 
   // Навигация по страницам
   const goToPrevPage = () => {
-    if (currentPage > 1) {
+    if (currentPage > 1 && !isChangingPage) {
+      setIsChangingPage(true);
       const newPage = currentPage - 1;
       setCurrentPage(newPage);
       saveProgress(newPage);
@@ -83,7 +78,8 @@ export default function ReadBook() {
   };
 
   const goToNextPage = () => {
-    if (currentPage < totalPages) {
+    if (currentPage < totalPages && !isChangingPage) {
+      setIsChangingPage(true);
       const newPage = currentPage + 1;
       setCurrentPage(newPage);
       saveProgress(newPage);
@@ -137,9 +133,9 @@ export default function ReadBook() {
 
       <div className="read-footer">
         <button 
-          className={`nav-btn ${currentPage === 1 ? 'disabled' : ''}`}
+          className={`nav-btn ${currentPage === 1 || isChangingPage ? 'disabled' : ''}`}
           onClick={goToPrevPage}
-          disabled={currentPage === 1}
+          disabled={currentPage === 1 || isChangingPage}
         >
           <ChevronLeft size={20} />
         </button>
@@ -149,9 +145,9 @@ export default function ReadBook() {
         </div>
         
         <button 
-          className={`nav-btn ${currentPage === totalPages ? 'disabled' : ''}`}
+          className={`nav-btn ${currentPage === totalPages || isChangingPage ? 'disabled' : ''}`}
           onClick={goToNextPage}
-          disabled={currentPage === totalPages}
+          disabled={currentPage === totalPages || isChangingPage}
         >
           <ChevronRight size={20} />
         </button>

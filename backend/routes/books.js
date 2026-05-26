@@ -12,7 +12,24 @@ const pool = new Pool({
   ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
 });
 
-const CHARS_PER_PAGE = 2000; // Количество символов на страницу
+const SENTENCES_PER_PAGE = 30; // Количество предложений на страницу
+
+// ============================================
+// ВСПОМОГАТЕЛЬНАЯ ФУНКЦИЯ: разбить текст на предложения
+// ============================================
+function splitIntoSentences(text) {
+  // Регулярное выражение для разделения на предложения
+  // (.!?…) — конец предложения, включая кавычки и пробелы после
+  const sentenceRegex = /[^.!?]+[.!?]+["']?\s*/g;
+  const matches = text.match(sentenceRegex);
+  
+  if (!matches || matches.length === 0) {
+    // Если не нашлось предложений, возвращаем весь текст как одно предложение
+    return [text];
+  }
+  
+  return matches;
+}
 
 // ============================================
 // 1. ПОЛУЧИТЬ ВСЕ КНИГИ (для ленты)
@@ -54,7 +71,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // ============================================
-// 3. ПОЛУЧИТЬ СТРАНИЦУ КНИГИ (с разбивкой)
+// 3. ПОЛУЧИТЬ СТРАНИЦУ КНИГИ (разбивка по предложениям)
 // ============================================
 router.get('/:id/page/:pageNum', async (req, res) => {
   const { id, pageNum } = req.params;
@@ -76,23 +93,26 @@ router.get('/:id/page/:pageNum', async (req, res) => {
     const book = bookResult.rows[0];
     const fullText = getBookText(book.file_path);
     
-    // Разбиваем текст на страницы
-    const totalChars = fullText.length;
-    const totalPages = Math.ceil(totalChars / CHARS_PER_PAGE);
+    // Разбиваем текст на предложения
+    const sentences = splitIntoSentences(fullText);
+    const totalSentences = sentences.length;
+    const totalPages = Math.ceil(totalSentences / SENTENCES_PER_PAGE);
     
     // Проверяем, что страница существует
     if (pageNumber < 1 || pageNumber > totalPages) {
       return res.status(404).json({ error: 'Page not found' });
     }
     
-    // Вырезаем нужную страницу
-    const start = (pageNumber - 1) * CHARS_PER_PAGE;
-    const end = Math.min(start + CHARS_PER_PAGE, totalChars);
-    const pageText = fullText.substring(start, end);
+    // Вырезаем нужные предложения
+    const startIdx = (pageNumber - 1) * SENTENCES_PER_PAGE;
+    const endIdx = Math.min(startIdx + SENTENCES_PER_PAGE, totalSentences);
+    const pageSentences = sentences.slice(startIdx, endIdx);
     
-    // Получаем прогресс пользователя
+    // Склеиваем обратно в текст
+    const pageText = pageSentences.join('');
+    
+    // Получаем прогресс пользователя (только номер страницы)
     let savedPage = 1;
-    let savedPercent = 0;
     
     if (userId) {
       const progressResult = await pool.query(`
@@ -103,11 +123,9 @@ router.get('/:id/page/:pageNum', async (req, res) => {
       
       if (progressResult.rows[0] && progressResult.rows[0].last_read_position) {
         const rawProgress = progressResult.rows[0].last_read_position;
-        // Прогресс хранится как "страница.процент" (например "3.45")
         const progressStr = String(rawProgress);
         const parts = progressStr.split('.');
         savedPage = parseInt(parts[0]) || 1;
-        savedPercent = parts[1] ? parseFloat(`0.${parts[1]}`) : 0;
       }
     }
     
@@ -118,8 +136,7 @@ router.get('/:id/page/:pageNum', async (req, res) => {
       pageNumber: pageNumber,
       totalPages: totalPages,
       text: pageText,
-      savedPage: savedPage,
-      savedPercent: savedPercent
+      savedPage: savedPage
     });
   } catch (err) {
     console.error('Error fetching page:', err);
@@ -128,7 +145,7 @@ router.get('/:id/page/:pageNum', async (req, res) => {
 });
 
 // ============================================
-// 4. СОХРАНИТЬ ПРОГРЕСС ЧТЕНИЯ (страница.процент)
+// 4. СОХРАНИТЬ ПРОГРЕСС (только номер страницы)
 // ============================================
 router.post('/:id/progress', async (req, res) => {
   const { id } = req.params;
@@ -139,7 +156,7 @@ router.post('/:id/progress', async (req, res) => {
     return res.status(401).json({ error: 'Unauthorized' });
   }
   
-  // Проверяем формат позиции (должен быть "страница.процент")
+  // position = "страница.0" (проценты больше не нужны)
   if (!position || typeof position !== 'string') {
     return res.status(400).json({ error: 'Invalid position format' });
   }
