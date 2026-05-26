@@ -10,15 +10,33 @@ export default function BookPage() {
   const [book, setBook] = useState(null);
   const [loading, setLoading] = useState(true);
   const [userStatus, setUserStatus] = useState(null);
+  const [savedPage, setSavedPage] = useState(1); // НОВОЕ: для сохранённой страницы
 
   useEffect(() => {
     const fetchBook = async () => {
       try {
         const token = localStorage.getItem('token');
+        
+        // Загружаем книгу
         const response = await axios.get(`${API_URL}/api/books/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setBook(response.data);
+        
+        // НОВОЕ: загружаем сохранённый прогресс
+        try {
+          const progressResponse = await axios.get(`${API_URL}/api/books/${id}/progress`, {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          const progressStr = progressResponse.data.progress;
+          if (progressStr) {
+            const page = parseInt(progressStr.split('.')[0]) || 1;
+            setSavedPage(page);
+          }
+        } catch (progressErr) {
+          console.error('Ошибка загрузки прогресса:', progressErr);
+        }
+        
       } catch (err) {
         console.error('Error fetching book:', err);
         if (err.response?.status === 404) {
@@ -30,6 +48,20 @@ export default function BookPage() {
     };
     fetchBook();
   }, [id, navigate]);
+
+  // НОВОЕ: установка статуса книги (с сохранением на сервер)
+  const setStatus = async (status) => {
+    try {
+      const token = localStorage.getItem('token');
+      await axios.post(`${API_URL}/api/books/${id}/status`, 
+        { status },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setUserStatus(status);
+    } catch (err) {
+      console.error('Ошибка сохранения статуса:', err);
+    }
+  };
 
   if (loading) return <div className="container" style={{ textAlign: 'center', marginTop: '50px' }}>Загрузка книги...</div>;
   if (!book) return null;
@@ -63,19 +95,19 @@ export default function BookPage() {
           <div style={{ margin: '24px 0', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
             <button 
               className={userStatus === 'reading' ? 'btn-primary' : 'btn-outline'}
-              onClick={() => setUserStatus('reading')}
+              onClick={() => setStatus('reading')}
             >
               Читаю
             </button>
             <button 
               className={userStatus === 'read' ? 'btn-primary' : 'btn-outline'}
-              onClick={() => setUserStatus('read')}
+              onClick={() => setStatus('read')}
             >
               Прочитано
             </button>
             <button 
               className={userStatus === 'want_to_read' ? 'btn-primary' : 'btn-outline'}
-              onClick={() => setUserStatus('want_to_read')}
+              onClick={() => setStatus('want_to_read')}
             >
               Буду читать
             </button>
@@ -86,10 +118,11 @@ export default function BookPage() {
             <p style={{ lineHeight: '1.6', color: '#333' }}>{book.description || 'Описание отсутствует'}</p>
           </div>
           
+          {/* ИЗМЕНЕНО: теперь ведёт на сохранённую страницу */}
           <button 
             className="btn-primary" 
             style={{ width: '100%', marginTop: '32px', padding: '14px' }}
-            onClick={() => navigate(`/read/${id}`)}
+            onClick={() => navigate(`/read/${id}/${savedPage}`)}
           >
             Читать книгу
           </button>
