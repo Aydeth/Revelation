@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS user_book_status (
   user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
   book_id INTEGER REFERENCES books(id) ON DELETE CASCADE,
   status VARCHAR(20) CHECK (status IN ('read', 'reading', 'want_to_read')),
-  last_read_position INTEGER DEFAULT 0,
+  last_read_position DECIMAL(5,2) DEFAULT 0,  -- ← ИЗМЕНЕНО
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (user_id, book_id)
 );
