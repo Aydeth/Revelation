@@ -11,21 +11,14 @@ const booksRoutes = require('./routes/books');
 const authMiddleware = require('./middleware/auth');
 
 // ============================================
-// Публичные маршруты (без middleware)
+// Все маршруты auth (но middleware применяем только к защищённым)
 // ============================================
-app.post('/api/auth/login', authRoutes);
-app.post('/api/auth/register', authRoutes);
+app.use('/api/auth', authRoutes);
 
-// ============================================
-// Защищённые маршруты (с middleware)
-// ============================================
-app.get('/api/auth/me', authMiddleware, authRoutes);
-app.put('/api/auth/profile', authMiddleware, authRoutes);
+// Защищённые маршруты (только для книг)
 app.use('/api/books', authMiddleware, booksRoutes);
 
-// ============================================
 // Health check
-// ============================================
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date() });
 });

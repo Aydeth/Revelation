@@ -82,13 +82,29 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// Получить текущего пользователя (защищённый маршрут)
-router.get('/me', async (req, res) => {
-  const userId = req.userId; // middleware добавил это поле
+// Middleware для проверки токена (только для защищённых маршрутов внутри auth)
+const authMiddleware = (req, res, next) => {
+  const authHeader = req.headers.authorization;
   
-  if (!userId) {
-    return res.status(401).json({ error: 'Unauthorized' });
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'Unauthorized: No token provided' });
   }
+  
+  const token = authHeader.split(' ')[1];
+  
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.userId = decoded.userId;
+    req.username = decoded.username;
+    next();
+  } catch (err) {
+    return res.status(401).json({ error: 'Unauthorized: Invalid token' });
+  }
+};
+
+// Получить текущего пользователя (защищённый)
+router.get('/me', authMiddleware, async (req, res) => {
+  const userId = req.userId;
   
   try {
     const result = await pool.query(
@@ -107,14 +123,10 @@ router.get('/me', async (req, res) => {
   }
 });
 
-// Обновить профиль (защищённый маршрут)
-router.put('/profile', async (req, res) => {
+// Обновить профиль (защищённый)
+router.put('/profile', authMiddleware, async (req, res) => {
   const userId = req.userId;
   const { username, avatar_url } = req.body;
-  
-  if (!userId) {
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
   
   try {
     const result = await pool.query(
