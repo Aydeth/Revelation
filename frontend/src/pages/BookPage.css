@@ -1,11 +1,11 @@
 .book-page {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 20px 0; /* Убрал padding слева и справа, оставил только вертикальные */
+  padding: 20px 0;
   min-height: calc(100vh - 120px);
 }
 
-/* Остальные стили остаются без изменений */
+/* Кнопка "Назад" */
 .back-button {
   background: none;
   border: 1px solid #DFE2ED;
@@ -50,15 +50,25 @@ body.dark-theme .back-button .ripple {
   background: rgba(255, 255, 255, 0.15);
 }
 
+/* Основной контент - колонка для обложки и кнопки */
 .book-content {
   display: flex;
   gap: 40px;
   flex-wrap: wrap;
 }
 
-.book-cover-large {
+/* Левая колонка с обложкой и кнопкой */
+.book-left-column {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
   flex-shrink: 0;
-  width: 300px;
+}
+
+/* Обложка - чуть меньше */
+.book-cover-large {
+  width: 260px;
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
@@ -70,6 +80,39 @@ body.dark-theme .back-button .ripple {
   display: block;
 }
 
+/* Кнопка "Читать книгу" - под обложкой, такой же ширины */
+.read-button {
+  width: 260px;
+  border: none;
+  padding: 14px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  background-color: #003BFF;
+  color: white;
+}
+
+body.dark-theme .read-button {
+  background-color: #FFFFFF;
+  color: #1A1A1A;
+}
+
+.read-button:hover {
+  opacity: 0.8;
+}
+
+.read-button .ripple {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+body.dark-theme .read-button .ripple {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+/* Правая колонка с информацией */
 .book-info {
   flex: 1;
 }
@@ -126,10 +169,11 @@ body.dark-theme .rating-badge {
   color: #FFFFFF;
 }
 
+/* Кнопки статуса */
 .book-actions {
   display: flex;
   gap: 12px;
-  margin-bottom: 24px;
+  margin-bottom: 32px;
   flex-wrap: wrap;
 }
 
@@ -207,38 +251,7 @@ body.dark-theme .status-btn.active .ripple {
   background: rgba(0, 0, 0, 0.2);
 }
 
-.read-button {
-  width: 100%;
-  border: none;
-  padding: 14px;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 500;
-  cursor: pointer;
-  margin-bottom: 32px;
-  position: relative;
-  overflow: hidden;
-  background-color: #003BFF;
-  color: white;
-}
-
-body.dark-theme .read-button {
-  background-color: #FFFFFF;
-  color: #1A1A1A;
-}
-
-.read-button:hover {
-  opacity: 0.8;
-}
-
-.read-button .ripple {
-  background: rgba(255, 255, 255, 0.4);
-}
-
-body.dark-theme .read-button .ripple {
-  background: rgba(0, 0, 0, 0.2);
-}
-
+/* Описание книги */
 .book-description h3 {
   font-size: 20px;
   margin-bottom: 12px;
@@ -265,14 +278,24 @@ body.dark-theme .book-description p {
   color: #888;
 }
 
+/* Адаптив */
 @media (max-width: 768px) {
   .book-content {
     flex-direction: column;
     align-items: center;
+    gap: 24px;
+  }
+  
+  .book-left-column {
+    align-items: center;
   }
   
   .book-cover-large {
-    width: 250px;
+    width: 220px;
+  }
+  
+  .read-button {
+    width: 220px;
   }
   
   .book-info h1 {

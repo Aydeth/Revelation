@@ -6,7 +6,6 @@ import './BookPage.css';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
-// Ripple эффект (как в читалке)
 const createRipple = (event) => {
   const button = event.currentTarget;
   const ripple = document.createElement('span');
@@ -99,13 +98,25 @@ export default function BookPage() {
       </button>
       
       <div className="book-content">
-        <div className="book-cover-large">
-          <img 
-            src={book.cover_url || 'https://via.placeholder.com/300x450?text=No+Cover'} 
-            alt={book.title}
-          />
+        {/* Левая колонка: обложка + кнопка "Читать" */}
+        <div className="book-left-column">
+          <div className="book-cover-large">
+            <img 
+              src={book.cover_url || 'https://via.placeholder.com/300x450?text=No+Cover'} 
+              alt={book.title}
+            />
+          </div>
+          
+          <button 
+            className="read-button" 
+            onClick={handleRead}
+            onMouseDown={createRipple}
+          >
+            Читать книгу
+          </button>
         </div>
         
+        {/* Правая колонка: информация о книге */}
         <div className="book-info">
           <h1>{book.title}</h1>
           <h2>{book.author}</h2>
@@ -140,14 +151,6 @@ export default function BookPage() {
               Буду читать
             </button>
           </div>
-          
-          <button 
-            className="read-button" 
-            onClick={handleRead}
-            onMouseDown={createRipple}
-          >
-            Читать книгу
-          </button>
           
           <div className="book-description">
             <h3>Описание</h3>

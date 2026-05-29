@@ -57,7 +57,7 @@ body.dark-theme .logo-link .ripple {
   background: rgba(255, 255, 255, 0.15);
 }
 
-/* Кнопка переключения темы - как все кнопки в проекте */
+/* Кнопка переключения темы */
 .theme-toggle-btn {
   background: none;
   border: 1px solid #DFE2ED;
@@ -80,7 +80,6 @@ body.dark-theme .theme-toggle-btn {
   border-color: #404040;
 }
 
-/* Убираем изменение цвета при наведении */
 .theme-toggle-btn:hover,
 .theme-toggle-btn:focus,
 .theme-toggle-btn:active {
@@ -186,6 +185,11 @@ body.dark-theme .footer-link .ripple {
   .logo-img {
     height: 40px;
     width: 40px;
+  }
+  
+  /* Убираем border-radius у логотипа на мобильных */
+  .logo-link {
+    border-radius: 0;
   }
   
   .theme-toggle-btn {
