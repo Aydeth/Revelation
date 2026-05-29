@@ -34,7 +34,6 @@ router.post('/register', async (req, res) => {
       { expiresIn: '7d' }
     );
     
-    console.log(`✅ New user registered: ${username} (id: ${result.rows[0].id})`);
     res.json({ user: result.rows[0], token });
   } catch (err) {
     if (err.code === '23505') {
@@ -73,7 +72,6 @@ router.post('/login', async (req, res) => {
       { expiresIn: '7d' }
     );
     
-    console.log(`✅ User logged in: ${username} (id: ${user.id})`);
     res.json({ 
       user: { id: user.id, username: user.username, email: user.email, avatar_url: user.avatar_url }, 
       token 
@@ -84,9 +82,9 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// Получить текущего пользователя
+// Получить текущего пользователя (защищённый маршрут)
 router.get('/me', async (req, res) => {
-  const userId = req.userId; // Берём из middleware
+  const userId = req.userId; // middleware добавил это поле
   
   if (!userId) {
     return res.status(401).json({ error: 'Unauthorized' });
@@ -109,7 +107,7 @@ router.get('/me', async (req, res) => {
   }
 });
 
-// Обновить профиль
+// Обновить профиль (защищённый маршрут)
 router.put('/profile', async (req, res) => {
   const userId = req.userId;
   const { username, avatar_url } = req.body;

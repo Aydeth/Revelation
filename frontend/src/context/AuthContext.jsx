@@ -1,53 +1,54 @@
 import { createContext, useState, useEffect, useContext } from 'react';
+import axios from 'axios';
 
 const AuthContext = createContext();
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // При загрузке просто достаём пользователя из localStorage
-    const storedUser = localStorage.getItem('user');
-    const storedToken = localStorage.getItem('token');
-    
-    if (storedUser && storedToken && storedToken !== 'null' && storedToken !== 'undefined') {
-      try {
-        const parsedUser = JSON.parse(storedUser);
-        setUser(parsedUser);
-        console.log('✅ User restored from localStorage:', parsedUser.username);
-      } catch (e) {
-        console.error('Failed to parse stored user:', e);
-        localStorage.removeItem('user');
-        localStorage.removeItem('token');
+    const initAuth = async () => {
+      const storedToken = localStorage.getItem('token');
+      
+      if (!storedToken || storedToken === 'null' || storedToken === 'undefined') {
+        setLoading(false);
+        return;
       }
-    }
+      
+      try {
+        const response = await axios.get(`${API_URL}/api/auth/me`, {
+          headers: { Authorization: `Bearer ${storedToken}` }
+        });
+        
+        if (response.data && response.data.id) {
+          setUser(response.data);
+        } else {
+          localStorage.removeItem('token');
+        }
+      } catch (err) {
+        console.error('Token verification failed:', err.response?.status);
+        localStorage.removeItem('token');
+      } finally {
+        setLoading(false);
+      }
+    };
     
-    setLoading(false);
+    initAuth();
   }, []);
 
   const login = (token, userData) => {
-    if (!token || token === 'null' || token === 'undefined') {
-      console.error('Invalid token provided to login');
-      return;
-    }
-    
-    // Сохраняем и токен, и данные пользователя
     localStorage.setItem('token', token);
-    localStorage.setItem('user', JSON.stringify(userData));
     setUser(userData);
-    console.log('✅ User logged in:', userData.username);
   };
 
   const logout = () => {
     localStorage.removeItem('token');
-    localStorage.removeItem('user');
     setUser(null);
-    console.log('✅ User logged out');
   };
 
   const updateUser = (userData) => {
-    localStorage.setItem('user', JSON.stringify(userData));
     setUser(userData);
   };
 
