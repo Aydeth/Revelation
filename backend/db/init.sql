@@ -3,6 +3,7 @@
 -- ============================================
 
 ALTER TABLE users ADD COLUMN IF NOT EXISTS avatar_url TEXT;
+ALTER TABLE user_book_status ADD COLUMN IF NOT EXISTS rating INTEGER CHECK (rating >= 1 AND rating <= 5);
 
 -- ============================================
 -- 2. СОЗДАНИЕ ТАБЛИЦ (если их нет)

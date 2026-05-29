@@ -172,7 +172,7 @@ router.get('/user/:username/shelf/:shelf', async (req, res) => {
         b.author, 
         b.cover_url, 
         b.publication_year,
-        ubs.rating as user_rating,
+        COALESCE(ubs.rating, 0) as user_rating,
         ubs.updated_at
       FROM user_book_status ubs
       JOIN books b ON ubs.book_id = b.id

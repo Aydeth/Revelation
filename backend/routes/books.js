@@ -265,7 +265,7 @@ router.get('/:id/rating', async (req, res) => {
     res.json({ rating: result.rows[0]?.rating || null });
   } catch (err) {
     console.error('Error fetching rating:', err);
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error: ' + err.message });
   }
 });
 
@@ -280,13 +280,14 @@ router.post('/:id/rating', async (req, res) => {
   }
   
   if (!rating || rating < 1 || rating > 5) {
-    return res.status(400).json({ error: 'Invalid rating' });
+    return res.status(400).json({ error: 'Invalid rating, must be 1-5' });
   }
   
   try {
+    // Обновляем или вставляем рейтинг
     await pool.query(`
-      INSERT INTO user_book_status (user_id, book_id, rating, updated_at)
-      VALUES ($1, $2, $3, CURRENT_TIMESTAMP)
+      INSERT INTO user_book_status (user_id, book_id, rating, status, updated_at)
+      VALUES ($1, $2, $3, 'reading', CURRENT_TIMESTAMP)
       ON CONFLICT (user_id, book_id) 
       DO UPDATE SET rating = $3, updated_at = CURRENT_TIMESTAMP
     `, [userId, id, rating]);
@@ -295,7 +296,7 @@ router.post('/:id/rating', async (req, res) => {
     await pool.query(`
       UPDATE books 
       SET rating_avg = (
-        SELECT AVG(rating) FROM user_book_status WHERE book_id = $1 AND rating IS NOT NULL
+        SELECT COALESCE(AVG(rating), 0) FROM user_book_status WHERE book_id = $1 AND rating IS NOT NULL
       ),
       rating_count = (
         SELECT COUNT(*) FROM user_book_status WHERE book_id = $1 AND rating IS NOT NULL
@@ -306,7 +307,7 @@ router.post('/:id/rating', async (req, res) => {
     res.json({ success: true });
   } catch (err) {
     console.error('Error saving rating:', err);
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error: ' + err.message });
   }
 });
 
