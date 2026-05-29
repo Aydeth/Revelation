@@ -22,7 +22,7 @@ body.dark-theme .read-container {
   background-color: #1A1A1A;
 }
 
-/* Хедер */
+/* Хедер - анимация */
 .read-header {
   flex-shrink: 0;
   background: #FFFFFF;
@@ -32,6 +32,18 @@ body.dark-theme .read-container {
   justify-content: space-between;
   align-items: center;
   gap: 16px;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.read-header.visible {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.read-header.hidden {
+  transform: translateY(-100%);
+  opacity: 0;
+  pointer-events: none;
 }
 
 body.dark-theme .read-header {
@@ -119,11 +131,10 @@ body.dark-theme .read-title p {
   max-width: 800px;
   margin: 0 auto;
   width: 100%;
+  cursor: pointer;
 }
 
-/* ============================================
-   КАСТОМНЫЙ СКРОЛЛБАР - СВЕТЛАЯ ТЕМА
-   ============================================ */
+/* Кастомный скроллбар - светлая тема */
 .read-content::-webkit-scrollbar {
   width: 8px;
 }
@@ -142,9 +153,7 @@ body.dark-theme .read-title p {
   background: #A8A8A8;
 }
 
-/* ============================================
-   КАСТОМНЫЙ СКРОЛЛБАР - ТЁМНАЯ ТЕМА
-   ============================================ */
+/* Кастомный скроллбар - тёмная тема */
 body.dark-theme .read-content::-webkit-scrollbar-track {
   background: #2A2A2A;
 }
@@ -187,7 +196,7 @@ body.dark-theme .read-content p {
 .read-content.text-align-right p { text-align: right; }
 .read-content.text-align-justify p { text-align: justify; }
 
-/* Футер с навигацией */
+/* Футер - анимация */
 .read-footer {
   flex-shrink: 0;
   background: #FFFFFF;
@@ -197,6 +206,18 @@ body.dark-theme .read-content p {
   justify-content: center;
   align-items: center;
   gap: 24px;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.read-footer.visible {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.read-footer.hidden {
+  transform: translateY(100%);
+  opacity: 0;
+  pointer-events: none;
 }
 
 body.dark-theme .read-footer {
