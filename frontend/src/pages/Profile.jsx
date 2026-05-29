@@ -39,6 +39,7 @@ export default function Profile() {
 
   const handleShelfClick = (shelfId) => {
     console.log('Shelf clicked:', shelfId);
+    // TODO: перейти на страницу с книгами этой полки
   };
 
   const joinedDate = user.created_at 
@@ -47,19 +48,18 @@ export default function Profile() {
 
   return (
     <div className="profile-page">
-      <div className="profile-header">
-        <div className="profile-avatar">
-          <img 
-            src={user.avatar_url || 'https://via.placeholder.com/120x120?text=Avatar'} 
-            alt={user.username}
-          />
-        </div>
-        <div className="profile-info">
-          <h1>{user.username}</h1>
-          <p className="profile-email">{user.email}</p>
-          <p className="profile-joined">
-            Присоединился: {joinedDate}
-          </p>
+      <div className="profile-container">
+        {/* Левая колонка - аватар и кнопки */}
+        <div className="profile-left">
+          <div className="profile-avatar">
+            <img 
+              src={user.avatar_url || 'https://via.placeholder.com/240x240?text=Avatar'} 
+              alt={user.username}
+            />
+          </div>
+          <div className="profile-username">
+            {user.username}
+          </div>
           <button 
             className="edit-profile-btn" 
             onClick={() => setShowEditModal(true)}
@@ -75,24 +75,29 @@ export default function Profile() {
             Выйти
           </button>
         </div>
-      </div>
 
-      <div className="profile-shelves">
-        <h2>Мои полки</h2>
-        <div className="shelves-grid">
-          {shelves.map(shelf => (
-            <div 
-              key={shelf.id} 
-              className="shelf-card"
-              onClick={() => handleShelfClick(shelf.id)}
-              onMouseDown={createRipple}
-            >
-              <div className="shelf-info">
-                <h3>{shelf.name}</h3>
-                <p>{shelf.count} книг</p>
-              </div>
+        {/* Правая колонка - полки */}
+        <div className="profile-right">
+          <div className="profile-shelves">
+            <h2>Мои полки</h2>
+            <div className="shelves-list">
+              {shelves.map(shelf => (
+                <div 
+                  key={shelf.id} 
+                  className="shelf-card"
+                  onClick={() => handleShelfClick(shelf.id)}
+                  onMouseDown={createRipple}
+                >
+                  <div className="shelf-info">
+                    <h3>{shelf.name}</h3>
+                  </div>
+                  <div className="shelf-count">
+                    {shelf.count} книг
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
         </div>
       </div>
 

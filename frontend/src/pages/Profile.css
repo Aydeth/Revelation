@@ -1,102 +1,130 @@
 .profile-page {
-  max-width: 800px;
+  max-width: 1000px;
   margin: 0 auto;
   padding: 20px 0;
 }
 
-.profile-header {
+.profile-container {
   display: flex;
-  gap: 32px;
-  margin-bottom: 40px;
+  gap: 48px;
   flex-wrap: wrap;
 }
 
-.profile-avatar {
+/* Левая колонка - аватар и кнопки */
+.profile-left {
   flex-shrink: 0;
+  width: 260px;
+  text-align: center;
+}
+
+.profile-avatar {
+  margin-bottom: 16px;
 }
 
 .profile-avatar img {
-  width: 120px;
-  height: 120px;
-  border-radius: 60px;
+  width: 100%;
+  max-width: 240px;
+  height: auto;
+  border-radius: 50%;
   object-fit: cover;
   border: none;
 }
 
-.profile-info {
-  flex: 1;
-}
-
-.profile-info h1 {
-  font-size: 28px;
-  margin-bottom: 8px;
+.profile-username {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 12px 0 20px;
   color: #222;
+  word-break: break-word;
 }
 
-body.dark-theme .profile-info h1 {
+body.dark-theme .profile-username {
   color: #E0E0E0;
 }
 
-.profile-email {
-  color: #666;
-  margin-bottom: 8px;
-}
-
-body.dark-theme .profile-email {
-  color: #AAAAAA;
-}
-
-.profile-joined {
-  font-size: 14px;
-  color: #888;
-  margin-bottom: 20px;
-}
-
-.edit-profile-btn, .logout-btn {
+.edit-profile-btn {
+  width: 100%;
   background: none;
   border: 1px solid #DFE2ED;
-  padding: 10px 20px;
+  padding: 10px 16px;
   border-radius: 8px;
   font-size: 14px;
   cursor: pointer;
-  margin-right: 12px;
+  margin-bottom: 12px;
   position: relative;
   overflow: hidden;
   transition: none;
-}
-
-.edit-profile-btn, .logout-btn {
   color: #1A1A1A;
   border-color: #DFE2ED;
 }
 
-body.dark-theme .edit-profile-btn,
+body.dark-theme .edit-profile-btn {
+  color: #E0E0E0;
+  border-color: #404040;
+}
+
+.edit-profile-btn:hover {
+  border-color: #DFE2ED !important;
+  color: #1A1A1A !important;
+  background-color: transparent !important;
+}
+
+body.dark-theme .edit-profile-btn:hover {
+  border-color: #404040 !important;
+  color: #E0E0E0 !important;
+}
+
+.edit-profile-btn .ripple {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+body.dark-theme .edit-profile-btn .ripple {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.logout-btn {
+  width: 100%;
+  background: none;
+  border: 1px solid #DFE2ED;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: none;
+  color: #1A1A1A;
+  border-color: #DFE2ED;
+}
+
 body.dark-theme .logout-btn {
   color: #E0E0E0;
   border-color: #404040;
 }
 
-.edit-profile-btn:hover, 
 .logout-btn:hover {
   border-color: #DFE2ED !important;
   color: #1A1A1A !important;
   background-color: transparent !important;
 }
 
-body.dark-theme .edit-profile-btn:hover,
 body.dark-theme .logout-btn:hover {
   border-color: #404040 !important;
   color: #E0E0E0 !important;
-  background-color: transparent !important;
 }
 
-.edit-profile-btn .ripple, .logout-btn .ripple {
+.logout-btn .ripple {
   background: rgba(0, 0, 0, 0.1);
 }
 
-body.dark-theme .edit-profile-btn .ripple,
 body.dark-theme .logout-btn .ripple {
   background: rgba(255, 255, 255, 0.15);
+}
+
+/* Правая колонка - полки */
+.profile-right {
+  flex: 1;
+  min-width: 200px;
 }
 
 .profile-shelves h2 {
@@ -109,17 +137,17 @@ body.dark-theme .profile-shelves h2 {
   color: #E0E0E0;
 }
 
-.shelves-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 16px;
+.shelves-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .shelf-card {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 16px;
+  justify-content: space-between;
+  padding: 16px 20px;
   background: #FFFFFF;
   border: 1px solid #DFE2ED;
   border-radius: 12px;
@@ -142,7 +170,7 @@ body.dark-theme .shelf-card {
 .shelf-info h3 {
   font-size: 16px;
   font-weight: 600;
-  margin-bottom: 4px;
+  margin: 0;
   color: #222;
 }
 
@@ -150,12 +178,13 @@ body.dark-theme .shelf-info h3 {
   color: #E0E0E0;
 }
 
-.shelf-info p {
+.shelf-count {
   font-size: 14px;
+  font-weight: 500;
   color: #888;
 }
 
-body.dark-theme .shelf-info p {
+body.dark-theme .shelf-count {
   color: #AAAAAA;
 }
 
@@ -167,18 +196,19 @@ body.dark-theme .shelf-card .ripple {
   background: rgba(255, 255, 255, 0.15);
 }
 
+/* Адаптив */
 @media (max-width: 768px) {
-  .profile-header {
+  .profile-container {
     flex-direction: column;
     align-items: center;
-    text-align: center;
+    gap: 32px;
   }
   
-  .profile-info {
-    text-align: center;
+  .profile-left {
+    width: 220px;
   }
   
-  .shelves-grid {
-    grid-template-columns: 1fr;
+  .profile-right {
+    width: 100%;
   }
 }
