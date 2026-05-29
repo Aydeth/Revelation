@@ -15,7 +15,6 @@ const pool = new Pool({
 
 // Регистрация
 router.post('/register', async (req, res) => {
-  console.log('📝 Register endpoint hit'); // Добавим лог для диагностики
   const { username, email, password } = req.body;
   
   if (!username || !email || !password) {
@@ -35,20 +34,20 @@ router.post('/register', async (req, res) => {
       { expiresIn: '7d' }
     );
     
+    console.log(`✅ New user registered: ${username} (id: ${result.rows[0].id})`);
     res.json({ user: result.rows[0], token });
   } catch (err) {
-    console.error('Registration error:', err);
     if (err.code === '23505') {
       res.status(400).json({ error: 'Username or email already exists' });
     } else {
-      res.status(500).json({ error: 'Server error: ' + err.message });
+      console.error('Registration error:', err);
+      res.status(500).json({ error: 'Server error' });
     }
   }
 });
 
 // Логин
 router.post('/login', async (req, res) => {
-  console.log('🔐 Login endpoint hit');
   const { username, password } = req.body;
   
   try {
@@ -74,16 +73,18 @@ router.post('/login', async (req, res) => {
       { expiresIn: '7d' }
     );
     
-    res.json({ user: { id: user.id, username: user.username, email: user.email }, token });
+    console.log(`✅ User logged in: ${username} (id: ${user.id})`);
+    res.json({ 
+      user: { id: user.id, username: user.username, email: user.email, avatar_url: user.avatar_url }, 
+      token 
+    });
   } catch (err) {
     console.error('Login error:', err);
-    res.status(500).json({ error: 'Server error: ' + err.message });
+    res.status(500).json({ error: 'Server error' });
   }
 });
 
-module.exports = router; // 👈 Убедись, что эта строка есть
-
-// Получить информацию о текущем пользователе
+// Получить текущего пользователя
 router.get('/me', async (req, res) => {
   const userId = req.user?.userId;
   
@@ -108,7 +109,7 @@ router.get('/me', async (req, res) => {
   }
 });
 
-// Обновить профиль пользователя
+// Обновить профиль
 router.put('/profile', async (req, res) => {
   const userId = req.user?.userId;
   const { username, avatar_url } = req.body;
@@ -129,3 +130,5 @@ router.put('/profile', async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 });
+
+module.exports = router;

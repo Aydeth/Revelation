@@ -11,22 +11,31 @@ export default function LoginRegister() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setLoading(true);
     
     try {
       const endpoint = isLogin ? '/api/auth/login' : '/api/auth/register';
       const payload = isLogin ? { username, password } : { username, email, password };
       
       const response = await axios.post(`${API_URL}${endpoint}`, payload);
+      
+      if (!response.data.token || response.data.token === 'null') {
+        throw new Error('Invalid token received');
+      }
+      
       login(response.data.token, response.data.user);
       navigate('/');
     } catch (err) {
       setError(err.response?.data?.error || 'Ошибка сервера');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -79,12 +88,22 @@ export default function LoginRegister() {
             />
           </div>
           
-          <button type="submit" className="btn-primary" style={{ width: '100%', marginBottom: '16px' }}>
-            {isLogin ? 'Войти' : 'Зарегистрироваться'}
+          <button 
+            type="submit" 
+            className="btn-primary" 
+            style={{ width: '100%', marginBottom: '16px' }}
+            disabled={loading}
+          >
+            {loading ? 'Загрузка...' : (isLogin ? 'Войти' : 'Зарегистрироваться')}
           </button>
         </form>
         
-        <button onClick={() => setIsLogin(!isLogin)} className="btn-secondary" style={{ width: '100%' }}>
+        <button 
+          onClick={() => setIsLogin(!isLogin)} 
+          className="btn-secondary" 
+          style={{ width: '100%' }}
+          disabled={loading}
+        >
           {isLogin ? 'Создать аккаунт' : 'Уже есть аккаунт?'}
         </button>
       </div>
