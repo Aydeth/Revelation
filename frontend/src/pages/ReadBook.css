@@ -144,6 +144,36 @@ body.read-mode {
   color: #003BFF;
 }
 
+/* Загрузка внутри читалки */
+.read-content.loading-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loader {
+  font-size: 16px;
+  color: #888;
+  text-align: center;
+  padding: 40px;
+}
+
+.page-loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+}
+
+/* Плавное исчезновение контента при смене страницы */
+.read-content {
+  transition: opacity 0.15s ease;
+}
+
+.read-content.fade-out {
+  opacity: 0.5;
+}
+
 /* Адаптив */
 @media (max-width: 768px) {
   .read-header {

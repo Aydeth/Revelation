@@ -11,9 +11,9 @@ export default function ReadBook() {
   const navigate = useNavigate();
   const [book, setBook] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isPageChanging, setIsPageChanging] = useState(false);
   const [currentPage, setCurrentPage] = useState(parseInt(pageNum) || 1);
   const [totalPages, setTotalPages] = useState(0);
-  const [isChangingPage, setIsChangingPage] = useState(false);
   const contentRef = useRef(null);
 
   // Загрузка страницы
@@ -25,61 +25,62 @@ export default function ReadBook() {
       });
       
       const data = response.data;
-      setBook(data);
+      setBook(prev => ({ ...prev, ...data }));
       setTotalPages(data.totalPages);
       
-      // После загрузки — скролл в начало
-      if (contentRef.current) {
-        contentRef.current.scrollTop = 0;
-      }
+      // Скролл в начало после загрузки
+      setTimeout(() => {
+        if (contentRef.current) {
+          contentRef.current.scrollTop = 0;
+        }
+      }, 0);
     } catch (err) {
       console.error('Ошибка:', err);
       navigate('/');
     } finally {
       setLoading(false);
-      setIsChangingPage(false);
+      setIsPageChanging(false);
     }
   }, [id, navigate]);
 
-  // Загрузка при монтировании или смене страницы
+  // Загрузка при монтировании
   useEffect(() => {
     setLoading(true);
     fetchPage(currentPage);
-    document.body.classList.add('read-mode');
     
+    document.body.classList.add('read-mode');
     return () => {
       document.body.classList.remove('read-mode');
     };
   }, [currentPage, fetchPage]);
 
-  // Сохранение прогресса (только номер страницы)
+  // Сохранение прогресса
   const saveProgress = async (page) => {
     try {
       const token = localStorage.getItem('token');
-      const positionValue = `${page}.0`;
       await axios.post(`${API_URL}/api/books/${id}/progress`, 
-        { position: positionValue },
+        { position: `${page}.0` },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      console.log(`💾 Сохранена страница: ${page}`);
     } catch (err) {
-      console.error('❌ Ошибка сохранения:', err.response?.status);
+      console.error('Ошибка сохранения:', err);
     }
   };
 
-  // Навигация по страницам
+  // Переход на предыдущую страницу
   const goToPrevPage = () => {
-    if (currentPage > 1 && !isChangingPage) {
-      setIsChangingPage(true);
+    if (currentPage > 1 && !isPageChanging) {
+      setIsPageChanging(true);
       const newPage = currentPage - 1;
       setCurrentPage(newPage);
       saveProgress(newPage);
     }
   };
 
+  // Переход на следующую страницу
   const goToNextPage = () => {
-    if (currentPage < totalPages && !isChangingPage) {
-      setIsChangingPage(true);
+    if (currentPage < totalPages && !isPageChanging) {
+      setIsPageChanging(true);
       const newPage = currentPage + 1;
       setCurrentPage(newPage);
       saveProgress(newPage);
@@ -95,11 +96,10 @@ export default function ReadBook() {
   // Сохранение при закрытии
   useEffect(() => {
     const handleBeforeUnload = () => {
-      const positionValue = `${currentPage}.0`;
       const token = localStorage.getItem('token');
       if (token) {
         const url = `${API_URL}/api/books/${id}/progress`;
-        const data = JSON.stringify({ position: positionValue });
+        const data = JSON.stringify({ position: `${currentPage}.0` });
         navigator.sendBeacon(url, new Blob([data], { type: 'application/json' }));
       }
     };
@@ -108,7 +108,38 @@ export default function ReadBook() {
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, [id, currentPage]);
 
-  if (loading) return <div className="loading">Загрузка...</div>;
+  // Если ещё нет данных книги, показываем загрузку внутри читалки
+  if (loading && !book) {
+    return (
+      <div className="read-container">
+        <div className="read-header">
+          <button className="back-btn" onClick={handleExit}>
+            <ArrowLeft size={20} />
+          </button>
+          <div className="read-title">
+            <h2>Загрузка...</h2>
+          </div>
+        </div>
+        <div className="read-content loading-content">
+          <div className="loader">Загрузка текста...</div>
+        </div>
+        <div className="read-footer">
+          <button className="nav-btn disabled" disabled>
+            <ChevronLeft size={20} />
+          </button>
+          <div className="page-info">-- / --</div>
+          <button className="nav-btn disabled" disabled>
+            <ChevronRight size={20} />
+          </button>
+          <button className="settings-btn">
+            <Settings size={20} />
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Если нет книги, ничего не показываем
   if (!book) return null;
 
   const paragraphs = book.text?.split('\n') || [];
@@ -125,17 +156,23 @@ export default function ReadBook() {
         </div>
       </div>
 
-      <div className="read-content" ref={contentRef}>
-        {paragraphs.map((paragraph, i) => (
-          <p key={i}>{paragraph}</p>
-        ))}
+      <div className={`read-content ${isPageChanging ? 'fade-out' : ''}`} ref={contentRef}>
+        {isPageChanging ? (
+          <div className="page-loader">
+            <div className="loader">Загрузка страницы...</div>
+          </div>
+        ) : (
+          paragraphs.map((paragraph, i) => (
+            <p key={i}>{paragraph}</p>
+          ))
+        )}
       </div>
 
       <div className="read-footer">
         <button 
-          className={`nav-btn ${currentPage === 1 || isChangingPage ? 'disabled' : ''}`}
+          className={`nav-btn ${currentPage === 1 || isPageChanging ? 'disabled' : ''}`}
           onClick={goToPrevPage}
-          disabled={currentPage === 1 || isChangingPage}
+          disabled={currentPage === 1 || isPageChanging}
         >
           <ChevronLeft size={20} />
         </button>
@@ -145,9 +182,9 @@ export default function ReadBook() {
         </div>
         
         <button 
-          className={`nav-btn ${currentPage === totalPages || isChangingPage ? 'disabled' : ''}`}
+          className={`nav-btn ${currentPage === totalPages || isPageChanging ? 'disabled' : ''}`}
           onClick={goToNextPage}
-          disabled={currentPage === totalPages || isChangingPage}
+          disabled={currentPage === totalPages || isPageChanging}
         >
           <ChevronRight size={20} />
         </button>
