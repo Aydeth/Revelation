@@ -123,7 +123,64 @@ router.get('/me', authMiddleware, async (req, res) => {
   }
 });
 
-// Обновить профиль (защищённый)
+// Получить пользователя по username (публичный)
+router.get('/user/:username', async (req, res) => {
+  const { username } = req.params;
+  
+  try {
+    const result = await pool.query(
+      'SELECT id, username, avatar_url, created_at FROM users WHERE username = $1',
+      [username]
+    );
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error('Error fetching user:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Получить книги пользователя по полке (публичный)
+router.get('/user/:username/shelf/:shelf', async (req, res) => {
+  const { username, shelf } = req.params;
+  const validShelves = ['reading', 'read', 'want_to_read'];
+  
+  if (!validShelves.includes(shelf)) {
+    return res.status(400).json({ error: 'Invalid shelf' });
+  }
+  
+  try {
+    const userResult = await pool.query(
+      'SELECT id FROM users WHERE username = $1',
+      [username]
+    );
+    
+    if (userResult.rows.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    
+    const userId = userResult.rows[0].id;
+    
+    const booksResult = await pool.query(`
+      SELECT b.id, b.title, b.author, b.cover_url, b.publication_year, ubs.rating
+      FROM user_book_status ubs
+      JOIN books b ON ubs.book_id = b.id
+      WHERE ubs.user_id = $1 AND ubs.status = $2
+      ORDER BY ubs.updated_at DESC
+    `, [userId, shelf]);
+    
+    res.json(booksResult.rows);
+  } catch (err) {
+    console.error('Error fetching shelf:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Обновить профиль
 router.put('/profile', authMiddleware, async (req, res) => {
   const userId = req.userId;
   const { username, avatar_url } = req.body;

@@ -31,17 +31,20 @@ export default function BookPage() {
   const [loading, setLoading] = useState(true);
   const [userStatus, setUserStatus] = useState(null);
   const [savedPage, setSavedPage] = useState(1);
+  const [statusLoading, setStatusLoading] = useState(false);
 
   useEffect(() => {
     const fetchBook = async () => {
       try {
         const token = localStorage.getItem('token');
         
+        // Загружаем информацию о книге
         const response = await axios.get(`${API_URL}/api/books/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setBook(response.data);
         
+        // Загружаем сохранённый прогресс чтения
         try {
           const progressResponse = await axios.get(`${API_URL}/api/books/${id}/progress`, {
             headers: { Authorization: `Bearer ${token}` }
@@ -55,6 +58,16 @@ export default function BookPage() {
           console.error('Ошибка загрузки прогресса:', progressErr);
         }
         
+        // Загружаем текущий статус книги (на какой полке)
+        try {
+          const statusResponse = await axios.get(`${API_URL}/api/books/${id}/status`, {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          setUserStatus(statusResponse.data.status);
+        } catch (statusErr) {
+          console.error('Ошибка загрузки статуса:', statusErr);
+        }
+        
       } catch (err) {
         console.error('Error fetching book:', err);
         if (err.response?.status === 404) {
@@ -64,10 +77,12 @@ export default function BookPage() {
         setLoading(false);
       }
     };
+    
     fetchBook();
   }, [id, navigate]);
 
   const setStatus = async (status) => {
+    setStatusLoading(true);
     try {
       const token = localStorage.getItem('token');
       await axios.post(`${API_URL}/api/books/${id}/status`, 
@@ -77,6 +92,8 @@ export default function BookPage() {
       setUserStatus(status);
     } catch (err) {
       console.error('Ошибка сохранения статуса:', err);
+    } finally {
+      setStatusLoading(false);
     }
   };
 
@@ -133,6 +150,7 @@ export default function BookPage() {
               className={`status-btn ${userStatus === 'reading' ? 'active' : ''}`}
               onClick={() => setStatus('reading')}
               onMouseDown={createRipple}
+              disabled={statusLoading}
             >
               Читаю
             </button>
@@ -140,6 +158,7 @@ export default function BookPage() {
               className={`status-btn ${userStatus === 'read' ? 'active' : ''}`}
               onClick={() => setStatus('read')}
               onMouseDown={createRipple}
+              disabled={statusLoading}
             >
               Прочитано
             </button>
@@ -147,6 +166,7 @@ export default function BookPage() {
               className={`status-btn ${userStatus === 'want_to_read' ? 'active' : ''}`}
               onClick={() => setStatus('want_to_read')}
               onMouseDown={createRipple}
+              disabled={statusLoading}
             >
               Буду читать
             </button>

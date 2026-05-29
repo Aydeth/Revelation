@@ -18,13 +18,10 @@ const SENTENCES_PER_PAGE = 30; // Количество предложений н
 // ВСПОМОГАТЕЛЬНАЯ ФУНКЦИЯ: разбить текст на предложения
 // ============================================
 function splitIntoSentences(text) {
-  // Регулярное выражение для разделения на предложения
-  // (.!?…) — конец предложения, включая кавычки и пробелы после
   const sentenceRegex = /[^.!?]+[.!?]+["']?\s*/g;
   const matches = text.match(sentenceRegex);
   
   if (!matches || matches.length === 0) {
-    // Если не нашлось предложений, возвращаем весь текст как одно предложение
     return [text];
   }
   
@@ -75,11 +72,10 @@ router.get('/:id', async (req, res) => {
 // ============================================
 router.get('/:id/page/:pageNum', async (req, res) => {
   const { id, pageNum } = req.params;
-  const userId = req.user?.userId;
+  const userId = req.userId;
   const pageNumber = parseInt(pageNum);
   
   try {
-    // Получаем информацию о книге
     const bookResult = await pool.query(`
       SELECT title, author, file_path 
       FROM books 
@@ -93,25 +89,19 @@ router.get('/:id/page/:pageNum', async (req, res) => {
     const book = bookResult.rows[0];
     const fullText = getBookText(book.file_path);
     
-    // Разбиваем текст на предложения
     const sentences = splitIntoSentences(fullText);
     const totalSentences = sentences.length;
     const totalPages = Math.ceil(totalSentences / SENTENCES_PER_PAGE);
     
-    // Проверяем, что страница существует
     if (pageNumber < 1 || pageNumber > totalPages) {
       return res.status(404).json({ error: 'Page not found' });
     }
     
-    // Вырезаем нужные предложения
     const startIdx = (pageNumber - 1) * SENTENCES_PER_PAGE;
     const endIdx = Math.min(startIdx + SENTENCES_PER_PAGE, totalSentences);
     const pageSentences = sentences.slice(startIdx, endIdx);
-    
-    // Склеиваем обратно в текст
     const pageText = pageSentences.join('');
     
-    // Получаем прогресс пользователя (только номер страницы)
     let savedPage = 1;
     
     if (userId) {
@@ -156,7 +146,6 @@ router.post('/:id/progress', async (req, res) => {
     return res.status(401).json({ error: 'Unauthorized' });
   }
   
-  // position = "страница.0" (проценты больше не нужны)
   if (!position || typeof position !== 'string') {
     return res.status(400).json({ error: 'Invalid position format' });
   }
@@ -182,7 +171,7 @@ router.post('/:id/progress', async (req, res) => {
 router.post('/:id/status', async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
-  const userId = req.user?.userId;
+  const userId = req.userId;
   
   if (!userId) {
     return res.status(401).json({ error: 'Unauthorized' });
@@ -208,7 +197,32 @@ router.post('/:id/status', async (req, res) => {
 });
 
 // ============================================
-// 6. ПОЛУЧИТЬ ПРОГРЕСС КНИГИ ДЛЯ ПОЛЬЗОВАТЕЛЯ
+// 6. ПОЛУЧИТЬ СТАТУС КНИГИ ДЛЯ ТЕКУЩЕГО ПОЛЬЗОВАТЕЛЯ
+// ============================================
+router.get('/:id/status', async (req, res) => {
+  const { id } = req.params;
+  const userId = req.userId;
+  
+  if (!userId) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  
+  try {
+    const result = await pool.query(`
+      SELECT status 
+      FROM user_book_status 
+      WHERE user_id = $1 AND book_id = $2
+    `, [userId, id]);
+    
+    res.json({ status: result.rows[0]?.status || null });
+  } catch (err) {
+    console.error('Error fetching status:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// ============================================
+// 7. ПОЛУЧИТЬ ПРОГРЕСС КНИГИ ДЛЯ ПОЛЬЗОВАТЕЛЯ
 // ============================================
 router.get('/:id/progress', async (req, res) => {
   const { id } = req.params;
