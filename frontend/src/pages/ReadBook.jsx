@@ -9,10 +9,29 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 const SETTINGS_STORAGE_KEY = 'reader_settings';
 
 const defaultSettings = {
-  fontSize: 'normal',     // small, normal, large, xlarge
-  fontWeight: 'normal',   // normal, medium, bold
-  lineHeight: 'normal',   // compact, normal, loose
-  textAlign: 'justify'    // left, center, right, justify
+  fontSize: 'normal',
+  fontWeight: 'normal',
+  lineHeight: 'normal',
+  textAlign: 'justify'
+};
+
+// Ripple эффект для кнопок
+const createRipple = (event) => {
+  const button = event.currentTarget;
+  const ripple = document.createElement('span');
+  const rect = button.getBoundingClientRect();
+  const size = Math.max(button.clientWidth, button.clientHeight);
+  
+  ripple.classList.add('ripple');
+  ripple.style.width = ripple.style.height = `${size}px`;
+  ripple.style.left = `${event.clientX - rect.left - size / 2}px`;
+  ripple.style.top = `${event.clientY - rect.top - size / 2}px`;
+  
+  const oldRipples = button.querySelectorAll('.ripple');
+  oldRipples.forEach(r => r.remove());
+  
+  button.appendChild(ripple);
+  setTimeout(() => ripple.remove(), 600);
 };
 
 export default function ReadBook() {
@@ -26,24 +45,6 @@ export default function ReadBook() {
   const [showSettings, setShowSettings] = useState(false);
   const [readerSettings, setReaderSettings] = useState(defaultSettings);
   const contentRef = useRef(null);
-
-  const createRipple = (event) => {
-    const button = event.currentTarget;
-    const ripple = document.createElement('span');
-    const rect = button.getBoundingClientRect();
-    const size = Math.max(button.clientWidth, button.clientHeight);
-    
-    ripple.classList.add('ripple');
-    ripple.style.width = ripple.style.height = `${size}px`;
-    ripple.style.left = `${event.clientX - rect.left - size / 2}px`;
-    ripple.style.top = `${event.clientY - rect.top - size / 2}px`;
-    
-    const oldRipples = button.querySelectorAll('.ripple');
-    oldRipples.forEach(r => r.remove());
-    
-    button.appendChild(ripple);
-    setTimeout(() => ripple.remove(), 600);
-  };
 
   // Загрузка сохранённых настроек
   useEffect(() => {
@@ -180,11 +181,11 @@ export default function ReadBook() {
           <div className="loader">Загрузка текста...</div>
         </div>
         <div className="read-footer">
-          <button className="nav-btn disabled" disabled onMouseDown={createRipple}>
+          <button className="nav-btn disabled" disabled>
             <ChevronLeft size={20} />
           </button>
           <div className="page-info">-- / --</div>
-          <button className="nav-btn disabled" disabled onMouseDown={createRipple}>
+          <button className="nav-btn disabled" disabled>
             <ChevronRight size={20} />
           </button>
           <button className="settings-btn" onMouseDown={createRipple}>
@@ -246,7 +247,11 @@ export default function ReadBook() {
           <ChevronRight size={20} />
         </button>
         
-        <button className="settings-btn" onClick={() => setShowSettings(true)} onMouseDown={createRipple}>
+        <button 
+          className="settings-btn" 
+          onClick={() => setShowSettings(true)}
+          onMouseDown={createRipple}
+        >
           <Settings size={20} />
         </button>
       </div>

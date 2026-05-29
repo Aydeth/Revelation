@@ -31,6 +31,10 @@ body.dark-theme .app-header {
 
 .logo-link {
   display: inline-block;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
 }
 
 .logo-img {
@@ -38,16 +42,25 @@ body.dark-theme .app-header {
   width: 48px;
   vertical-align: middle;
   transition: opacity 0.2s;
+  display: block;
 }
 
 .logo-img:hover {
   opacity: 0.8;
 }
 
+.logo-link .ripple {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+body.dark-theme .logo-link .ripple {
+  background: rgba(255, 255, 255, 0.15);
+}
+
 /* Кнопка переключения темы */
 .theme-toggle-btn {
-  background: none;
-  border: 1px solid #E9E9E9;
+  background-color: transparent;
+  border: 1px solid #DFE2ED;
   width: 40px;
   height: 40px;
   border-radius: 40px;
@@ -57,15 +70,25 @@ body.dark-theme .app-header {
   justify-content: center;
   font-size: 20px;
   transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
 }
 
 body.dark-theme .theme-toggle-btn {
   border-color: #404040;
-  background-color: #3A3A3A;
+  background-color: transparent;
 }
 
 .theme-toggle-btn:hover {
   border-color: #003BFF;
+}
+
+.theme-toggle-btn .ripple {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+body.dark-theme .theme-toggle-btn .ripple {
+  background: rgba(255, 255, 255, 0.15);
 }
 
 /* Основной контент */
@@ -109,6 +132,7 @@ body.dark-theme .app-footer {
   position: relative;
   overflow: hidden;
   transition: color 0.2s;
+  cursor: pointer;
 }
 
 body.dark-theme .footer-link {
@@ -121,6 +145,14 @@ body.dark-theme .footer-link {
 
 body.dark-theme .footer-link:hover {
   background-color: #3A3A3A;
+}
+
+.footer-link .ripple {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+body.dark-theme .footer-link .ripple {
+  background: rgba(255, 255, 255, 0.15);
 }
 
 .loading {

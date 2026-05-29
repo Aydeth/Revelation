@@ -5,7 +5,6 @@ import './BookPage.css';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
-// Функция для ripple эффекта
 const createRipple = (event) => {
   const button = event.currentTarget;
   const ripple = document.createElement('span');
@@ -17,7 +16,6 @@ const createRipple = (event) => {
   ripple.style.left = `${event.clientX - rect.left - size / 2}px`;
   ripple.style.top = `${event.clientY - rect.top - size / 2}px`;
   
-  // Удаляем старые ripple
   const oldRipples = button.querySelectorAll('.ripple');
   oldRipples.forEach(r => r.remove());
   

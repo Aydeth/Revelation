@@ -9,9 +9,27 @@ import ReadBook from './pages/ReadBook';
 import { useTheme } from './context/ThemeContext';
 import './App.css';
 
-// Импорт иконок для темы
 import LightIcon from './assets/Icon.svg';
 import DarkIcon from './assets/DarkIcon.svg';
+
+// Ripple эффект для кнопок
+const createRipple = (event) => {
+  const element = event.currentTarget;
+  const ripple = document.createElement('span');
+  const rect = element.getBoundingClientRect();
+  const size = Math.max(element.clientWidth, element.clientHeight);
+  
+  ripple.classList.add('ripple');
+  ripple.style.width = ripple.style.height = `${size}px`;
+  ripple.style.left = `${event.clientX - rect.left - size / 2}px`;
+  ripple.style.top = `${event.clientY - rect.top - size / 2}px`;
+  
+  const oldRipples = element.querySelectorAll('.ripple');
+  oldRipples.forEach(r => r.remove());
+  
+  element.appendChild(ripple);
+  setTimeout(() => ripple.remove(), 600);
+};
 
 function App() {
   const [user, setUser] = useState(null);
@@ -36,10 +54,10 @@ function App() {
         {user && (
           <header className="app-header">
             <div className="header-container">
-              <Link to="/" className="logo-link">
+              <Link to="/" className="logo-link" onMouseDown={createRipple}>
                 <img src={logoSrc} alt="Logo" className="logo-img" />
               </Link>
-              <button onClick={toggleTheme} className="theme-toggle-btn">
+              <button onClick={toggleTheme} className="theme-toggle-btn" onMouseDown={createRipple}>
                 {theme === 'light' ? '🌙' : '☀️'}
               </button>
             </div>
@@ -60,9 +78,9 @@ function App() {
         {user && (
           <nav className="app-footer">
             <div className="footer-container">
-              <Link to="/" className="footer-link">Лента</Link>
-              <Link to="/my-books" className="footer-link">Мои книги</Link>
-              <Link to="/profile" className="footer-link">Профиль</Link>
+              <Link to="/" className="footer-link" onMouseDown={createRipple}>Лента</Link>
+              <Link to="/my-books" className="footer-link" onMouseDown={createRipple}>Мои книги</Link>
+              <Link to="/profile" className="footer-link" onMouseDown={createRipple}>Профиль</Link>
             </div>
           </nav>
         )}
