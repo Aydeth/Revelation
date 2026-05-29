@@ -2,9 +2,18 @@ import { useEffect, useState, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { ArrowLeft, ChevronLeft, ChevronRight, Settings } from 'lucide-react';
+import ReaderSettings from '../components/ReaderSettings';
 import './ReadBook.css';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const SETTINGS_STORAGE_KEY = 'reader_settings';
+
+const defaultSettings = {
+  fontSize: 18,
+  fontWeight: 400,
+  lineHeight: 1.8,
+  textAlign: 'justify'
+};
 
 export default function ReadBook() {
   const { id, pageNum } = useParams();
@@ -14,7 +23,32 @@ export default function ReadBook() {
   const [isPageChanging, setIsPageChanging] = useState(false);
   const [currentPage, setCurrentPage] = useState(parseInt(pageNum) || 1);
   const [totalPages, setTotalPages] = useState(0);
+  const [showSettings, setShowSettings] = useState(false);
+  const [readerSettings, setReaderSettings] = useState(defaultSettings);
   const contentRef = useRef(null);
+
+  // Загрузка сохранённых настроек
+  useEffect(() => {
+    const saved = localStorage.getItem(SETTINGS_STORAGE_KEY);
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        setReaderSettings({ ...defaultSettings, ...parsed });
+      } catch (e) {
+        console.error('Error loading settings:', e);
+      }
+    }
+  }, []);
+
+  // Применение настроек к DOM
+  useEffect(() => {
+    if (contentRef.current) {
+      contentRef.current.style.fontSize = `${readerSettings.fontSize}px`;
+      contentRef.current.style.fontWeight = readerSettings.fontWeight;
+      contentRef.current.style.lineHeight = readerSettings.lineHeight;
+      contentRef.current.style.textAlign = readerSettings.textAlign;
+    }
+  }, [readerSettings]);
 
   // Загрузка страницы
   const fetchPage = useCallback(async (page) => {
@@ -28,7 +62,6 @@ export default function ReadBook() {
       setBook(prev => ({ ...prev, ...data }));
       setTotalPages(data.totalPages);
       
-      // Скролл в начало после загрузки
       setTimeout(() => {
         if (contentRef.current) {
           contentRef.current.scrollTop = 0;
@@ -93,6 +126,11 @@ export default function ReadBook() {
     navigate(`/book/${id}`);
   };
 
+  // Применение настроек из модалки
+  const handleApplySettings = (newSettings) => {
+    setReaderSettings(newSettings);
+  };
+
   // Сохранение при закрытии
   useEffect(() => {
     const handleBeforeUnload = () => {
@@ -108,7 +146,6 @@ export default function ReadBook() {
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, [id, currentPage]);
 
-  // Если ещё нет данных книги, показываем загрузку внутри читалки
   if (loading && !book) {
     return (
       <div className="read-container">
@@ -139,7 +176,6 @@ export default function ReadBook() {
     );
   }
 
-  // Если нет книги, ничего не показываем
   if (!book) return null;
 
   const paragraphs = book.text?.split('\n') || [];
@@ -189,10 +225,17 @@ export default function ReadBook() {
           <ChevronRight size={20} />
         </button>
         
-        <button className="settings-btn">
+        <button className="settings-btn" onClick={() => setShowSettings(true)}>
           <Settings size={20} />
         </button>
       </div>
+
+      {showSettings && (
+        <ReaderSettings 
+          onClose={() => setShowSettings(false)}
+          onApply={handleApplySettings}
+        />
+      )}
     </div>
   );
 }
