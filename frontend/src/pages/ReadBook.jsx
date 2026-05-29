@@ -7,7 +7,6 @@ import './ReadBook.css';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 const SETTINGS_STORAGE_KEY = 'reader_settings';
-const HIDE_DELAY = 3000; // Задержка перед скрытием (3 секунды)
 
 const defaultSettings = {
   fontSize: 'normal',
@@ -46,7 +45,6 @@ export default function ReadBook() {
   const [showSettings, setShowSettings] = useState(false);
   const [readerSettings, setReaderSettings] = useState(defaultSettings);
   const [uiVisible, setUiVisible] = useState(true);
-  const hideTimeoutRef = useRef(null);
   const contentRef = useRef(null);
 
   // Загрузка сохранённых настроек
@@ -96,7 +94,6 @@ export default function ReadBook() {
     document.body.classList.add('read-mode');
     return () => {
       document.body.classList.remove('read-mode');
-      if (hideTimeoutRef.current) clearTimeout(hideTimeoutRef.current);
     };
   }, [currentPage, fetchPage]);
 
@@ -120,7 +117,6 @@ export default function ReadBook() {
       const newPage = currentPage - 1;
       setCurrentPage(newPage);
       saveProgress(newPage);
-      showUiTemporarily();
     }
   };
 
@@ -131,7 +127,6 @@ export default function ReadBook() {
       const newPage = currentPage + 1;
       setCurrentPage(newPage);
       saveProgress(newPage);
-      showUiTemporarily();
     }
   };
 
@@ -146,28 +141,9 @@ export default function ReadBook() {
     setReaderSettings(newSettings);
   };
 
-  // Показать UI временно и скрыть через задержку
-  const showUiTemporarily = () => {
-    setUiVisible(true);
-    if (hideTimeoutRef.current) clearTimeout(hideTimeoutRef.current);
-    hideTimeoutRef.current = setTimeout(() => {
-      setUiVisible(false);
-    }, HIDE_DELAY);
-  };
-
-  // Обработка тапа по контенту
-  const handleContentTap = (e) => {
-    // Если клик по кнопке или её дочернему элементу — не скрываем
-    if (e.target.closest('button')) return;
-    
-    if (uiVisible) {
-      // Если UI виден — скрываем сразу
-      setUiVisible(false);
-      if (hideTimeoutRef.current) clearTimeout(hideTimeoutRef.current);
-    } else {
-      // Если UI скрыт — показываем временно
-      showUiTemporarily();
-    }
+  // Переключение видимости UI (ручное управление)
+  const toggleUi = () => {
+    setUiVisible(!uiVisible);
   };
 
   // Сохранение при закрытии
@@ -199,7 +175,7 @@ export default function ReadBook() {
   if (loading && !book) {
     return (
       <div className="read-container">
-        <div className="read-header">
+        <div className="read-header visible">
           <button className="back-btn" onClick={handleExit} onMouseDown={createRipple}>
             <ArrowLeft size={20} />
           </button>
@@ -210,7 +186,7 @@ export default function ReadBook() {
         <div className="read-content loading-content">
           <div className="loader">Загрузка текста...</div>
         </div>
-        <div className="read-footer">
+        <div className="read-footer visible">
           <button className="nav-btn disabled" disabled>
             <ChevronLeft size={20} />
           </button>
@@ -245,7 +221,7 @@ export default function ReadBook() {
       <div 
         className={getContentClasses()} 
         ref={contentRef}
-        onClick={handleContentTap}
+        onClick={toggleUi}
       >
         {isPageChanging ? (
           <div className="page-loader">

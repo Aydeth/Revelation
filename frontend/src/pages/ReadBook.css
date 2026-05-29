@@ -123,7 +123,7 @@ body.dark-theme .read-title p {
   color: #AAAAAA;
 }
 
-/* Контент */
+/* Контент - растягивается на весь экран, когда UI скрыт */
 .read-content {
   flex: 1;
   overflow-y: auto;
@@ -132,6 +132,12 @@ body.dark-theme .read-title p {
   margin: 0 auto;
   width: 100%;
   cursor: pointer;
+  transition: padding 0.3s ease;
+}
+
+/* Когда UI скрыт — убираем отступы, чтобы контент занял всё пространство */
+.read-container:has(.read-header.hidden) .read-content {
+  padding: 20px 24px;
 }
 
 /* Кастомный скроллбар - светлая тема */
@@ -317,7 +323,7 @@ body.dark-theme .loader {
 
 /* Плавное исчезновение контента при смене страницы */
 .read-content {
-  transition: opacity 0.15s ease;
+  transition: opacity 0.15s ease, padding 0.3s ease;
 }
 
 .read-content.fade-out {
@@ -336,6 +342,10 @@ body.dark-theme .loader {
   
   .read-content {
     padding: 24px 16px;
+  }
+  
+  .read-container:has(.read-header.hidden) .read-content {
+    padding: 16px;
   }
   
   .read-content p {
