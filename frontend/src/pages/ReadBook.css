@@ -32,18 +32,23 @@ body.dark-theme .read-container {
   justify-content: space-between;
   align-items: center;
   gap: 16px;
-  transition: transform 0.3s ease, opacity 0.3s ease;
+  transition: transform 0.3s ease, opacity 0.3s ease, flex-shrink 0.3s ease;
 }
 
 .read-header.visible {
   transform: translateY(0);
   opacity: 1;
+  flex-shrink: 0;
 }
 
 .read-header.hidden {
   transform: translateY(-100%);
   opacity: 0;
   pointer-events: none;
+  flex-shrink: 0;
+  height: 0;
+  padding: 0;
+  overflow: hidden;
 }
 
 body.dark-theme .read-header {
@@ -123,7 +128,7 @@ body.dark-theme .read-title p {
   color: #AAAAAA;
 }
 
-/* Контент - растягивается на весь экран, когда UI скрыт */
+/* Контент - flex растяжение */
 .read-content {
   flex: 1;
   overflow-y: auto;
@@ -132,12 +137,13 @@ body.dark-theme .read-title p {
   margin: 0 auto;
   width: 100%;
   cursor: pointer;
-  transition: padding 0.3s ease;
+  transition: flex 0.3s ease, padding 0.3s ease;
 }
 
-/* Когда UI скрыт — убираем отступы, чтобы контент занял всё пространство */
+/* Когда хедер и футер скрыты - контент занимает всё пространство */
 .read-container:has(.read-header.hidden) .read-content {
-  padding: 20px 24px;
+  flex: 1;
+  max-height: 100%;
 }
 
 /* Кастомный скроллбар - светлая тема */
@@ -212,18 +218,24 @@ body.dark-theme .read-content p {
   justify-content: center;
   align-items: center;
   gap: 24px;
-  transition: transform 0.3s ease, opacity 0.3s ease;
+  transition: transform 0.3s ease, opacity 0.3s ease, flex-shrink 0.3s ease, height 0.3s ease, padding 0.3s ease;
 }
 
 .read-footer.visible {
   transform: translateY(0);
   opacity: 1;
+  flex-shrink: 0;
+  height: auto;
 }
 
 .read-footer.hidden {
   transform: translateY(100%);
   opacity: 0;
   pointer-events: none;
+  flex-shrink: 0;
+  height: 0;
+  padding: 0;
+  overflow: hidden;
 }
 
 body.dark-theme .read-footer {
@@ -323,7 +335,7 @@ body.dark-theme .loader {
 
 /* Плавное исчезновение контента при смене страницы */
 .read-content {
-  transition: opacity 0.15s ease, padding 0.3s ease;
+  transition: opacity 0.15s ease;
 }
 
 .read-content.fade-out {
@@ -342,10 +354,6 @@ body.dark-theme .loader {
   
   .read-content {
     padding: 24px 16px;
-  }
-  
-  .read-container:has(.read-header.hidden) .read-content {
-    padding: 16px;
   }
   
   .read-content p {
