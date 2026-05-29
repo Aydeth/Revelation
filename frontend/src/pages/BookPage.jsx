@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Star } from 'lucide-react';
+import ReviewModal from '../components/ReviewModal';
 import './BookPage.css';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
@@ -24,32 +25,13 @@ const createRipple = (event) => {
   setTimeout(() => ripple.remove(), 600);
 };
 
-// Компонент звёзд для выбора рейтинга
-const StarRatingInput = ({ rating, onChange }) => {
-  const [hoverRating, setHoverRating] = useState(0);
+const StarRating = ({ rating }) => {
+  const fullStars = Math.floor(rating || 0);
+  const emptyStars = 5 - fullStars;
   
   return (
-    <div className="rating-input" style={{ display: 'flex', gap: '4px', marginTop: '8px' }}>
-      {[1, 2, 3, 4, 5].map(star => (
-        <button
-          key={star}
-          type="button"
-          className="star-btn"
-          onClick={() => onChange(star)}
-          onMouseEnter={() => setHoverRating(star)}
-          onMouseLeave={() => setHoverRating(0)}
-          style={{
-            background: 'none',
-            border: 'none',
-            fontSize: '24px',
-            cursor: 'pointer',
-            padding: '0 4px',
-            color: (hoverRating || rating) >= star ? '#F1C40F' : '#DFE2ED'
-          }}
-        >
-          ★
-        </button>
-      ))}
+    <div className="review-stars-display">
+      {'★'.repeat(fullStars)}{'☆'.repeat(emptyStars)}
     </div>
   );
 };
@@ -62,18 +44,24 @@ export default function BookPage() {
   const [userStatus, setUserStatus] = useState(null);
   const [savedPage, setSavedPage] = useState(1);
   const [statusLoading, setStatusLoading] = useState(false);
-  const [userRating, setUserRating] = useState(0);
-  const [ratingLoading, setRatingLoading] = useState(false);
+  const [reviews, setReviews] = useState([]);
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [reviewLoading, setReviewLoading] = useState(false);
 
   useEffect(() => {
-    const fetchBook = async () => {
+    const fetchData = async () => {
       try {
         const token = localStorage.getItem('token');
         
-        const response = await axios.get(`${API_URL}/api/books/${id}`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        setBook(response.data);
+        const [bookRes, reviewsRes] = await Promise.all([
+          axios.get(`${API_URL}/api/books/${id}`, {
+            headers: { Authorization: `Bearer ${token}` }
+          }),
+          axios.get(`${API_URL}/api/books/${id}/reviews`)
+        ]);
+        
+        setBook(bookRes.data);
+        setReviews(reviewsRes.data);
         
         try {
           const progressResponse = await axios.get(`${API_URL}/api/books/${id}/progress`, {
@@ -97,18 +85,8 @@ export default function BookPage() {
           console.error('Ошибка загрузки статуса:', statusErr);
         }
         
-        // Загружаем рейтинг пользователя
-        try {
-          const ratingResponse = await axios.get(`${API_URL}/api/books/${id}/rating`, {
-            headers: { Authorization: `Bearer ${token}` }
-          });
-          setUserRating(ratingResponse.data.rating || 0);
-        } catch (ratingErr) {
-          console.error('Ошибка загрузки рейтинга:', ratingErr);
-        }
-        
       } catch (err) {
-        console.error('Error fetching book:', err);
+        console.error('Error fetching data:', err);
         if (err.response?.status === 404) {
           navigate('/');
         }
@@ -117,7 +95,7 @@ export default function BookPage() {
       }
     };
     
-    fetchBook();
+    fetchData();
   }, [id, navigate]);
 
   const setStatus = async (status) => {
@@ -136,24 +114,34 @@ export default function BookPage() {
     }
   };
 
-  const setRating = async (rating) => {
-    setRatingLoading(true);
-    try {
-      const token = localStorage.getItem('token');
-      await axios.post(`${API_URL}/api/books/${id}/rating`, 
-        { rating },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      setUserRating(rating);
-    } catch (err) {
-      console.error('Ошибка сохранения рейтинга:', err);
-    } finally {
-      setRatingLoading(false);
-    }
-  };
-
   const handleRead = () => {
     navigate(`/read/${id}/${savedPage}`);
+  };
+
+  const handleAddReview = async (rating, comment) => {
+    setReviewLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      await axios.post(`${API_URL}/api/books/${id}/reviews`,
+        { rating, comment },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      
+      // Обновляем список отзывов
+      const reviewsRes = await axios.get(`${API_URL}/api/books/${id}/reviews`);
+      setReviews(reviewsRes.data);
+      
+      // Обновляем рейтинг книги
+      const bookRes = await axios.get(`${API_URL}/api/books/${id}`);
+      setBook(prev => ({ ...prev, rating_avg: bookRes.data.rating_avg, rating_count: bookRes.data.rating_count }));
+      
+      setShowReviewModal(false);
+    } catch (err) {
+      console.error('Ошибка сохранения отзыва:', err);
+      alert('Не удалось сохранить отзыв');
+    } finally {
+      setReviewLoading(false);
+    }
   };
 
   if (loading) return <div className="loading">Загрузка книги...</div>;
@@ -184,6 +172,15 @@ export default function BookPage() {
             onMouseDown={createRipple}
           >
             Читать книгу
+          </button>
+          
+          <button 
+            className="review-button" 
+            onClick={() => setShowReviewModal(true)}
+            onMouseDown={createRipple}
+          >
+            <Star size={16} />
+            Написать отзыв
           </button>
         </div>
         
@@ -225,21 +222,62 @@ export default function BookPage() {
             </button>
           </div>
           
-          <div className="user-rating">
-            <h4>Ваша оценка:</h4>
-            <StarRatingInput 
-              rating={userRating} 
-              onChange={setRating}
-            />
-            {ratingLoading && <span className="rating-loading">Сохранение...</span>}
-          </div>
-          
           <div className="book-description">
             <h3>Описание</h3>
             <p>{book.description || 'Описание отсутствует'}</p>
           </div>
+          
+          <div className="book-reviews">
+            <h3>Отзывы ({reviews.length})</h3>
+            <div className="reviews-list">
+              {reviews.length === 0 ? (
+                <div className="no-reviews">Пока нет отзывов. Будьте первым!</div>
+              ) : (
+                reviews.map(review => (
+                  <div key={review.id} className="review-card">
+                    <div className="review-author">
+                      <div 
+                        className="review-author-avatar"
+                        onClick={() => navigate(`/user/${review.username}`)}
+                      >
+                        <img 
+                          src={review.avatar_url || 'https://via.placeholder.com/40x40?text=Avatar'} 
+                          alt={review.username}
+                        />
+                      </div>
+                      <div 
+                        className="review-author-info"
+                        onClick={() => navigate(`/user/${review.username}`)}
+                      >
+                        <strong>{review.username}</strong>
+                        <span className="review-date">
+                          {new Date(review.created_at).toLocaleDateString('ru-RU')}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="review-rating">
+                      <StarRating rating={review.rating} />
+                    </div>
+                    {review.comment && (
+                      <div className="review-comment">
+                        {review.comment}
+                      </div>
+                    )}
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
         </div>
       </div>
+
+      {showReviewModal && (
+        <ReviewModal 
+          onClose={() => setShowReviewModal(false)}
+          onSubmit={handleAddReview}
+          loading={reviewLoading}
+        />
+      )}
     </div>
   );
 }
