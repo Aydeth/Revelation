@@ -1,8 +1,29 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import './BookPage.css';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
+// Функция для ripple эффекта
+const createRipple = (event) => {
+  const button = event.currentTarget;
+  const ripple = document.createElement('span');
+  const rect = button.getBoundingClientRect();
+  const size = Math.max(button.clientWidth, button.clientHeight);
+  
+  ripple.classList.add('ripple');
+  ripple.style.width = ripple.style.height = `${size}px`;
+  ripple.style.left = `${event.clientX - rect.left - size / 2}px`;
+  ripple.style.top = `${event.clientY - rect.top - size / 2}px`;
+  
+  // Удаляем старые ripple
+  const oldRipples = button.querySelectorAll('.ripple');
+  oldRipples.forEach(r => r.remove());
+  
+  button.appendChild(ripple);
+  setTimeout(() => ripple.remove(), 600);
+};
 
 export default function BookPage() {
   const { id } = useParams();
@@ -10,20 +31,18 @@ export default function BookPage() {
   const [book, setBook] = useState(null);
   const [loading, setLoading] = useState(true);
   const [userStatus, setUserStatus] = useState(null);
-  const [savedPage, setSavedPage] = useState(1); // НОВОЕ: для сохранённой страницы
+  const [savedPage, setSavedPage] = useState(1);
 
   useEffect(() => {
     const fetchBook = async () => {
       try {
         const token = localStorage.getItem('token');
         
-        // Загружаем книгу
         const response = await axios.get(`${API_URL}/api/books/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setBook(response.data);
         
-        // НОВОЕ: загружаем сохранённый прогресс
         try {
           const progressResponse = await axios.get(`${API_URL}/api/books/${id}/progress`, {
             headers: { Authorization: `Bearer ${token}` }
@@ -49,7 +68,6 @@ export default function BookPage() {
     fetchBook();
   }, [id, navigate]);
 
-  // НОВОЕ: установка статуса книги (с сохранением на сервер)
   const setStatus = async (status) => {
     try {
       const token = localStorage.getItem('token');
@@ -63,69 +81,78 @@ export default function BookPage() {
     }
   };
 
-  if (loading) return <div className="container" style={{ textAlign: 'center', marginTop: '50px' }}>Загрузка книги...</div>;
+  const handleRead = () => {
+    navigate(`/read/${id}/${savedPage}`);
+  };
+
+  if (loading) return <div className="loading">Загрузка книги...</div>;
   if (!book) return null;
 
   return (
-    <div className="container" style={{ padding: '20px 0' }}>
-      <button onClick={() => navigate('/')} className="btn-outline" style={{ marginBottom: '24px' }}>
+    <div className="book-page">
+      <button 
+        className="back-button" 
+        onClick={() => navigate('/')}
+        onMouseDown={createRipple}
+      >
         ← Назад
       </button>
       
-      <div style={{ display: 'flex', gap: '40px', flexWrap: 'wrap' }}>
-        <img 
-          src={book.cover_url || 'https://via.placeholder.com/300x450?text=No+Cover'} 
-          alt={book.title}
-          style={{ width: '280px', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
-        />
+      <div className="book-content">
+        <div className="book-cover-large">
+          <img 
+            src={book.cover_url || 'https://via.placeholder.com/300x450?text=No+Cover'} 
+            alt={book.title}
+          />
+        </div>
         
-        <div style={{ flex: 1 }}>
-          <h1 style={{ fontSize: '32px', marginBottom: '8px', fontWeight: '600' }}>{book.title}</h1>
-          <h2 style={{ fontSize: '20px', color: '#666', marginBottom: '16px', fontWeight: '400' }}>{book.author}</h2>
+        <div className="book-info">
+          <h1>{book.title}</h1>
+          <h2>{book.author}</h2>
           
-          <div style={{ marginBottom: '16px' }}>
-            <span style={{ background: '#F5F5F5', padding: '4px 12px', borderRadius: '20px', fontSize: '14px' }}>
-              {book.publication_year}
-            </span>
-            <span style={{ marginLeft: '12px', color: '#003BFF', fontWeight: '500' }}>
+          <div className="book-meta">
+            <span className="year-badge">{book.publication_year}</span>
+            <span className="rating-badge">
               ★ {book.rating_avg || 'Нет оценок'} ({book.rating_count || 0} оценок)
             </span>
           </div>
           
-          <div style={{ margin: '24px 0', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+          <div className="book-actions">
             <button 
-              className={userStatus === 'reading' ? 'btn-primary' : 'btn-outline'}
+              className={`status-btn ${userStatus === 'reading' ? 'active' : ''}`}
               onClick={() => setStatus('reading')}
+              onMouseDown={createRipple}
             >
               Читаю
             </button>
             <button 
-              className={userStatus === 'read' ? 'btn-primary' : 'btn-outline'}
+              className={`status-btn ${userStatus === 'read' ? 'active' : ''}`}
               onClick={() => setStatus('read')}
+              onMouseDown={createRipple}
             >
               Прочитано
             </button>
             <button 
-              className={userStatus === 'want_to_read' ? 'btn-primary' : 'btn-outline'}
+              className={`status-btn ${userStatus === 'want_to_read' ? 'active' : ''}`}
               onClick={() => setStatus('want_to_read')}
+              onMouseDown={createRipple}
             >
               Буду читать
             </button>
           </div>
           
-          <div style={{ marginTop: '32px' }}>
-            <h3 style={{ fontSize: '20px', marginBottom: '12px', fontWeight: '500' }}>Описание</h3>
-            <p style={{ lineHeight: '1.6', color: '#333' }}>{book.description || 'Описание отсутствует'}</p>
-          </div>
-          
-          {/* ИЗМЕНЕНО: теперь ведёт на сохранённую страницу */}
           <button 
-            className="btn-primary" 
-            style={{ width: '100%', marginTop: '32px', padding: '14px' }}
-            onClick={() => navigate(`/read/${id}/${savedPage}`)}
+            className="read-button" 
+            onClick={handleRead}
+            onMouseDown={createRipple}
           >
             Читать книгу
           </button>
+          
+          <div className="book-description">
+            <h3>Описание</h3>
+            <p>{book.description || 'Описание отсутствует'}</p>
+          </div>
         </div>
       </div>
     </div>

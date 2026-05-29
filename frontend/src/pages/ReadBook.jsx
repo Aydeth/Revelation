@@ -27,6 +27,24 @@ export default function ReadBook() {
   const [readerSettings, setReaderSettings] = useState(defaultSettings);
   const contentRef = useRef(null);
 
+  const createRipple = (event) => {
+    const button = event.currentTarget;
+    const ripple = document.createElement('span');
+    const rect = button.getBoundingClientRect();
+    const size = Math.max(button.clientWidth, button.clientHeight);
+    
+    ripple.classList.add('ripple');
+    ripple.style.width = ripple.style.height = `${size}px`;
+    ripple.style.left = `${event.clientX - rect.left - size / 2}px`;
+    ripple.style.top = `${event.clientY - rect.top - size / 2}px`;
+    
+    const oldRipples = button.querySelectorAll('.ripple');
+    oldRipples.forEach(r => r.remove());
+    
+    button.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 600);
+  };
+
   // Загрузка сохранённых настроек
   useEffect(() => {
     const saved = localStorage.getItem(SETTINGS_STORAGE_KEY);
@@ -151,7 +169,7 @@ export default function ReadBook() {
     return (
       <div className="read-container">
         <div className="read-header">
-          <button className="back-btn" onClick={handleExit}>
+          <button className="back-btn" onClick={handleExit} onMouseDown={createRipple}>
             <ArrowLeft size={20} />
           </button>
           <div className="read-title">
@@ -162,14 +180,14 @@ export default function ReadBook() {
           <div className="loader">Загрузка текста...</div>
         </div>
         <div className="read-footer">
-          <button className="nav-btn disabled" disabled>
+          <button className="nav-btn disabled" disabled onMouseDown={createRipple}>
             <ChevronLeft size={20} />
           </button>
           <div className="page-info">-- / --</div>
-          <button className="nav-btn disabled" disabled>
+          <button className="nav-btn disabled" disabled onMouseDown={createRipple}>
             <ChevronRight size={20} />
           </button>
-          <button className="settings-btn">
+          <button className="settings-btn" onMouseDown={createRipple}>
             <Settings size={20} />
           </button>
         </div>
@@ -184,7 +202,7 @@ export default function ReadBook() {
   return (
     <div className="read-container">
       <div className="read-header">
-        <button className="back-btn" onClick={handleExit}>
+        <button className="back-btn" onClick={handleExit} onMouseDown={createRipple}>
           <ArrowLeft size={20} />
         </button>
         <div className="read-title">
@@ -210,6 +228,7 @@ export default function ReadBook() {
           className={`nav-btn ${currentPage === 1 || isPageChanging ? 'disabled' : ''}`}
           onClick={goToPrevPage}
           disabled={currentPage === 1 || isPageChanging}
+          onMouseDown={createRipple}
         >
           <ChevronLeft size={20} />
         </button>
@@ -222,11 +241,12 @@ export default function ReadBook() {
           className={`nav-btn ${currentPage === totalPages || isPageChanging ? 'disabled' : ''}`}
           onClick={goToNextPage}
           disabled={currentPage === totalPages || isPageChanging}
+          onMouseDown={createRipple}
         >
           <ChevronRight size={20} />
         </button>
         
-        <button className="settings-btn" onClick={() => setShowSettings(true)}>
+        <button className="settings-btn" onClick={() => setShowSettings(true)} onMouseDown={createRipple}>
           <Settings size={20} />
         </button>
       </div>

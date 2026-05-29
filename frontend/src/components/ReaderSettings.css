@@ -32,6 +32,12 @@
   animation: slideUp 0.3s ease;
 }
 
+/* Тёмная тема для панели настроек */
+body.dark-theme .settings-panel {
+  background-color: #2A2A2A;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
 @keyframes slideUp {
   from {
     transform: translateY(30px);
@@ -51,11 +57,19 @@
   border-bottom: 1px solid #E9E9E9;
 }
 
+body.dark-theme .settings-header {
+  border-bottom-color: #404040;
+}
+
 .settings-header h3 {
   font-size: 18px;
   font-weight: 600;
   color: #222;
   margin: 0;
+}
+
+body.dark-theme .settings-header h3 {
+  color: #E0E0E0;
 }
 
 .close-btn {
@@ -73,6 +87,15 @@
 
 .close-btn:hover {
   background-color: #F9F9F9;
+  color: #003BFF;
+}
+
+body.dark-theme .close-btn {
+  color: #AAAAAA;
+}
+
+body.dark-theme .close-btn:hover {
+  background-color: #3A3A3A;
   color: #003BFF;
 }
 
@@ -98,6 +121,10 @@
   color: #444;
 }
 
+body.dark-theme .setting-label {
+  color: #CCCCCC;
+}
+
 .setting-control {
   display: flex;
   align-items: center;
@@ -105,7 +132,7 @@
   flex-wrap: wrap;
 }
 
-.setting-btn {
+.theme-btn, .size-btn, .line-btn, .weight-btn {
   background: none;
   border: 1px solid #DFE2ED;
   padding: 8px 16px;
@@ -113,38 +140,35 @@
   font-size: 14px;
   cursor: pointer;
   transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
-.setting-btn:hover {
-  border-color: #003BFF;
-  color: #003BFF;
+body.dark-theme .theme-btn,
+body.dark-theme .size-btn,
+body.dark-theme .line-btn,
+body.dark-theme .weight-btn {
+  border-color: #404040;
+  color: #E0E0E0;
 }
 
-.setting-value {
-  min-width: 50px;
-  text-align: center;
-  font-size: 14px;
-  font-weight: 500;
-  color: #222;
-}
-
-.weight-btn {
-  background: none;
-  border: 1px solid #DFE2ED;
-  padding: 8px 16px;
-  border-radius: 8px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.weight-btn.active {
+.theme-btn.active, .size-btn.active, .line-btn.active, .weight-btn.active {
   background-color: #003BFF;
   border-color: #003BFF;
   color: white;
 }
 
-.weight-btn:hover:not(.active) {
+.theme-btn:hover:not(.active), .size-btn:hover:not(.active), 
+.line-btn:hover:not(.active), .weight-btn:hover:not(.active) {
+  border-color: #003BFF;
+  color: #003BFF;
+}
+
+body.dark-theme .theme-btn:hover:not(.active),
+body.dark-theme .size-btn:hover:not(.active),
+body.dark-theme .line-btn:hover:not(.active),
+body.dark-theme .weight-btn:hover:not(.active) {
   border-color: #003BFF;
   color: #003BFF;
 }
@@ -168,6 +192,11 @@
   color: #666;
 }
 
+body.dark-theme .align-btn {
+  border-color: #404040;
+  color: #CCCCCC;
+}
+
 .align-btn.active {
   background-color: #003BFF;
   border-color: #003BFF;
@@ -179,9 +208,23 @@
   color: #003BFF;
 }
 
+.setting-divider {
+  height: 1px;
+  background-color: #E9E9E9;
+  margin: 20px 0;
+}
+
+body.dark-theme .setting-divider {
+  background-color: #404040;
+}
+
 .settings-footer {
   padding: 16px 24px 24px;
   border-top: 1px solid #E9E9E9;
+}
+
+body.dark-theme .settings-footer {
+  border-top-color: #404040;
 }
 
 .reset-btn {
@@ -201,71 +244,12 @@
   color: #666;
 }
 
+body.dark-theme .reset-btn {
+  border-color: #404040;
+  color: #CCCCCC;
+}
+
 .reset-btn:hover {
   border-color: #DC2626;
   color: #DC2626;
-}
-
-/* Добавь в конец файла */
-
-.size-btn, .line-btn {
-  background: none;
-  border: 1px solid #DFE2ED;
-  padding: 8px 16px;
-  border-radius: 8px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.size-btn.active, .line-btn.active {
-  background-color: #003BFF;
-  border-color: #003BFF;
-  color: white;
-}
-
-.size-btn:hover:not(.active), .line-btn:hover:not(.active) {
-  border-color: #003BFF;
-  color: #003BFF;
-}
-
-/* Добавь в конец файла */
-
-.theme-btn {
-  background: none;
-  border: 1px solid #DFE2ED;
-  padding: 8px 20px;
-  border-radius: 8px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-body.dark-theme .theme-btn {
-  border-color: #404040;
-  color: #E0E0E0;
-}
-
-.theme-btn.active {
-  background-color: #003BFF;
-  border-color: #003BFF;
-  color: white;
-}
-
-.theme-btn:hover:not(.active) {
-  border-color: #003BFF;
-  color: #003BFF;
-}
-
-.setting-divider {
-  height: 1px;
-  background-color: #E9E9E9;
-  margin: 20px 0;
-}
-
-body.dark-theme .setting-divider {
-  background-color: #404040;
 }
