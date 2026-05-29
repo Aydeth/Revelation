@@ -172,8 +172,6 @@ body.dark-theme .footer-link .ripple {
   color: #888888;
 }
 
-/* Добавь или обнови в App.css */
-
 .footer-container {
   max-width: 1080px;
   margin: 0 auto;
@@ -195,8 +193,8 @@ body.dark-theme .footer-link .ripple {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
-  font-size: 12px;
+  gap: 6px;
+  font-size: 14px;
 }
 
 body.dark-theme .footer-link {

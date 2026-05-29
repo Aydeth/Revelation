@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Link, Navigate } from 'react-router-dom';
-import { Sun, Moon, ScrollText, BookOpen, User } from 'lucide-react';
+import { Sun, Moon, Scroll, Book, User } from 'lucide-react';
 import Feed from './pages/Feed';
 import MyBooks from './pages/MyBooks';
 import Profile from './pages/Profile';
@@ -72,11 +72,11 @@ function AppContent() {
         <nav className="app-footer">
           <div className="footer-container">
             <Link to="/" className="footer-link" onMouseDown={createRipple}>
-              <ScrollText size={20} />
+              <Scroll size={20} />
               <span>Лента</span>
             </Link>
             <Link to="/my-books" className="footer-link" onMouseDown={createRipple}>
-              <BookOpen size={20} />
+              <Book size={20} />
               <span>Мои книги</span>
             </Link>
             <Link to={`/user/${user.username}`} className="footer-link" onMouseDown={createRipple}>
