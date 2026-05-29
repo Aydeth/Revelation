@@ -158,6 +158,38 @@
   font-size: 14px;
 }
 
+/* Тёмная тема для ленты */
+body.dark-theme .search-input {
+  background-color: #2A2A2A;
+  border-color: #404040;
+  color: #E0E0E0;
+}
+
+body.dark-theme .search-input:focus {
+  border-color: #003BFF;
+  background-color: #333333;
+}
+
+body.dark-theme .book-card:hover {
+  background-color: #2A2A2A;
+}
+
+body.dark-theme .book-title {
+  color: #E0E0E0;
+}
+
+body.dark-theme .book-author {
+  color: #AAAAAA;
+}
+
+body.dark-theme .book-date {
+  color: #888888;
+}
+
+body.dark-theme .cover-placeholder {
+  background-color: #333333;
+}
+
 /* Адаптив для планшетов и телефонов */
 @media (max-width: 768px) {
   .feed-container {

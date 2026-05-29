@@ -13,9 +13,16 @@ body {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-/* Кнопки без теней и деформаций */
+/* Тёмная тема */
+body.dark-theme {
+  background-color: #1A1A1A;
+  color: #E0E0E0;
+}
+
+/* Кнопки */
 button {
   font-family: inherit;
   background: none;
@@ -50,7 +57,23 @@ button:active {
   overflow: hidden;
 }
 
+body.dark-theme .btn-outline {
+  color: #E0E0E0;
+  border-color: #404040;
+}
+
 .btn-outline:hover {
   border-color: #003BFF;
   color: #003BFF;
 }
+
+/* Контейнер */
+.container {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Хедер приложения (App.css будет обновлён) */
+/* Футер приложения */
+/* Остальные глобальные стили будут в компонентах с поддержкой темы */

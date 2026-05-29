@@ -237,3 +237,52 @@ body.read-mode {
 .read-content.fade-out {
   opacity: 0.5;
 }
+
+/* Добавь в конец файла */
+
+/* Тёмная тема для читалки */
+body.dark-theme .read-container {
+  background-color: #1A1A1A;
+}
+
+body.dark-theme .read-header {
+  background-color: #2A2A2A;
+  border-bottom-color: #404040;
+}
+
+body.dark-theme .read-title h2 {
+  color: #E0E0E0;
+}
+
+body.dark-theme .read-title p {
+  color: #AAAAAA;
+}
+
+body.dark-theme .read-content p {
+  color: #E0E0E0;
+}
+
+body.dark-theme .read-footer {
+  background-color: #2A2A2A;
+  border-top-color: #404040;
+}
+
+body.dark-theme .nav-btn,
+body.dark-theme .settings-btn {
+  border-color: #404040;
+  color: #E0E0E0;
+}
+
+body.dark-theme .nav-btn:hover:not(.disabled),
+body.dark-theme .settings-btn:hover {
+  border-color: #003BFF;
+  color: #003BFF;
+}
+
+body.dark-theme .page-info {
+  color: #AAAAAA;
+}
+
+body.dark-theme .loader {
+  color: #AAAAAA;
+}

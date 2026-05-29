@@ -6,12 +6,17 @@ import Profile from './pages/Profile';
 import LoginRegister from './pages/LoginRegister';
 import BookPage from './pages/BookPage';
 import ReadBook from './pages/ReadBook';
-import logo from './assets/Icon.svg';
+import { useTheme } from './context/ThemeContext';
 import './App.css';
+
+// Импорт иконок для темы
+import LightIcon from './assets/icon.svg';
+import DarkIcon from './assets/dark-icon.svg';
 
 function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -23,6 +28,8 @@ function App() {
 
   if (loading) return <div className="loading">Загрузка...</div>;
 
+  const logoSrc = theme === 'light' ? LightIcon : DarkIcon;
+
   return (
     <BrowserRouter>
       <div className="app-wrapper">
@@ -30,8 +37,11 @@ function App() {
           <header className="app-header">
             <div className="header-container">
               <Link to="/" className="logo-link">
-                <img src={logo} alt="Logo" className="logo-img" />
+                <img src={logoSrc} alt="Logo" className="logo-img" />
               </Link>
+              <button onClick={toggleTheme} className="theme-toggle-btn">
+                {theme === 'light' ? '🌙' : '☀️'}
+              </button>
             </div>
           </header>
         )}
@@ -41,12 +51,9 @@ function App() {
             <Route path="/login" element={<LoginRegister setUser={setUser} />} />
             <Route path="/" element={user ? <Feed /> : <Navigate to="/login" />} />
             <Route path="/my-books" element={user ? <MyBooks /> : <Navigate to="/login" />} />
-            <Route path="/profile" element={user ? <Profile /> : <Navigate to="/login" />} />
-            <Route path="/book/:id" element={user ? <BookPage /> : <Navigate to="/login" />} />
-            <Route path="/read/:id" element={user ? <ReadBook /> : <Navigate to="/login" />} />
             <Route path="/profile" element={user ? <Profile setUser={setUser} /> : <Navigate to="/login" />} />
+            <Route path="/book/:id" element={user ? <BookPage /> : <Navigate to="/login" />} />
             <Route path="/read/:id/:pageNum" element={user ? <ReadBook /> : <Navigate to="/login" />} />
-            <Route path="/read/:id" element={user ? <ReadBook /> : <Navigate to="/login" />} />
           </Routes>
         </main>
 

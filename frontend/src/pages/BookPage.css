@@ -1,0 +1,20 @@
+
+body.dark-theme .book-page {
+  background-color: #1A1A1A;
+}
+
+body.dark-theme .book-info h1 {
+  color: #E0E0E0;
+}
+
+body.dark-theme .book-info h2 {
+  color: #AAAAAA;
+}
+
+body.dark-theme .book-description h3 {
+  color: #E0E0E0;
+}
+
+body.dark-theme .book-description p {
+  color: #CCCCCC;
+}

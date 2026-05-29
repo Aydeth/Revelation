@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { X, AlignLeft, AlignCenter, AlignRight, AlignJustify, RefreshCw } from 'lucide-react';
+import { X, AlignLeft, AlignCenter, AlignRight, AlignJustify, RefreshCw, Moon, Sun } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
 import './ReaderSettings.css';
 
 const STORAGE_KEY = 'reader_settings';
@@ -13,6 +14,7 @@ const defaultSettings = {
 
 export default function ReaderSettings({ onClose, onApply }) {
   const [settings, setSettings] = useState(defaultSettings);
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
@@ -63,6 +65,37 @@ export default function ReaderSettings({ onClose, onApply }) {
         </div>
 
         <div className="settings-section">
+          {/* Переключение темы */}
+          <div className="setting-item">
+            <div className="setting-label">
+              {theme === 'light' ? <Sun size={18} /> : <Moon size={18} />}
+              <span>Тема оформления</span>
+            </div>
+            <div className="setting-control">
+              <button 
+                className={`theme-btn ${theme === 'light' ? 'active' : ''}`}
+                onClick={() => {
+                  if (theme !== 'light') toggleTheme();
+                }}
+              >
+                <Sun size={16} />
+                Светлая
+              </button>
+              <button 
+                className={`theme-btn ${theme === 'dark' ? 'active' : ''}`}
+                onClick={() => {
+                  if (theme !== 'dark') toggleTheme();
+                }}
+              >
+                <Moon size={16} />
+                Тёмная
+              </button>
+            </div>
+          </div>
+
+          <div className="setting-divider"></div>
+
+          {/* Остальные настройки */}
           <div className="setting-item">
             <div className="setting-label">
               <span style={{ fontSize: '18px' }}>Aa</span>
@@ -187,7 +220,7 @@ export default function ReaderSettings({ onClose, onApply }) {
         <div className="settings-footer">
           <button className="reset-btn" onClick={resetSettings}>
             <RefreshCw size={16} />
-            Сбросить все
+            Сбросить настройки форматирования
           </button>
         </div>
       </div>
