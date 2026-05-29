@@ -1,26 +1,27 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Статическая папка для загруженных файлов
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 const authRoutes = require('./routes/auth');
 const booksRoutes = require('./routes/books');
+const uploadRoutes = require('./routes/upload');
 const authMiddleware = require('./middleware/auth');
 
-const uploadRoutes = require('./routes/upload');
-app.use('/api/upload', authMiddleware, uploadRoutes);
-app.use('/uploads', express.static('uploads'));
-
-// ============================================
-// Все маршруты auth (но middleware применяем только к защищённым)
-// ============================================
+// Публичные маршруты
 app.use('/api/auth', authRoutes);
 
-// Защищённые маршруты (только для книг)
+// Защищённые маршруты
 app.use('/api/books', authMiddleware, booksRoutes);
+app.use('/api/upload', authMiddleware, uploadRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
