@@ -312,10 +312,12 @@ router.post('/:id/rating', async (req, res) => {
 });
 
 // ============================================
-// 8. ПОЛУЧИТЬ ОТЗЫВЫ ДЛЯ КНИГИ (публичный)
+// 8. ПОЛУЧИТЬ ОТЗЫВЫ ДЛЯ КНИГИ (публичный - без авторизации)
 // ============================================
 router.get('/:id/reviews', async (req, res) => {
   const { id } = req.params;
+  
+  console.log(`📖 Fetching reviews for book ${id}`);
   
   try {
     const result = await pool.query(`
@@ -333,10 +335,11 @@ router.get('/:id/reviews', async (req, res) => {
       ORDER BY r.created_at DESC
     `, [id]);
     
+    console.log(`✅ Found ${result.rows.length} reviews`);
     res.json(result.rows);
   } catch (err) {
     console.error('Error fetching reviews:', err);
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error: ' + err.message });
   }
 });
 
@@ -348,16 +351,20 @@ router.post('/:id/reviews', async (req, res) => {
   const { rating, comment } = req.body;
   const userId = req.userId;
   
+  console.log(`📝 Saving review for book ${id}, user ${userId}, rating ${rating}`);
+  
   if (!userId) {
+    console.log('❌ No userId');
     return res.status(401).json({ error: 'Unauthorized' });
   }
   
   if (!rating || rating < 1 || rating > 5) {
+    console.log('❌ Invalid rating:', rating);
     return res.status(400).json({ error: 'Invalid rating' });
   }
   
   try {
-    // Добавляем отзыв
+    // Добавляем или обновляем отзыв
     await pool.query(`
       INSERT INTO reviews (user_id, book_id, rating, comment, created_at, updated_at)
       VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
@@ -385,6 +392,7 @@ router.post('/:id/reviews', async (req, res) => {
       DO UPDATE SET rating = $3, updated_at = CURRENT_TIMESTAMP
     `, [userId, id, rating]);
     
+    console.log('✅ Review saved successfully');
     res.json({ success: true });
   } catch (err) {
     console.error('Error saving review:', err);
