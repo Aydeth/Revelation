@@ -1,20 +1,19 @@
 import { useState, useEffect } from 'react';
-import { X, Type, Bold, AlignLeft, AlignCenter, AlignRight, AlignJustify, RefreshCw } from 'lucide-react';
+import { X, AlignLeft, AlignCenter, AlignRight, AlignJustify, RefreshCw } from 'lucide-react';
 import './ReaderSettings.css';
 
 const STORAGE_KEY = 'reader_settings';
 
 const defaultSettings = {
-  fontSize: 18,
-  fontWeight: 400,
-  lineHeight: 1.8,
+  fontSize: 'normal',
+  fontWeight: 'normal',
+  lineHeight: 'normal',
   textAlign: 'justify'
 };
 
 export default function ReaderSettings({ onClose, onApply }) {
   const [settings, setSettings] = useState(defaultSettings);
 
-  // Загрузка сохранённых настроек
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
@@ -27,29 +26,26 @@ export default function ReaderSettings({ onClose, onApply }) {
     }
   }, []);
 
-  // Применение настроек
   const applySettings = (newSettings) => {
     setSettings(newSettings);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(newSettings));
     onApply(newSettings);
   };
 
-  const handleFontSizeChange = (delta) => {
-    const newSize = Math.min(32, Math.max(12, settings.fontSize + delta));
-    applySettings({ ...settings, fontSize: newSize });
+  const handleFontSizeChange = (value) => {
+    applySettings({ ...settings, fontSize: value });
   };
 
-  const handleFontWeightChange = (weight) => {
-    applySettings({ ...settings, fontWeight: weight });
+  const handleFontWeightChange = (value) => {
+    applySettings({ ...settings, fontWeight: value });
   };
 
-  const handleLineHeightChange = (delta) => {
-    const newHeight = Math.min(2.5, Math.max(1.2, settings.lineHeight + delta));
-    applySettings({ ...settings, lineHeight: parseFloat(newHeight.toFixed(1)) });
+  const handleLineHeightChange = (value) => {
+    applySettings({ ...settings, lineHeight: value });
   };
 
-  const handleTextAlignChange = (align) => {
-    applySettings({ ...settings, textAlign: align });
+  const handleTextAlignChange = (value) => {
+    applySettings({ ...settings, textAlign: value });
   };
 
   const resetSettings = () => {
@@ -69,37 +65,58 @@ export default function ReaderSettings({ onClose, onApply }) {
         <div className="settings-section">
           <div className="setting-item">
             <div className="setting-label">
-              <Type size={18} />
+              <span style={{ fontSize: '18px' }}>Aa</span>
               <span>Размер шрифта</span>
             </div>
             <div className="setting-control">
-              <button className="setting-btn" onClick={() => handleFontSizeChange(-2)}>A-</button>
-              <span className="setting-value">{settings.fontSize}px</span>
-              <button className="setting-btn" onClick={() => handleFontSizeChange(2)}>A+</button>
+              <button 
+                className={`size-btn ${settings.fontSize === 'small' ? 'active' : ''}`}
+                onClick={() => handleFontSizeChange('small')}
+              >
+                Маленький
+              </button>
+              <button 
+                className={`size-btn ${settings.fontSize === 'normal' ? 'active' : ''}`}
+                onClick={() => handleFontSizeChange('normal')}
+              >
+                Средний
+              </button>
+              <button 
+                className={`size-btn ${settings.fontSize === 'large' ? 'active' : ''}`}
+                onClick={() => handleFontSizeChange('large')}
+              >
+                Большой
+              </button>
+              <button 
+                className={`size-btn ${settings.fontSize === 'xlarge' ? 'active' : ''}`}
+                onClick={() => handleFontSizeChange('xlarge')}
+              >
+                Очень большой
+              </button>
             </div>
           </div>
 
           <div className="setting-item">
             <div className="setting-label">
-              <Bold size={18} />
+              <span style={{ fontWeight: 'bold' }}>B</span>
               <span>Насыщенность</span>
             </div>
             <div className="setting-control">
               <button 
-                className={`weight-btn ${settings.fontWeight === 400 ? 'active' : ''}`}
-                onClick={() => handleFontWeightChange(400)}
+                className={`weight-btn ${settings.fontWeight === 'normal' ? 'active' : ''}`}
+                onClick={() => handleFontWeightChange('normal')}
               >
                 Обычный
               </button>
               <button 
-                className={`weight-btn ${settings.fontWeight === 500 ? 'active' : ''}`}
-                onClick={() => handleFontWeightChange(500)}
+                className={`weight-btn ${settings.fontWeight === 'medium' ? 'active' : ''}`}
+                onClick={() => handleFontWeightChange('medium')}
               >
                 Полужирный
               </button>
               <button 
-                className={`weight-btn ${settings.fontWeight === 600 ? 'active' : ''}`}
-                onClick={() => handleFontWeightChange(600)}
+                className={`weight-btn ${settings.fontWeight === 'bold' ? 'active' : ''}`}
+                onClick={() => handleFontWeightChange('bold')}
               >
                 Жирный
               </button>
@@ -108,13 +125,28 @@ export default function ReaderSettings({ onClose, onApply }) {
 
           <div className="setting-item">
             <div className="setting-label">
-              <span style={{ fontSize: '18px' }}>📏</span>
+              <span style={{ fontSize: '18px' }}>⇅</span>
               <span>Межстрочный интервал</span>
             </div>
             <div className="setting-control">
-              <button className="setting-btn" onClick={() => handleLineHeightChange(-0.1)}>−</button>
-              <span className="setting-value">{settings.lineHeight}</span>
-              <button className="setting-btn" onClick={() => handleLineHeightChange(0.1)}>+</button>
+              <button 
+                className={`line-btn ${settings.lineHeight === 'compact' ? 'active' : ''}`}
+                onClick={() => handleLineHeightChange('compact')}
+              >
+                Уплотнённый
+              </button>
+              <button 
+                className={`line-btn ${settings.lineHeight === 'normal' ? 'active' : ''}`}
+                onClick={() => handleLineHeightChange('normal')}
+              >
+                Обычный
+              </button>
+              <button 
+                className={`line-btn ${settings.lineHeight === 'loose' ? 'active' : ''}`}
+                onClick={() => handleLineHeightChange('loose')}
+              >
+                Разреженный
+              </button>
             </div>
           </div>
 

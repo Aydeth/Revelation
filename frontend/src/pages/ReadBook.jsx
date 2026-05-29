@@ -9,10 +9,10 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 const SETTINGS_STORAGE_KEY = 'reader_settings';
 
 const defaultSettings = {
-  fontSize: 18,
-  fontWeight: 400,
-  lineHeight: 1.8,
-  textAlign: 'justify'
+  fontSize: 'normal',     // small, normal, large, xlarge
+  fontWeight: 'normal',   // normal, medium, bold
+  lineHeight: 'normal',   // compact, normal, loose
+  textAlign: 'justify'    // left, center, right, justify
 };
 
 export default function ReadBook() {
@@ -39,16 +39,6 @@ export default function ReadBook() {
       }
     }
   }, []);
-
-  // Применение настроек к DOM
-  useEffect(() => {
-    if (contentRef.current) {
-      contentRef.current.style.fontSize = `${readerSettings.fontSize}px`;
-      contentRef.current.style.fontWeight = readerSettings.fontWeight;
-      contentRef.current.style.lineHeight = readerSettings.lineHeight;
-      contentRef.current.style.textAlign = readerSettings.textAlign;
-    }
-  }, [readerSettings]);
 
   // Загрузка страницы
   const fetchPage = useCallback(async (page) => {
@@ -146,6 +136,17 @@ export default function ReadBook() {
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, [id, currentPage]);
 
+  // Генерация классов для настроек
+  const getContentClasses = () => {
+    const classes = ['read-content'];
+    if (isPageChanging) classes.push('fade-out');
+    classes.push(`font-size-${readerSettings.fontSize}`);
+    classes.push(`font-weight-${readerSettings.fontWeight}`);
+    classes.push(`line-height-${readerSettings.lineHeight}`);
+    classes.push(`text-align-${readerSettings.textAlign}`);
+    return classes.join(' ');
+  };
+
   if (loading && !book) {
     return (
       <div className="read-container">
@@ -192,7 +193,7 @@ export default function ReadBook() {
         </div>
       </div>
 
-      <div className={`read-content ${isPageChanging ? 'fade-out' : ''}`} ref={contentRef}>
+      <div className={getContentClasses()} ref={contentRef}>
         {isPageChanging ? (
           <div className="page-loader">
             <div className="loader">Загрузка страницы...</div>

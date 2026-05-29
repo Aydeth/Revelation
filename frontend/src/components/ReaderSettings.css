@@ -205,3 +205,26 @@
   border-color: #DC2626;
   color: #DC2626;
 }
+
+/* Добавь в конец файла */
+
+.size-btn, .line-btn {
+  background: none;
+  border: 1px solid #DFE2ED;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.size-btn.active, .line-btn.active {
+  background-color: #003BFF;
+  border-color: #003BFF;
+  color: white;
+}
+
+.size-btn:hover:not(.active), .line-btn:hover:not(.active) {
+  border-color: #003BFF;
+  color: #003BFF;
+}
