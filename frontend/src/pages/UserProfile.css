@@ -174,14 +174,12 @@ body.dark-theme .shelf-book-info p {
   color: #AAAAAA;
 }
 
-.shelf-book-year, .shelf-book-rating {
+.shelf-book-year {
   font-size: 12px;
   color: #888;
-  margin-right: 12px;
 }
 
-body.dark-theme .shelf-book-year,
-body.dark-theme .shelf-book-rating {
+body.dark-theme .shelf-book-year {
   color: #AAAAAA;
 }
 
@@ -198,6 +196,12 @@ body.dark-theme .shelf-book-card .ripple {
   padding: 40px;
   color: #888;
   font-size: 14px;
+}
+
+.loading {
+  text-align: center;
+  padding: 60px;
+  color: #888;
 }
 
 /* Адаптив */

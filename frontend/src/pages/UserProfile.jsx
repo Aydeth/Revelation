@@ -32,14 +32,17 @@ export default function UserProfile() {
   const [loading, setLoading] = useState(true);
   const [selectedShelf, setSelectedShelf] = useState('reading');
   const [shelfBooks, setShelfBooks] = useState([]);
-  const [shelvesCount, setShelvesCount] = useState({ reading: 0, read: 0, want_to_read: 0 });
+  const [shelfLoading, setShelfLoading] = useState(false);
 
   const isOwnProfile = currentUser?.username === username;
 
+  // Загрузка пользователя
   useEffect(() => {
     const fetchUser = async () => {
       try {
+        console.log('Fetching user:', username);
         const response = await axios.get(`${API_URL}/api/auth/user/${username}`);
+        console.log('User data:', response.data);
         setProfileUser(response.data);
       } catch (err) {
         console.error('User not found:', err);
@@ -48,23 +51,33 @@ export default function UserProfile() {
         setLoading(false);
       }
     };
-    fetchUser();
+    
+    if (username) {
+      fetchUser();
+    }
   }, [username, navigate]);
 
+  // Загрузка книг с выбранной полки
   useEffect(() => {
     if (!profileUser) return;
     
     const fetchShelfBooks = async () => {
+      setShelfLoading(true);
       try {
-        const response = await axios.get(`${API_URL}/api/auth/user/${username}/shelf/${selectedShelf}`);
+        console.log('Fetching shelf:', profileUser.username, selectedShelf);
+        const response = await axios.get(`${API_URL}/api/auth/user/${profileUser.username}/shelf/${selectedShelf}`);
+        console.log('Shelf books:', response.data);
         setShelfBooks(response.data);
       } catch (err) {
         console.error('Error fetching shelf books:', err);
+        setShelfBooks([]);
+      } finally {
+        setShelfLoading(false);
       }
     };
     
     fetchShelfBooks();
-  }, [profileUser, username, selectedShelf]);
+  }, [profileUser, selectedShelf]);
 
   const shelves = [
     { id: 'reading', name: 'Читаю' },
@@ -72,8 +85,13 @@ export default function UserProfile() {
     { id: 'want_to_read', name: 'Буду читать' }
   ];
 
-  if (loading) return <div className="loading">Загрузка...</div>;
-  if (!profileUser) return null;
+  if (loading) {
+    return <div className="loading">Загрузка профиля...</div>;
+  }
+  
+  if (!profileUser) {
+    return <div className="loading">Пользователь не найден</div>;
+  }
 
   return (
     <div className="user-profile-page">
@@ -111,7 +129,9 @@ export default function UserProfile() {
             </div>
             
             <div className="shelf-books-list">
-              {shelfBooks.length === 0 ? (
+              {shelfLoading ? (
+                <div className="empty-shelf">Загрузка...</div>
+              ) : shelfBooks.length === 0 ? (
                 <div className="empty-shelf">
                   Нет книг на этой полке
                 </div>
@@ -133,7 +153,6 @@ export default function UserProfile() {
                       <h4>{book.title}</h4>
                       <p>{book.author}</p>
                       <span className="shelf-book-year">{book.publication_year}</span>
-                      {book.rating && <span className="shelf-book-rating">★ {book.rating}</span>}
                     </div>
                   </Link>
                 ))
