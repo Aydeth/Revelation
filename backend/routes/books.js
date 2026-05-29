@@ -247,4 +247,67 @@ router.get('/:id/progress', async (req, res) => {
   }
 });
 
+// Получить рейтинг пользователя для книги
+router.get('/:id/rating', async (req, res) => {
+  const { id } = req.params;
+  const userId = req.userId;
+  
+  if (!userId) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  
+  try {
+    const result = await pool.query(
+      'SELECT rating FROM user_book_status WHERE user_id = $1 AND book_id = $2',
+      [userId, id]
+    );
+    
+    res.json({ rating: result.rows[0]?.rating || null });
+  } catch (err) {
+    console.error('Error fetching rating:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Установить рейтинг пользователя для книги
+router.post('/:id/rating', async (req, res) => {
+  const { id } = req.params;
+  const { rating } = req.body;
+  const userId = req.userId;
+  
+  if (!userId) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  
+  if (!rating || rating < 1 || rating > 5) {
+    return res.status(400).json({ error: 'Invalid rating' });
+  }
+  
+  try {
+    await pool.query(`
+      INSERT INTO user_book_status (user_id, book_id, rating, updated_at)
+      VALUES ($1, $2, $3, CURRENT_TIMESTAMP)
+      ON CONFLICT (user_id, book_id) 
+      DO UPDATE SET rating = $3, updated_at = CURRENT_TIMESTAMP
+    `, [userId, id, rating]);
+    
+    // Обновляем средний рейтинг книги
+    await pool.query(`
+      UPDATE books 
+      SET rating_avg = (
+        SELECT AVG(rating) FROM user_book_status WHERE book_id = $1 AND rating IS NOT NULL
+      ),
+      rating_count = (
+        SELECT COUNT(*) FROM user_book_status WHERE book_id = $1 AND rating IS NOT NULL
+      )
+      WHERE id = $1
+    `, [id]);
+    
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Error saving rating:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 module.exports = router;

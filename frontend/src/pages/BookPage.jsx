@@ -24,6 +24,36 @@ const createRipple = (event) => {
   setTimeout(() => ripple.remove(), 600);
 };
 
+// Компонент звёзд для выбора рейтинга
+const StarRatingInput = ({ rating, onChange }) => {
+  const [hoverRating, setHoverRating] = useState(0);
+  
+  return (
+    <div className="rating-input" style={{ display: 'flex', gap: '4px', marginTop: '8px' }}>
+      {[1, 2, 3, 4, 5].map(star => (
+        <button
+          key={star}
+          type="button"
+          className="star-btn"
+          onClick={() => onChange(star)}
+          onMouseEnter={() => setHoverRating(star)}
+          onMouseLeave={() => setHoverRating(0)}
+          style={{
+            background: 'none',
+            border: 'none',
+            fontSize: '24px',
+            cursor: 'pointer',
+            padding: '0 4px',
+            color: (hoverRating || rating) >= star ? '#F1C40F' : '#DFE2ED'
+          }}
+        >
+          ★
+        </button>
+      ))}
+    </div>
+  );
+};
+
 export default function BookPage() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -32,19 +62,19 @@ export default function BookPage() {
   const [userStatus, setUserStatus] = useState(null);
   const [savedPage, setSavedPage] = useState(1);
   const [statusLoading, setStatusLoading] = useState(false);
+  const [userRating, setUserRating] = useState(0);
+  const [ratingLoading, setRatingLoading] = useState(false);
 
   useEffect(() => {
     const fetchBook = async () => {
       try {
         const token = localStorage.getItem('token');
         
-        // Загружаем информацию о книге
         const response = await axios.get(`${API_URL}/api/books/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setBook(response.data);
         
-        // Загружаем сохранённый прогресс чтения
         try {
           const progressResponse = await axios.get(`${API_URL}/api/books/${id}/progress`, {
             headers: { Authorization: `Bearer ${token}` }
@@ -58,7 +88,6 @@ export default function BookPage() {
           console.error('Ошибка загрузки прогресса:', progressErr);
         }
         
-        // Загружаем текущий статус книги (на какой полке)
         try {
           const statusResponse = await axios.get(`${API_URL}/api/books/${id}/status`, {
             headers: { Authorization: `Bearer ${token}` }
@@ -66,6 +95,16 @@ export default function BookPage() {
           setUserStatus(statusResponse.data.status);
         } catch (statusErr) {
           console.error('Ошибка загрузки статуса:', statusErr);
+        }
+        
+        // Загружаем рейтинг пользователя
+        try {
+          const ratingResponse = await axios.get(`${API_URL}/api/books/${id}/rating`, {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          setUserRating(ratingResponse.data.rating || 0);
+        } catch (ratingErr) {
+          console.error('Ошибка загрузки рейтинга:', ratingErr);
         }
         
       } catch (err) {
@@ -97,6 +136,22 @@ export default function BookPage() {
     }
   };
 
+  const setRating = async (rating) => {
+    setRatingLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      await axios.post(`${API_URL}/api/books/${id}/rating`, 
+        { rating },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setUserRating(rating);
+    } catch (err) {
+      console.error('Ошибка сохранения рейтинга:', err);
+    } finally {
+      setRatingLoading(false);
+    }
+  };
+
   const handleRead = () => {
     navigate(`/read/${id}/${savedPage}`);
   };
@@ -115,7 +170,6 @@ export default function BookPage() {
       </button>
       
       <div className="book-content">
-        {/* Левая колонка: обложка + кнопка "Читать" */}
         <div className="book-left-column">
           <div className="book-cover-large">
             <img 
@@ -133,7 +187,6 @@ export default function BookPage() {
           </button>
         </div>
         
-        {/* Правая колонка: информация о книге */}
         <div className="book-info">
           <h1>{book.title}</h1>
           <h2>{book.author}</h2>
@@ -170,6 +223,15 @@ export default function BookPage() {
             >
               Буду читать
             </button>
+          </div>
+          
+          <div className="user-rating">
+            <h4>Ваша оценка:</h4>
+            <StarRatingInput 
+              rating={userRating} 
+              onChange={setRating}
+            />
+            {ratingLoading && <span className="rating-loading">Сохранение...</span>}
           </div>
           
           <div className="book-description">

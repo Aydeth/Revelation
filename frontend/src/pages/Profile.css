@@ -110,12 +110,7 @@ body.dark-theme .logout-btn .ripple {
   display: flex;
   gap: 8px;
   margin-bottom: 24px;
-  border-bottom: 1px solid #DFE2ED;
   padding-bottom: 8px;
-}
-
-body.dark-theme .shelves-tabs {
-  border-bottom-color: #404040;
 }
 
 .shelf-tab {
@@ -154,39 +149,52 @@ body.dark-theme .shelf-tab .ripple {
 .shelf-books-list {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 0;
 }
 
+/* Карточка книги как в ленте */
 .shelf-book-card {
   display: flex;
-  gap: 16px;
-  padding: 12px;
-  background: #FFFFFF;
-  border: 1px solid #DFE2ED;
-  border-radius: 12px;
+  padding: 20px 0;
+  gap: 25px;
+  align-items: flex-start;
   cursor: pointer;
-  text-decoration: none;
   position: relative;
   overflow: hidden;
-  transition: none;
-}
-
-body.dark-theme .shelf-book-card {
-  background: #2A2A2A;
-  border-color: #404040;
+  background-color: transparent;
+  transition: background-color 0.2s ease, transform 0.15s ease;
+  border: none;
+  border-radius: 12px;
+  transform: scale(1);
+  box-shadow: none;
+  will-change: transform;
+  text-decoration: none;
 }
 
 .shelf-book-card:hover {
-  transform: none;
-  box-shadow: none;
+  background-color: #F9F9F9;
+}
+
+.shelf-book-card:active {
+  transform: scale(0.98);
+  transition: transform 0.08s ease;
+}
+
+body.dark-theme .shelf-book-card:hover {
+  background-color: #2A2A2A;
 }
 
 .shelf-book-cover {
-  flex-shrink: 0;
-  width: 60px;
-  height: 90px;
-  border-radius: 8px;
+  width: 80px;
+  height: 120px;
+  background-color: #F5F5F5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
   overflow: hidden;
+  flex-shrink: 0;
+  border: 1px solid #E9E9E9;
 }
 
 .shelf-book-cover img {
@@ -200,9 +208,9 @@ body.dark-theme .shelf-book-card {
 }
 
 .shelf-book-info h4 {
-  font-size: 16px;
-  font-weight: 600;
-  margin: 0 0 4px;
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 4px;
   color: #222;
 }
 
@@ -211,22 +219,31 @@ body.dark-theme .shelf-book-info h4 {
 }
 
 .shelf-book-info p {
+  color: #666666;
+  margin-bottom: 6px;
   font-size: 14px;
-  color: #666;
-  margin: 0 0 8px;
 }
 
 body.dark-theme .shelf-book-info p {
   color: #AAAAAA;
 }
 
-.shelf-book-year {
-  font-size: 12px;
-  color: #888;
+.shelf-book-rating {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
 }
 
-body.dark-theme .shelf-book-year {
-  color: #AAAAAA;
+.shelf-book-stars {
+  color: #F1C40F;
+  font-size: 14px;
+  letter-spacing: 2px;
+}
+
+.shelf-book-year {
+  color: #888888;
+  font-size: 13px;
 }
 
 .shelf-book-card .ripple {
@@ -239,7 +256,7 @@ body.dark-theme .shelf-book-card .ripple {
 
 .empty-shelf {
   text-align: center;
-  padding: 40px;
+  padding: 60px 20px;
   color: #888;
   font-size: 14px;
 }
@@ -273,5 +290,19 @@ body.dark-theme .shelf-book-card .ripple {
   
   .shelves-tabs {
     justify-content: center;
+  }
+  
+  .shelf-book-card {
+    gap: 15px;
+    padding: 15px 0;
+  }
+  
+  .shelf-book-cover {
+    width: 60px;
+    height: 90px;
+  }
+  
+  .shelf-book-info h4 {
+    font-size: 16px;
   }
 }

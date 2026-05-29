@@ -291,6 +291,42 @@ body.dark-theme .book-description p {
   color: #888;
 }
 
+.user-rating {
+  margin: 24px 0;
+  padding: 16px;
+  border: 1px solid #DFE2ED;
+  border-radius: 12px;
+}
+
+body.dark-theme .user-rating {
+  border-color: #404040;
+}
+
+.user-rating h4 {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: #444;
+}
+
+body.dark-theme .user-rating h4 {
+  color: #CCCCCC;
+}
+
+.star-btn {
+  transition: transform 0.1s ease;
+}
+
+.star-btn:active {
+  transform: scale(0.9);
+}
+
+.rating-loading {
+  font-size: 12px;
+  color: #888;
+  margin-left: 12px;
+}
+
 /* Адаптив */
 @media (max-width: 768px) {
   .book-content {

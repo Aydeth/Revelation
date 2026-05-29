@@ -25,6 +25,20 @@ const createRipple = (event) => {
   setTimeout(() => ripple.remove(), 600);
 };
 
+// Компонент звёзд для отображения рейтинга
+const StarRating = ({ rating }) => {
+  const fullStars = Math.floor(rating || 0);
+  const emptyStars = 5 - fullStars;
+  
+  return (
+    <div className="shelf-book-rating">
+      <div className="shelf-book-stars">
+        {'★'.repeat(fullStars)}{'☆'.repeat(emptyStars)}
+      </div>
+    </div>
+  );
+};
+
 export default function Profile() {
   const { username } = useParams();
   const navigate = useNavigate();
@@ -36,26 +50,21 @@ export default function Profile() {
   const [shelfLoading, setShelfLoading] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
 
-  // Определяем, свой это профиль или чужой
   const isOwnProfile = currentUser?.username === username || (!username && currentUser);
 
-  // Если нет username в URL, редирект на свой профиль
   useEffect(() => {
     if (!username && currentUser) {
       navigate(`/user/${currentUser.username}`, { replace: true });
     }
   }, [username, currentUser, navigate]);
 
-  // Загрузка пользователя
   useEffect(() => {
     const targetUsername = username || currentUser?.username;
     if (!targetUsername) return;
     
     const fetchUser = async () => {
       try {
-        console.log('Fetching user:', targetUsername);
         const response = await axios.get(`${API_URL}/api/auth/user/${targetUsername}`);
-        console.log('User data:', response.data);
         setProfileUser(response.data);
       } catch (err) {
         console.error('User not found:', err);
@@ -68,7 +77,6 @@ export default function Profile() {
     fetchUser();
   }, [username, currentUser, navigate]);
 
-  // Загрузка книг с выбранной полки
   useEffect(() => {
     if (!profileUser) return;
     
@@ -110,7 +118,6 @@ export default function Profile() {
   return (
     <div className="profile-page">
       <div className="profile-container">
-        {/* Левая колонка - аватар и ник */}
         <div className="profile-left">
           <div className="profile-avatar">
             <img 
@@ -125,7 +132,6 @@ export default function Profile() {
             Присоединился: {new Date(profileUser.created_at).toLocaleDateString('ru-RU')}
           </div>
           
-          {/* Кнопки только для своего профиля */}
           {isOwnProfile && (
             <>
               <button 
@@ -146,7 +152,6 @@ export default function Profile() {
           )}
         </div>
 
-        {/* Правая колонка - полки */}
         <div className="profile-right">
           <div className="profile-shelves">
             <div className="shelves-tabs">
@@ -186,6 +191,7 @@ export default function Profile() {
                     <div className="shelf-book-info">
                       <h4>{book.title}</h4>
                       <p>{book.author}</p>
+                      <StarRating rating={book.user_rating} />
                       <span className="shelf-book-year">{book.publication_year}</span>
                     </div>
                   </div>
