@@ -5,7 +5,9 @@
   min-height: calc(100vh - 120px);
 }
 
-/* Кнопка "Назад" - как в читалке */
+/* ============================================
+   КНОПКА "НАЗАД"
+   ============================================ */
 .back-button {
   background: none;
   border: 1px solid #DFE2ED;
@@ -19,28 +21,26 @@
   margin-bottom: 20px;
   position: relative;
   overflow: hidden;
-  transition: none;
-}
-
-/* Светлая тема */
-.back-button {
   color: #003BFF;
   border-color: #DFE2ED;
 }
 
-/* Тёмная тема */
 body.dark-theme .back-button {
   color: #FFFFFF;
   border-color: #404040;
 }
 
-/* Убираем изменение цвета при наведении */
-.back-button:hover {
+/* Убираем любые изменения при наведении */
+.back-button:hover,
+.back-button:focus,
+.back-button:active {
   border-color: #DFE2ED;
   color: #003BFF;
 }
 
-body.dark-theme .back-button:hover {
+body.dark-theme .back-button:hover,
+body.dark-theme .back-button:focus,
+body.dark-theme .back-button:active {
   border-color: #404040;
   color: #FFFFFF;
 }
@@ -53,6 +53,9 @@ body.dark-theme .back-button .ripple {
   background: rgba(255, 255, 255, 0.15);
 }
 
+/* ============================================
+   ОСНОВНОЙ КОНТЕНТ
+   ============================================ */
 .book-content {
   display: flex;
   gap: 40px;
@@ -129,7 +132,9 @@ body.dark-theme .rating-badge {
   color: #FFFFFF;
 }
 
-/* Кнопки действий - ИДЕНТИЧНО настройкам в читалке */
+/* ============================================
+   КНОПКИ СТАТУСА (идентично настройкам)
+   ============================================ */
 .book-actions {
   display: flex;
   gap: 12px;
@@ -146,51 +151,64 @@ body.dark-theme .rating-badge {
   cursor: pointer;
   position: relative;
   overflow: hidden;
-  transition: none;
-}
-
-/* Светлая тема - неактивная кнопка (как в настройках) */
-.status-btn {
   color: #1A1A1A;
   border-color: #DFE2ED;
 }
 
-/* Светлая тема - активная кнопка (как в настройках) */
+body.dark-theme .status-btn {
+  color: #E0E0E0;
+  border-color: #404040;
+}
+
+/* Активная кнопка - светлая тема */
 .status-btn.active {
   background-color: #003BFF;
   border-color: #003BFF;
   color: white;
 }
 
-/* Тёмная тема - неактивная кнопка (как в настройках) */
-body.dark-theme .status-btn {
-  color: #E0E0E0;
-  border-color: #404040;
-}
-
-/* Тёмная тема - активная кнопка (как в настройках) */
+/* Активная кнопка - тёмная тема */
 body.dark-theme .status-btn.active {
   background-color: #FFFFFF;
   border-color: #FFFFFF;
   color: #1A1A1A;
 }
 
-/* Убираем ВСЕ изменения при наведении (как в настройках) */
+/* Убираем ЛЮБЫЕ изменения при наведении */
 .status-btn:hover,
-.status-btn.active:hover {
-  border-color: inherit;
-  color: inherit;
-  background-color: inherit;
+.status-btn:focus,
+.status-btn:active {
+  border-color: #DFE2ED;
+  color: #1A1A1A;
+  background-color: transparent;
 }
 
 body.dark-theme .status-btn:hover,
-body.dark-theme .status-btn.active:hover {
-  border-color: inherit;
-  color: inherit;
-  background-color: inherit;
+body.dark-theme .status-btn:focus,
+body.dark-theme .status-btn:active {
+  border-color: #404040;
+  color: #E0E0E0;
+  background-color: transparent;
 }
 
-/* Ripple для кнопок статуса (как в настройках) */
+/* Активная кнопка — при наведении не меняется */
+.status-btn.active:hover,
+.status-btn.active:focus,
+.status-btn.active:active {
+  background-color: #003BFF;
+  border-color: #003BFF;
+  color: white;
+}
+
+body.dark-theme .status-btn.active:hover,
+body.dark-theme .status-btn.active:focus,
+body.dark-theme .status-btn.active:active {
+  background-color: #FFFFFF;
+  border-color: #FFFFFF;
+  color: #1A1A1A;
+}
+
+/* Ripple для кнопок статуса */
 .status-btn .ripple {
   background: rgba(0, 0, 0, 0.1);
 }
@@ -203,7 +221,9 @@ body.dark-theme .status-btn.active .ripple {
   background: rgba(0, 0, 0, 0.2);
 }
 
-/* Кнопка "Читать книгу" */
+/* ============================================
+   КНОПКА "ЧИТАТЬ КНИГУ"
+   ============================================ */
 .read-button {
   width: 100%;
   border: none;
@@ -213,18 +233,12 @@ body.dark-theme .status-btn.active .ripple {
   font-weight: 500;
   cursor: pointer;
   margin-bottom: 32px;
-  transition: opacity 0.2s;
   position: relative;
   overflow: hidden;
-}
-
-/* Светлая тема */
-.read-button {
   background-color: #003BFF;
   color: white;
 }
 
-/* Тёмная тема */
 body.dark-theme .read-button {
   background-color: #FFFFFF;
   color: #1A1A1A;
@@ -242,7 +256,9 @@ body.dark-theme .read-button .ripple {
   background: rgba(0, 0, 0, 0.2);
 }
 
-/* Описание книги */
+/* ============================================
+   ОПИСАНИЕ КНИГИ
+   ============================================ */
 .book-description h3 {
   font-size: 20px;
   margin-bottom: 12px;
@@ -263,29 +279,15 @@ body.dark-theme .book-description p {
   color: #CCCCCC;
 }
 
+/* ============================================
+   ЗАГРУЗКА И АДАПТИВ
+   ============================================ */
 .loading {
   text-align: center;
   padding: 60px;
   color: #888;
 }
 
-/* Ripple эффект - ПРЕЖНЯЯ СКОРОСТЬ (как в настройках) */
-.ripple {
-  position: absolute;
-  border-radius: 50%;
-  transform: scale(0);
-  animation: ripple-effect 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-  pointer-events: none;
-}
-
-@keyframes ripple-effect {
-  to {
-    transform: scale(4);
-    opacity: 0;
-  }
-}
-
-/* Адаптив */
 @media (max-width: 768px) {
   .book-content {
     flex-direction: column;
