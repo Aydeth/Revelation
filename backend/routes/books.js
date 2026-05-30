@@ -266,13 +266,19 @@ router.post('/:id/reviews', async (req, res) => {
   }
   
   try {
+    // Сначала удаляем старый отзыв, если есть
+    await pool.query(
+      'DELETE FROM reviews WHERE user_id = $1 AND book_id = $2',
+      [userId, id]
+    );
+    
+    // Добавляем новый отзыв
     await pool.query(`
       INSERT INTO reviews (user_id, book_id, rating, comment, created_at, updated_at)
       VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-      ON CONFLICT (user_id, book_id) 
-      DO UPDATE SET rating = $3, comment = $4, updated_at = CURRENT_TIMESTAMP
     `, [userId, id, rating, comment || null]);
     
+    // Обновляем средний рейтинг книги
     await pool.query(`
       UPDATE books 
       SET rating_avg = (
@@ -284,6 +290,7 @@ router.post('/:id/reviews', async (req, res) => {
       WHERE id = $1
     `, [id]);
     
+    // Обновляем рейтинг в user_book_status
     await pool.query(`
       INSERT INTO user_book_status (user_id, book_id, rating, updated_at)
       VALUES ($1, $2, $3, CURRENT_TIMESTAMP)
