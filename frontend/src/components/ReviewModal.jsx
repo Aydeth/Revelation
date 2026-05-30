@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X, Check } from 'lucide-react';
 import './ReviewModal.css';
 
@@ -43,9 +43,20 @@ const StarRatingInput = ({ rating, onRatingChange }) => {
   );
 };
 
-export default function ReviewModal({ onClose, onSubmit, loading }) {
+export default function ReviewModal({ onClose, onSubmit, loading, existingReview }) {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
+  const isEdit = !!existingReview;
+
+  useEffect(() => {
+    if (existingReview) {
+      setRating(existingReview.rating || 0);
+      setComment(existingReview.comment || '');
+    } else {
+      setRating(0);
+      setComment('');
+    }
+  }, [existingReview]);
 
   const handleSubmit = () => {
     if (rating === 0) {
@@ -59,7 +70,7 @@ export default function ReviewModal({ onClose, onSubmit, loading }) {
     <div className="review-modal-overlay" onClick={onClose}>
       <div className="review-modal-panel" onClick={(e) => e.stopPropagation()}>
         <div className="review-modal-header">
-          <h3>Написать отзыв</h3>
+          <h3>{isEdit ? 'Изменить отзыв' : 'Написать отзыв'}</h3>
           <button className="review-close-btn" onClick={onClose} onMouseDown={createRipple}>
             <X size={20} />
           </button>
@@ -97,7 +108,7 @@ export default function ReviewModal({ onClose, onSubmit, loading }) {
             onMouseDown={createRipple}
           >
             <Check size={16} />
-            {loading ? 'Сохранение...' : 'Опубликовать'}
+            {loading ? 'Сохранение...' : (isEdit ? 'Сохранить' : 'Опубликовать')}
           </button>
         </div>
       </div>

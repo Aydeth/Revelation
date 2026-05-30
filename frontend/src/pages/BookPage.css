@@ -96,10 +96,6 @@ body.dark-theme .read-button {
   transition: transform 0.08s ease;
 }
 
-.read-button:hover {
-  opacity: 0.9;
-}
-
 .read-button .ripple {
   background: rgba(255, 255, 255, 0.4);
 }
@@ -131,17 +127,6 @@ body.dark-theme .read-button .ripple {
 body.dark-theme .review-button {
   color: #E0E0E0;
   border-color: #404040;
-}
-
-.review-button:hover {
-  border-color: #DFE2ED !important;
-  color: #1A1A1A !important;
-  background-color: transparent !important;
-}
-
-body.dark-theme .review-button:hover {
-  border-color: #404040 !important;
-  color: #E0E0E0 !important;
 }
 
 .review-button .ripple {
@@ -183,6 +168,7 @@ body.dark-theme .book-info h2 {
   gap: 20px;
   margin-bottom: 24px;
   flex-wrap: wrap;
+  align-items: center;
 }
 
 .year-badge {
@@ -199,9 +185,19 @@ body.dark-theme .year-badge {
 }
 
 .rating-badge {
-  font-size: 14px;
-  color: #003BFF;
+  font-size: 16px;
   font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.rating-badge span {
+  font-size: 18px;
+}
+
+.rating-badge {
+  color: #003BFF;
 }
 
 body.dark-theme .rating-badge {
@@ -246,10 +242,21 @@ body.dark-theme .status-btn.active {
   color: #1A1A1A;
 }
 
-.status-btn:hover {
+/* Убираем ВСЕ изменения при наведении */
+.status-btn:hover,
+.status-btn:focus,
+.status-btn:active {
   border-color: inherit !important;
   color: inherit !important;
-  background-color: transparent !important;
+  background-color: inherit !important;
+}
+
+body.dark-theme .status-btn:hover,
+body.dark-theme .status-btn:focus,
+body.dark-theme .status-btn:active {
+  border-color: inherit !important;
+  color: inherit !important;
+  background-color: inherit !important;
 }
 
 .status-btn .ripple {
@@ -288,7 +295,6 @@ body.dark-theme .book-description p {
   color: #CCCCCC;
 }
 
-/* Блок отзывов - отдельно после book-content */
 .book-reviews {
   width: 100%;
   margin-top: 48px;
@@ -381,7 +387,6 @@ body.dark-theme .review-date {
   font-size: 16px;
 }
 
-/* Залитые звёзды с разным цветом */
 .review-star-filled {
   color: #F1C40F;
 }

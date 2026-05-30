@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { ArrowLeft, Star } from 'lucide-react';
+import { ArrowLeft, PenLine } from 'lucide-react';
 import ReviewModal from '../components/ReviewModal';
 import './BookPage.css';
 
@@ -52,6 +52,8 @@ export default function BookPage() {
   const [reviews, setReviews] = useState([]);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [reviewLoading, setReviewLoading] = useState(false);
+  const [editingReview, setEditingReview] = useState(null);
+  const [currentUserId, setCurrentUserId] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -71,8 +73,18 @@ export default function BookPage() {
           setReviews([]);
         }
         
-        // Загружаем прогресс чтения (требует токен)
+        // Загружаем текущего пользователя
         if (token) {
+          try {
+            const meRes = await axios.get(`${API_URL}/api/auth/me`, {
+              headers: { Authorization: `Bearer ${token}` }
+            });
+            setCurrentUserId(meRes.data.id);
+          } catch (meErr) {
+            console.error('Ошибка загрузки пользователя:', meErr);
+          }
+          
+          // Загружаем прогресс чтения (требует токен)
           try {
             const progressResponse = await axios.get(`${API_URL}/api/books/${id}/progress`, {
               headers: { Authorization: `Bearer ${token}` }
@@ -150,6 +162,7 @@ export default function BookPage() {
       setBook(prev => ({ ...prev, rating_avg: bookRes.data.rating_avg, rating_count: bookRes.data.rating_count }));
       
       setShowReviewModal(false);
+      setEditingReview(null);
     } catch (err) {
       console.error('Ошибка сохранения отзыва:', err);
       alert('Не удалось сохранить отзыв');
@@ -157,6 +170,18 @@ export default function BookPage() {
       setReviewLoading(false);
     }
   };
+
+  const openReviewModal = () => {
+    const existing = reviews.find(r => r.user_id === currentUserId);
+    if (existing) {
+      setEditingReview(existing);
+    } else {
+      setEditingReview(null);
+    }
+    setShowReviewModal(true);
+  };
+
+  const userHasReview = reviews.some(r => r.user_id === currentUserId);
 
   if (loading) return <div className="loading">Загрузка книги...</div>;
   if (!book) return null;
@@ -191,11 +216,11 @@ export default function BookPage() {
           
           <button 
             className="review-button" 
-            onClick={() => setShowReviewModal(true)}
+            onClick={openReviewModal}
             onMouseDown={createRipple}
           >
-            <Star size={16} />
-            Написать отзыв
+            <PenLine size={16} />
+            {userHasReview ? 'Изменить отзыв' : 'Написать отзыв'}
           </button>
         </div>
         
@@ -207,7 +232,7 @@ export default function BookPage() {
           <div className="book-meta">
             <span className="year-badge">{book.publication_year}</span>
             <span className="rating-badge">
-              ★ {book.rating_avg || 'Нет оценок'} ({book.rating_count || 0} оценок)
+              ★ <span>{book.rating_avg || 'Нет оценок'}</span> ({book.rating_count || 0} оценок)
             </span>
           </div>
           
@@ -289,9 +314,13 @@ export default function BookPage() {
 
       {showReviewModal && (
         <ReviewModal 
-          onClose={() => setShowReviewModal(false)}
+          onClose={() => {
+            setShowReviewModal(false);
+            setEditingReview(null);
+          }}
           onSubmit={handleAddReview}
           loading={reviewLoading}
+          existingReview={editingReview}
         />
       )}
     </div>
