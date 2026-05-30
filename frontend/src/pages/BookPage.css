@@ -185,23 +185,34 @@ body.dark-theme .year-badge {
 }
 
 .rating-badge {
-  font-size: 16px;
-  font-weight: 500;
   display: flex;
   align-items: center;
   gap: 4px;
-}
-
-.rating-badge span {
-  font-size: 18px;
-}
-
-.rating-badge {
+  font-size: 14px;
+  font-weight: 500;
   color: #003BFF;
 }
 
 body.dark-theme .rating-badge {
   color: #FFFFFF;
+}
+
+.rating-star {
+  color: #F1C40F;
+  font-size: 14px;
+}
+
+.rating-value {
+  font-size: 14px;
+}
+
+.rating-count {
+  font-size: 14px;
+  color: #888;
+}
+
+body.dark-theme .rating-count {
+  color: #AAAAAA;
 }
 
 .book-actions {
@@ -242,7 +253,6 @@ body.dark-theme .status-btn.active {
   color: #1A1A1A;
 }
 
-/* Убираем ВСЕ изменения при наведении */
 .status-btn:hover,
 .status-btn:focus,
 .status-btn:active {
@@ -272,7 +282,7 @@ body.dark-theme .status-btn.active .ripple {
 }
 
 .book-description {
-  margin-bottom: 40px;
+  margin-bottom: 48px;
 }
 
 .book-description h3 {
@@ -295,15 +305,11 @@ body.dark-theme .book-description p {
   color: #CCCCCC;
 }
 
+/* Блок отзывов - без разделительной линии */
 .book-reviews {
   width: 100%;
-  margin-top: 48px;
-  padding-top: 32px;
-  border-top: 1px solid #DFE2ED;
-}
-
-body.dark-theme .book-reviews {
-  border-top-color: #404040;
+  margin-top: 0;
+  padding-top: 0;
 }
 
 .book-reviews h3 {
@@ -384,7 +390,7 @@ body.dark-theme .review-date {
   margin-bottom: 8px;
   display: flex;
   gap: 2px;
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .review-star-filled {

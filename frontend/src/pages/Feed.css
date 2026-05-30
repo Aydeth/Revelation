@@ -136,18 +136,30 @@ body.dark-theme .book-author {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 6px;
+  margin-top: 6px;
 }
 
 .rating-stars {
+  display: flex;
+  gap: 2px;
+  font-size: 12px;
+}
+
+.rating-stars .star-filled {
   color: #F1C40F;
-  font-size: 14px;
-  letter-spacing: 2px;
+}
+
+.rating-stars .star-empty {
+  color: #DFE2ED;
+}
+
+body.dark-theme .rating-stars .star-empty {
+  color: #555555;
 }
 
 .rating-value {
-  color: #888888;
-  font-size: 13px;
+  font-size: 12px;
+  color: #888;
 }
 
 body.dark-theme .rating-value {
@@ -172,12 +184,10 @@ body.dark-theme .book-date {
   pointer-events: none;
 }
 
-/* Светлая тема - тёмный ripple */
 .book-card .ripple {
   background: rgba(0, 0, 0, 0.08);
 }
 
-/* Тёмная тема - светлый ripple */
 body.dark-theme .book-card .ripple {
   background: rgba(255, 255, 255, 0.15);
 }

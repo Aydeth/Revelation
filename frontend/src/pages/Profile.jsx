@@ -32,9 +32,12 @@ const StarRating = ({ rating }) => {
   
   return (
     <div className="shelf-book-rating">
-      <div className="shelf-book-stars">
-        {'★'.repeat(fullStars)}{'☆'.repeat(emptyStars)}
-      </div>
+      {[...Array(fullStars)].map((_, i) => (
+        <span key={`full-${i}`} className="shelf-book-stars-filled">★</span>
+      ))}
+      {[...Array(emptyStars)].map((_, i) => (
+        <span key={`empty-${i}`} className="shelf-book-stars-empty">★</span>
+      ))}
     </div>
   );
 };

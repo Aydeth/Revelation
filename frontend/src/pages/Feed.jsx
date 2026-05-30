@@ -5,6 +5,40 @@ import './Feed.css';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
+const createRipple = (event) => {
+  const button = event.currentTarget;
+  const ripple = document.createElement('span');
+  const rect = button.getBoundingClientRect();
+  const size = Math.max(button.clientWidth, button.clientHeight);
+  
+  ripple.classList.add('ripple');
+  ripple.style.width = ripple.style.height = `${size}px`;
+  ripple.style.left = `${event.clientX - rect.left - size / 2}px`;
+  ripple.style.top = `${event.clientY - rect.top - size / 2}px`;
+  
+  const oldRipples = button.querySelectorAll('.ripple');
+  oldRipples.forEach(r => r.remove());
+  
+  button.appendChild(ripple);
+  setTimeout(() => ripple.remove(), 600);
+};
+
+const StarRating = ({ rating }) => {
+  const fullStars = Math.floor(rating || 0);
+  const emptyStars = 5 - fullStars;
+  
+  return (
+    <div className="rating-stars">
+      {[...Array(fullStars)].map((_, i) => (
+        <span key={`full-${i}`} className="star-filled">★</span>
+      ))}
+      {[...Array(emptyStars)].map((_, i) => (
+        <span key={`empty-${i}`} className="star-empty">★</span>
+      ))}
+    </div>
+  );
+};
+
 export default function Feed() {
   const [allBooks, setAllBooks] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -47,12 +81,11 @@ export default function Feed() {
     ripple.style.left = `${e.clientX - rect.left - size / 2}px`;
     ripple.style.top = `${e.clientY - rect.top - size / 2}px`;
     
-    // Удаляем старые ripple
     const oldRipples = card.querySelectorAll('.ripple');
     oldRipples.forEach(r => r.remove());
     
     card.appendChild(ripple);
-    setTimeout(() => ripple.remove(), 600); // синхронизируем с анимацией
+    setTimeout(() => ripple.remove(), 600);
     
     setPendingBookId(bookId);
   };
@@ -108,11 +141,8 @@ export default function Feed() {
                 <div className="book-title">{book.title}</div>
                 <div className="book-author">{book.author}</div>
                 <div className="book-rating">
-                  <span className="rating-stars">
-                    {'★'.repeat(Math.floor(book.rating_avg || 0))}
-                    {'☆'.repeat(5 - Math.floor(book.rating_avg || 0))}
-                  </span>
-                  <span className="rating-value">{book.rating_avg || 'No ratings'}</span>
+                  <StarRating rating={book.rating_avg} />
+                  <span className="rating-value">{book.rating_avg || 'Нет оценок'}</span>
                 </div>
                 <div className="book-date">{book.publication_year}</div>
               </div>

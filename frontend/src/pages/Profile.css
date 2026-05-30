@@ -230,17 +230,24 @@ body.dark-theme .shelf-book-info p {
   color: #AAAAAA;
 }
 
+/* Рейтинг в карточках профиля */
 .shelf-book-rating {
   display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 6px;
+  gap: 2px;
+  font-size: 12px;
+  margin-bottom: 4px;
 }
 
-.shelf-book-stars {
+.shelf-book-stars-filled {
   color: #F1C40F;
-  font-size: 14px;
-  letter-spacing: 2px;
+}
+
+.shelf-book-stars-empty {
+  color: #DFE2ED;
+}
+
+body.dark-theme .shelf-book-stars-empty {
+  color: #555555;
 }
 
 .shelf-book-year {

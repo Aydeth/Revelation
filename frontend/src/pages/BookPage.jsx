@@ -231,9 +231,11 @@ export default function BookPage() {
           
           <div className="book-meta">
             <span className="year-badge">{book.publication_year}</span>
-            <span className="rating-badge">
-              ★ <span>{book.rating_avg || 'Нет оценок'}</span> ({book.rating_count || 0} оценок)
-            </span>
+            <div className="rating-badge">
+              <span className="rating-star">★</span>
+              <span className="rating-value">{book.rating_avg || 'Нет оценок'}</span>
+              <span className="rating-count">({book.rating_count || 0} оценок)</span>
+            </div>
           </div>
           
           <div className="book-actions">
