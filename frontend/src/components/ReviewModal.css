@@ -226,3 +226,39 @@ body.dark-theme .review-submit-btn {
 body.dark-theme .review-submit-btn .ripple {
   background: rgba(0, 0, 0, 0.2);
 }
+
+.review-delete-btn {
+  background: none;
+  border: 1px solid #DC2626;
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  color: #DC2626;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  overflow: hidden;
+  transition: none;
+  margin-right: auto;
+}
+
+.review-delete-btn.confirm {
+  background-color: #DC2626;
+  color: white;
+}
+
+.review-delete-btn .ripple {
+  background: rgba(220, 38, 38, 0.2);
+}
+
+body.dark-theme .review-delete-btn {
+  border-color: #DC2626;
+  color: #DC2626;
+}
+
+body.dark-theme .review-delete-btn.confirm {
+  background-color: #DC2626;
+  color: white;
+}

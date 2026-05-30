@@ -228,4 +228,45 @@ router.post('/:id/reviews', async (req, res) => {
   }
 });
 
+router.delete('/:id/reviews', async (req, res) => {
+  const { id } = req.params;
+  const userId = req.userId;
+  
+  if (!userId) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  
+  try {
+    // Удаляем отзыв
+    await pool.query(
+      'DELETE FROM reviews WHERE user_id = $1 AND book_id = $2',
+      [userId, id]
+    );
+    
+    // Обновляем средний рейтинг книги
+    await pool.query(`
+      UPDATE books 
+      SET rating_avg = (
+        SELECT COALESCE(AVG(rating), 0) FROM reviews WHERE book_id = $1
+      ),
+      rating_count = (
+        SELECT COUNT(*) FROM reviews WHERE book_id = $1
+      )
+      WHERE id = $1
+    `, [id]);
+    
+    // Обнуляем рейтинг в user_book_status
+    await pool.query(`
+      UPDATE user_book_status 
+      SET rating = NULL, updated_at = CURRENT_TIMESTAMP
+      WHERE user_id = $1 AND book_id = $2
+    `, [userId, id]);
+    
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Error deleting review:', err);
+    res.status(500).json({ error: 'Server error: ' + err.message });
+  }
+});
+
 module.exports = router;

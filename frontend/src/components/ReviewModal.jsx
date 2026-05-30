@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, Check } from 'lucide-react';
+import { X, Check, Trash2 } from 'lucide-react';
 import './ReviewModal.css';
 
 const createRipple = (event) => {
@@ -43,9 +43,10 @@ const StarRatingInput = ({ rating, onRatingChange }) => {
   );
 };
 
-export default function ReviewModal({ onClose, onSubmit, loading, existingReview }) {
+export default function ReviewModal({ onClose, onSubmit, onDelete, loading, existingReview }) {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
+  const [deleteConfirm, setDeleteConfirm] = useState(false);
   const isEdit = !!existingReview;
 
   useEffect(() => {
@@ -56,6 +57,7 @@ export default function ReviewModal({ onClose, onSubmit, loading, existingReview
       setRating(0);
       setComment('');
     }
+    setDeleteConfirm(false);
   }, [existingReview]);
 
   const handleSubmit = () => {
@@ -64,6 +66,14 @@ export default function ReviewModal({ onClose, onSubmit, loading, existingReview
       return;
     }
     onSubmit(rating, comment);
+  };
+
+  const handleDelete = () => {
+    if (deleteConfirm) {
+      onDelete();
+    } else {
+      setDeleteConfirm(true);
+    }
   };
 
   return (
@@ -94,6 +104,17 @@ export default function ReviewModal({ onClose, onSubmit, loading, existingReview
         </div>
 
         <div className="review-modal-footer">
+          {isEdit && (
+            <button 
+              className={`review-delete-btn ${deleteConfirm ? 'confirm' : ''}`}
+              onClick={handleDelete}
+              disabled={loading}
+              onMouseDown={createRipple}
+            >
+              <Trash2 size={16} />
+              {deleteConfirm ? 'Подтвердить' : 'Удалить'}
+            </button>
+          )}
           <button 
             className="review-cancel-btn" 
             onClick={onClose}

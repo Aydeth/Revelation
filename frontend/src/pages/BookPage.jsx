@@ -171,6 +171,34 @@ export default function BookPage() {
     }
   };
 
+  const handleDeleteReview = async () => {
+    setReviewLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      
+      // Удаляем отзыв
+      await axios.delete(`${API_URL}/api/books/${id}/reviews`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      // Обновляем список отзывов (публичный)
+      const reviewsRes = await axios.get(`${API_URL}/api/books/${id}/reviews`);
+      setReviews(reviewsRes.data);
+      
+      // Обновляем книгу (публичный)
+      const bookRes = await axios.get(`${API_URL}/api/books/${id}`);
+      setBook(prev => ({ ...prev, rating_avg: bookRes.data.rating_avg, rating_count: bookRes.data.rating_count }));
+      
+      setShowReviewModal(false);
+      setEditingReview(null);
+    } catch (err) {
+      console.error('Ошибка удаления отзыва:', err);
+      alert('Не удалось удалить отзыв');
+    } finally {
+      setReviewLoading(false);
+    }
+  };
+
   const openReviewModal = () => {
     const existing = reviews.find(r => r.user_id === currentUserId);
     if (existing) {
@@ -321,6 +349,7 @@ export default function BookPage() {
             setEditingReview(null);
           }}
           onSubmit={handleAddReview}
+          onDelete={handleDeleteReview}
           loading={reviewLoading}
           existingReview={editingReview}
         />
