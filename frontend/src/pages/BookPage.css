@@ -187,27 +187,23 @@ body.dark-theme .year-badge {
 .rating-badge {
   display: flex;
   align-items: center;
-  gap: 4px;
-  font-size: 14px;
+  gap: 6px;
+  font-size: 16px;
   font-weight: 500;
   color: #003BFF;
 }
 
-body.dark-theme .rating-badge {
-  color: #FFFFFF;
-}
-
 .rating-star {
   color: #F1C40F;
-  font-size: 14px;
+  font-size: 18px;
 }
 
 .rating-value {
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .rating-count {
-  font-size: 14px;
+  font-size: 16px;
   color: #888;
 }
 
@@ -389,8 +385,8 @@ body.dark-theme .review-date {
 .review-rating {
   margin-bottom: 8px;
   display: flex;
-  gap: 2px;
-  font-size: 14px;
+  gap: 3px;
+  font-size: 16px;
 }
 
 .review-star-filled {

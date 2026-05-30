@@ -108,7 +108,7 @@ body.dark-theme .review-rating-section label {
 .review-star-btn {
   background: none;
   border: none;
-  font-size: 32px;
+  font-size: 28px;
   cursor: pointer;
   padding: 0;
   transition: transform 0.1s ease;
