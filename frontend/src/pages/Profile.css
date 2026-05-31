@@ -152,7 +152,7 @@ body.dark-theme .shelf-tab .ripple {
   gap: 0;
 }
 
-/* Карточка книги в профиле - как в "Лучшее" на главной */
+/* Карточка книги - единый стиль (как в AllBooks) */
 .shelf-book-card {
   display: flex;
   padding: 20px 0;

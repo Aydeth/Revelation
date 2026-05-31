@@ -36,7 +36,7 @@ body.dark-theme .search-input {
   gap: 0;
 }
 
-/* Карточка книги - как в "Лучшее" на главной */
+/* Карточка книги - единый стиль */
 .book-card {
   display: flex;
   padding: 20px 0;

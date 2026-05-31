@@ -39,7 +39,7 @@ const StarRating = ({ rating }) => {
   );
 };
 
-export default function Feed() {
+export default function AllBooks() {
   const [allBooks, setAllBooks] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
@@ -109,7 +109,7 @@ export default function Feed() {
         <input
           type="text"
           className="search-input"
-          placeholder="Search by title or author..."
+          placeholder="Поиск по названию или автору..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
@@ -118,8 +118,8 @@ export default function Feed() {
       <div className="books-list">
         {filteredBooks.length === 0 ? (
           <div className="empty-library">
-            <p className="empty-title">No books found</p>
-            <p className="empty-subtitle">Try changing your search parameters</p>
+            <p className="empty-title">Книги не найдены</p>
+            <p className="empty-subtitle">Попробуйте изменить параметры поиска</p>
           </div>
         ) : (
           filteredBooks.map(book => (
@@ -144,7 +144,6 @@ export default function Feed() {
                   <StarRating rating={book.rating_avg} />
                   <span className="rating-value">{book.rating_avg || 'Нет оценок'}</span>
                 </div>
-                <div className="book-date">{book.publication_year}</div>
               </div>
             </div>
           ))
