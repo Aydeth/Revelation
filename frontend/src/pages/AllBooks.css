@@ -36,7 +36,6 @@ body.dark-theme .search-input {
   gap: 0;
 }
 
-/* Карточка книги - единый стиль */
 .book-card {
   display: flex;
   padding: 20px 0;
@@ -139,24 +138,6 @@ body.dark-theme .book-author {
   margin-top: 6px;
 }
 
-.rating-stars {
-  display: flex;
-  gap: 3px;
-  font-size: 16px;
-}
-
-.rating-stars .star-filled {
-  color: #F1C40F;
-}
-
-.rating-stars .star-empty {
-  color: #DFE2ED;
-}
-
-body.dark-theme .rating-stars .star-empty {
-  color: #555555;
-}
-
 .rating-value {
   font-size: 14px;
   color: #888;
@@ -164,6 +145,21 @@ body.dark-theme .rating-stars .star-empty {
 
 body.dark-theme .rating-value {
   color: #AAAAAA;
+}
+
+/* Глобальные стили для звёзд (наследуются из Home.css) */
+.star-filled {
+  color: #F1C40F;
+  font-size: 16px;
+}
+
+.star-empty {
+  color: #DFE2ED;
+  font-size: 16px;
+}
+
+body.dark-theme .star-empty {
+  color: #555555;
 }
 
 .ripple {
@@ -235,10 +231,6 @@ body.dark-theme .book-card .ripple {
   
   .search-input {
     padding: 10px 14px;
-    font-size: 14px;
-  }
-  
-  .rating-stars {
     font-size: 14px;
   }
   

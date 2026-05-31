@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import EditProfileModal from '../components/EditProfileModal';
+import StarRating from '../components/StarRating';
 import './Profile.css';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
@@ -23,22 +24,6 @@ const createRipple = (event) => {
   
   button.appendChild(ripple);
   setTimeout(() => ripple.remove(), 600);
-};
-
-const StarRating = ({ rating }) => {
-  const fullStars = Math.floor(rating || 0);
-  const emptyStars = 5 - fullStars;
-  
-  return (
-    <div className="shelf-book-stars">
-      {[...Array(fullStars)].map((_, i) => (
-        <span key={`full-${i}`} className="shelf-book-stars-filled">★</span>
-      ))}
-      {[...Array(emptyStars)].map((_, i) => (
-        <span key={`empty-${i}`} className="shelf-book-stars-empty">★</span>
-      ))}
-    </div>
-  );
 };
 
 export default function Profile() {
@@ -195,7 +180,9 @@ export default function Profile() {
                       <p>{book.author}</p>
                       <div className="shelf-book-rating">
                         <StarRating rating={book.user_rating} />
-                        <span>{book.user_rating ? `${book.user_rating} / 5` : 'Не оценено'}</span>
+                        <span className="rating-value">
+                          {book.user_rating ? `${book.user_rating} / 5` : 'Не оценено'}
+                        </span>
                       </div>
                     </div>
                   </div>

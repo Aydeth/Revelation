@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import StarRating from '../components/StarRating';
 import './AllBooks.css';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
@@ -21,22 +22,6 @@ const createRipple = (event) => {
   
   button.appendChild(ripple);
   setTimeout(() => ripple.remove(), 600);
-};
-
-const StarRating = ({ rating }) => {
-  const fullStars = Math.floor(rating || 0);
-  const emptyStars = 5 - fullStars;
-  
-  return (
-    <div className="rating-stars">
-      {[...Array(fullStars)].map((_, i) => (
-        <span key={`full-${i}`} className="star-filled">★</span>
-      ))}
-      {[...Array(emptyStars)].map((_, i) => (
-        <span key={`empty-${i}`} className="star-empty">★</span>
-      ))}
-    </div>
-  );
 };
 
 export default function AllBooks() {

@@ -15,7 +15,6 @@
   flex-shrink: 0;
 }
 
-/* Секции */
 .home-section {
   margin-bottom: 48px;
 }
@@ -123,30 +122,12 @@ body.dark-theme .home-book-card-large p {
   margin-top: 6px;
 }
 
-.home-rating-stars {
-  display: flex;
-  gap: 3px;
-  font-size: 16px;
-}
-
-.home-rating-stars .star-filled {
-  color: #F1C40F;
-}
-
-.home-rating-stars .star-empty {
-  color: #DFE2ED;
-}
-
-body.dark-theme .home-rating-stars .star-empty {
-  color: #555555;
-}
-
-.home-book-rating span {
+.rating-value {
   font-size: 14px;
   color: #888;
 }
 
-body.dark-theme .home-book-rating span {
+body.dark-theme .rating-value {
   color: #AAAAAA;
 }
 
@@ -344,37 +325,18 @@ body.dark-theme .review-date {
   color: #AAAAAA;
 }
 
-.home-review-card .review-rating {
-  margin-bottom: 8px;
-  display: flex;
-  gap: 3px;
-  font-size: 16px;
-}
-
-.home-review-card .review-rating .star-filled {
-  color: #F1C40F;
-}
-
-.home-review-card .review-rating .star-empty {
-  color: #DFE2ED;
-}
-
-body.dark-theme .home-review-card .review-rating .star-empty {
-  color: #555555;
-}
-
-.home-review-card .review-comment {
+.review-comment {
   font-size: 14px;
   line-height: 1.5;
   color: #444;
-  margin-top: 4px;
+  margin-top: 8px;
 }
 
-body.dark-theme .home-review-card .review-comment {
+body.dark-theme .review-comment {
   color: #CCCCCC;
 }
 
-/* Боковая панель - жанры */
+/* Боковая панель */
 .sidebar-section {
   background: #FFFFFF;
   border: 1px solid #DFE2ED;
@@ -426,6 +388,21 @@ body.dark-theme .genre-tag {
   color: white;
 }
 
+/* Глобальные стили для звёзд */
+.star-filled {
+  color: #F1C40F;
+  font-size: 16px;
+}
+
+.star-empty {
+  color: #DFE2ED;
+  font-size: 16px;
+}
+
+body.dark-theme .star-empty {
+  color: #555555;
+}
+
 .ripple {
   position: absolute;
   background: rgba(0, 0, 0, 0.08);
@@ -442,7 +419,6 @@ body.dark-theme .genre-tag {
   }
 }
 
-/* Адаптив */
 @media (max-width: 900px) {
   .home-page {
     flex-direction: column;

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import StarRating from '../components/StarRating';
 import './Home.css';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
@@ -23,22 +24,6 @@ const createRipple = (event) => {
   setTimeout(() => ripple.remove(), 600);
 };
 
-const StarRating = ({ rating }) => {
-  const fullStars = Math.floor(rating || 0);
-  const emptyStars = 5 - fullStars;
-  
-  return (
-    <div className="home-rating-stars">
-      {[...Array(fullStars)].map((_, i) => (
-        <span key={`full-${i}`} className="star-filled">★</span>
-      ))}
-      {[...Array(emptyStars)].map((_, i) => (
-        <span key={`empty-${i}`} className="star-empty">★</span>
-      ))}
-    </div>
-  );
-};
-
 export default function Home() {
   const navigate = useNavigate();
   const [recentBooks, setRecentBooks] = useState([]);
@@ -49,19 +34,16 @@ export default function Home() {
   useEffect(() => {
     const fetchHomeData = async () => {
       try {
-        // Последние добавленные книги (по id)
         const booksRes = await axios.get(`${API_URL}/api/books`);
         const allBooks = booksRes.data;
         const recent = [...allBooks].slice(-3).reverse();
         setRecentBooks(recent);
         
-        // Лучшие по рейтингу
         const topRated = [...allBooks]
           .sort((a, b) => (b.rating_avg || 0) - (a.rating_avg || 0))
           .slice(0, 3);
         setTopRatedBooks(topRated);
         
-        // Последние отзывы
         const reviewsRes = await axios.get(`${API_URL}/api/books/reviews/latest`);
         setRecentReviews(reviewsRes.data);
         
@@ -80,7 +62,6 @@ export default function Home() {
   return (
     <div className="home-page">
       <div className="home-main">
-        {/* Блок "Последнее" */}
         <section className="home-section">
           <div className="section-header">
             <h2>Последнее</h2>
@@ -104,7 +85,7 @@ export default function Home() {
                   <p>{book.author}</p>
                   <div className="home-book-rating">
                     <StarRating rating={book.rating_avg} />
-                    <span>{book.rating_avg || 'Нет оценок'}</span>
+                    <span className="rating-value">{book.rating_avg || 'Нет оценок'}</span>
                   </div>
                 </div>
               </div>
@@ -112,7 +93,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Блок "Лучшее" */}
         <section className="home-section">
           <div className="section-header">
             <h2>Лучшее</h2>
@@ -136,7 +116,7 @@ export default function Home() {
                   <p>{book.author}</p>
                   <div className="home-book-rating">
                     <StarRating rating={book.rating_avg} />
-                    <span>{book.rating_avg || 'Нет оценок'}</span>
+                    <span className="rating-value">{book.rating_avg || 'Нет оценок'}</span>
                   </div>
                 </div>
               </div>
@@ -144,72 +124,62 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Блок "Оценивают" */}
         <section className="home-section">
           <div className="section-header">
             <h2>Оценивают</h2>
           </div>
           <div className="reviews-list">
-            {recentReviews.length === 0 ? (
-              <div className="no-reviews">Пока нет отзывов</div>
-            ) : (
-              recentReviews.map(review => (
-                <div key={review.id} className="home-review-card">
-                  <div className="review-book-info">
-                    <div 
-                      className="review-book-cover"
-                      onClick={() => navigate(`/book/${review.book_id}`)}
-                    >
-                      <img 
-                        src={review.book_cover_url || 'https://via.placeholder.com/48x72?text=No+Cover'} 
-                        alt={review.book_title}
-                      />
-                    </div>
-                    <div 
-                      className="review-book-details"
-                      onClick={() => navigate(`/book/${review.book_id}`)}
-                    >
-                      <h4>{review.book_title}</h4>
-                      <p>{review.book_author}</p>
-                    </div>
+            {recentReviews.map(review => (
+              <div key={review.id} className="home-review-card">
+                <div className="review-book-info">
+                  <div 
+                    className="review-book-cover"
+                    onClick={() => navigate(`/book/${review.book_id}`)}
+                  >
+                    <img 
+                      src={review.book_cover_url || 'https://via.placeholder.com/48x72?text=No+Cover'} 
+                      alt={review.book_title}
+                    />
                   </div>
-                  <div className="review-author-info">
-                    <div 
-                      className="review-author-avatar"
-                      onClick={() => navigate(`/user/${review.username}`)}
-                    >
-                      <img 
-                        src={review.avatar_url || 'https://via.placeholder.com/32x32?text=Avatar'} 
-                        alt={review.username}
-                        onError={(e) => { e.target.src = 'https://via.placeholder.com/32x32?text=Avatar'; }}
-                      />
-                    </div>
-                    <div 
-                      className="review-author-details"
-                      onClick={() => navigate(`/user/${review.username}`)}
-                    >
-                      <strong>{review.username}</strong>
-                      <span className="review-date">
-                        {new Date(review.created_at).toLocaleDateString('ru-RU')}
-                      </span>
-                    </div>
+                  <div 
+                    className="review-book-details"
+                    onClick={() => navigate(`/book/${review.book_id}`)}
+                  >
+                    <h4>{review.book_title}</h4>
+                    <p>{review.book_author}</p>
                   </div>
-                  <div className="review-rating">
-                    <StarRating rating={review.rating} />
-                  </div>
-                  {review.comment && (
-                    <div className="review-comment">
-                      {review.comment}
-                    </div>
-                  )}
                 </div>
-              ))
-            )}
+                <div className="review-author-info">
+                  <div 
+                    className="review-author-avatar"
+                    onClick={() => navigate(`/user/${review.username}`)}
+                  >
+                    <img 
+                      src={review.avatar_url || 'https://via.placeholder.com/32x32?text=Avatar'} 
+                      alt={review.username}
+                    />
+                  </div>
+                  <div className="review-author-details">
+                    <strong>{review.username}</strong>
+                    <span className="review-date">
+                      {new Date(review.created_at).toLocaleDateString('ru-RU')}
+                    </span>
+                  </div>
+                </div>
+                <div className="review-rating">
+                  <StarRating rating={review.rating} />
+                </div>
+                {review.comment && (
+                  <div className="review-comment">
+                    {review.comment}
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
         </section>
       </div>
 
-      {/* Правая колонка - поиск по жанрам */}
       <aside className="home-sidebar">
         <div className="sidebar-section">
           <h3>Поиск по жанрам</h3>
