@@ -25,13 +25,12 @@ const createRipple = (event) => {
   setTimeout(() => ripple.remove(), 600);
 };
 
-// Компонент звёзд для отображения рейтинга
 const StarRating = ({ rating }) => {
   const fullStars = Math.floor(rating || 0);
   const emptyStars = 5 - fullStars;
   
   return (
-    <div className="shelf-book-rating">
+    <div className="shelf-book-stars">
       {[...Array(fullStars)].map((_, i) => (
         <span key={`full-${i}`} className="shelf-book-stars-filled">★</span>
       ))}
@@ -187,15 +186,17 @@ export default function Profile() {
                   >
                     <div className="shelf-book-cover">
                       <img 
-                        src={book.cover_url || 'https://via.placeholder.com/60x90?text=No+Cover'} 
+                        src={book.cover_url || 'https://via.placeholder.com/80x120?text=No+Cover'} 
                         alt={book.title}
                       />
                     </div>
                     <div className="shelf-book-info">
                       <h4>{book.title}</h4>
                       <p>{book.author}</p>
-                      <StarRating rating={book.user_rating} />
-                      <span className="shelf-book-year">{book.publication_year}</span>
+                      <div className="shelf-book-rating">
+                        <StarRating rating={book.user_rating} />
+                        <span>{book.user_rating ? `${book.user_rating} / 5` : 'Не оценено'}</span>
+                      </div>
                     </div>
                   </div>
                 ))
