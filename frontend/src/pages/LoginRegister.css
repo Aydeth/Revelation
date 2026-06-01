@@ -1,0 +1,155 @@
+.login-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 120px);
+  padding: 20px;
+}
+
+.login-panel {
+  width: 100%;
+  max-width: 400px;
+  background: #FFFFFF;
+  border: 1px solid #DFE2ED;
+  border-radius: 16px;
+  padding: 32px;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+body.dark-theme .login-panel {
+  background: #000000;
+  border-color: #1A1A1A;
+}
+
+.login-title {
+  font-size: 24px;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 24px;
+  color: #222;
+}
+
+body.dark-theme .login-title {
+  color: #E0E0E0;
+}
+
+.login-error {
+  background: #FFEBEE;
+  color: #C62828;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 14px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+body.dark-theme .login-error {
+  background: #331111;
+  color: #FF8888;
+}
+
+.login-field {
+  margin-bottom: 16px;
+}
+
+.login-field input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #DFE2ED;
+  border-radius: 8px;
+  font-size: 16px;
+  background-color: #FFFFFF;
+  color: #333333;
+  transition: border-color 0.2s;
+  font-family: inherit;
+}
+
+body.dark-theme .login-field input {
+  background-color: #000000;
+  border-color: #1A1A1A;
+  color: #E0E0E0;
+}
+
+.login-field input:focus {
+  outline: none;
+  border-color: #003BFF;
+}
+
+.login-field input:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.login-submit-btn {
+  width: 100%;
+  background-color: #003BFF;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  color: white;
+  margin-top: 8px;
+  margin-bottom: 16px;
+  position: relative;
+  overflow: hidden;
+  transition: none;
+}
+
+body.dark-theme .login-submit-btn {
+  background-color: #FFFFFF;
+  color: #000000;
+}
+
+.login-submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.login-submit-btn .ripple {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+body.dark-theme .login-submit-btn .ripple {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.login-toggle-btn {
+  width: 100%;
+  background: none;
+  border: 1px solid #DFE2ED;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  color: #1A1A1A;
+  position: relative;
+  overflow: hidden;
+  transition: none;
+}
+
+body.dark-theme .login-toggle-btn {
+  border-color: #1A1A1A;
+  color: #E0E0E0;
+}
+
+.login-toggle-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.login-toggle-btn .ripple {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+body.dark-theme .login-toggle-btn .ripple {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* Нет hover-эффектов */
+.login-submit-btn:hover,
+.login-toggle-btn:hover {
+  opacity: 1;
+}
