@@ -224,31 +224,39 @@ export default function BookPage() {
   };
 
   const handleReaction = async (reviewId, reaction) => {
-    setReactionLoading(prev => ({ ...prev, [reviewId]: true }));
-    try {
-      const token = localStorage.getItem('token');
-      const response = await axios.post(`${API_URL}/api/books/reviews/${reviewId}/react`,
-        { reaction },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      
-      setReviews(prev => prev.map(review => 
-        review.id === reviewId 
-          ? { ...review, likes: response.data.likes, dislikes: response.data.dislikes }
-          : review
-      ));
-      
-      if (response.data.userReaction === null) {
-        setUserReactions(prev => ({ ...prev, [reviewId]: null }));
+  setReactionLoading(prev => ({ ...prev, [reviewId]: true }));
+  try {
+    const token = localStorage.getItem('token');
+    const response = await axios.post(`${API_URL}/api/books/reviews/${reviewId}/react`,
+      { reaction },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    
+    // Обновляем счётчики в отзыве
+    setReviews(prev => prev.map(review => 
+      review.id === reviewId 
+        ? { ...review, likes: response.data.likes, dislikes: response.data.dislikes }
+        : review
+    ));
+    
+    // Обновляем состояние реакции пользователя
+    setUserReactions(prev => {
+      const current = prev[reviewId];
+      if (current === reaction) {
+        // Снимаем реакцию
+        return { ...prev, [reviewId]: null };
       } else {
-        setUserReactions(prev => ({ ...prev, [reviewId]: reaction }));
+        // Ставим новую реакцию
+        return { ...prev, [reviewId]: reaction };
       }
-    } catch (err) {
-      console.error('Error posting reaction:', err);
-    } finally {
-      setReactionLoading(prev => ({ ...prev, [reviewId]: false }));
-    }
-  };
+    });
+    
+  } catch (err) {
+    console.error('Error posting reaction:', err);
+  } finally {
+    setReactionLoading(prev => ({ ...prev, [reviewId]: false }));
+  }
+};
 
   const openReviewModal = () => {
     const existing = reviews.find(r => r.user_id === currentUserId);
