@@ -177,7 +177,7 @@ router.post('/:id/status', async (req, res) => {
     return res.status(401).json({ error: 'Unauthorized' });
   }
   
-  // Если status === null — удаляем запись
+  // Если status === null — удаляем только статус, НЕ удаляем отзыв
   if (status === null) {
     try {
       await pool.query(

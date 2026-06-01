@@ -165,6 +165,7 @@ router.get('/user/:username/shelf/:shelf', async (req, res) => {
     
     const userId = userResult.rows[0].id;
     
+    // Получаем книги с полки, рейтинг берём из отзывов
     const booksResult = await pool.query(`
       SELECT 
         b.id, 
@@ -172,10 +173,11 @@ router.get('/user/:username/shelf/:shelf', async (req, res) => {
         b.author, 
         b.cover_url, 
         b.publication_year,
-        COALESCE(ubs.rating, 0) as user_rating,
+        COALESCE(r.rating, 0) as user_rating,
         ubs.updated_at
       FROM user_book_status ubs
       JOIN books b ON ubs.book_id = b.id
+      LEFT JOIN reviews r ON r.user_id = ubs.user_id AND r.book_id = ubs.book_id
       WHERE ubs.user_id = $1 AND ubs.status = $2
       ORDER BY ubs.updated_at DESC
     `, [userId, shelf]);
