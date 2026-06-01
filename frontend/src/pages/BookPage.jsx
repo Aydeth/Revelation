@@ -235,10 +235,9 @@ export default function BookPage() {
         
         <div className="book-info">
           <h1>{book.title}</h1>
-          <h2>{book.author}</h2>
+          <h2>{book.author}{book.publication_year ? `, ${book.publication_year}` : ''}</h2>
           
           <div className="book-meta">
-            <span className="year-badge">{book.publication_year}</span>
             <div className="rating-badge">
               <div className="rating-stars">
                 {[...Array(Math.floor(book.rating_avg || 0))].map((_, i) => (

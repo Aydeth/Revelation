@@ -131,18 +131,6 @@ body.dark-theme .book-info h2 {
   align-items: center;
 }
 
-.year-badge {
-  font-size: 14px;
-  color: #555;
-  background: none;
-  padding: 0;
-  border-radius: 0;
-}
-
-body.dark-theme .year-badge {
-  color: #AAAAAA;
-}
-
 .rating-badge {
   display: flex;
   align-items: center;
@@ -308,7 +296,6 @@ body.dark-theme .book-reviews h3 {
   gap: 12px;
   margin-bottom: 8px;
   cursor: pointer;
-  flex-wrap: wrap;
 }
 
 .review-author-avatar {

@@ -165,17 +165,14 @@ export default function Home() {
                     <p>{review.book_author}</p>
                   </div>
                 </div>
-                <div className="review-author-info">
-                  <div 
-                    className="review-author-avatar"
-                    onClick={() => navigate(`/user/${review.username}`)}
-                  >
+               <div className="review-author-row">
+                  <div className="review-author-avatar">
                     <img 
                       src={review.avatar_url || 'https://via.placeholder.com/32x32?text=Avatar'} 
                       alt={review.username}
                     />
                   </div>
-                  <div className="review-author-details">
+                  <div className="review-author-info">
                     <strong>{review.username}</strong>
                     <span className="review-date">
                       {new Date(review.created_at).toLocaleDateString('ru-RU')}
