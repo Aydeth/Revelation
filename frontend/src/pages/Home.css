@@ -46,7 +46,7 @@ body.dark-theme .section-header h2 {
   position: relative;
   overflow: hidden;
   border-radius: 12px;
-  transition: background-color 0.2s ease, transform 0.15s ease;
+  transition: transform 0.15s ease;
   background: #FFFFFF;
   border: 1px solid #DFE2ED;
   transform: scale(1);
@@ -139,7 +139,7 @@ body.dark-theme .rating-value {
   position: relative;
   overflow: hidden;
   background-color: transparent;
-  transition: background-color 0.2s ease, transform 0.15s ease;
+  transition: transform 0.15s ease;
   border: none;
   border-radius: 12px;
   transform: scale(1);
@@ -225,6 +225,24 @@ body.dark-theme .home-book-info-vertical p {
   gap: 12px;
   margin-bottom: 12px;
   cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
+  transition: transform 0.15s ease;
+  transform: scale(1);
+}
+
+.review-book-info:active {
+  transform: scale(0.95);
+  transition: transform 0.08s ease;
+}
+
+.review-book-info .ripple {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+body.dark-theme .review-book-info .ripple {
+  background: rgba(255, 255, 255, 0.15);
 }
 
 .review-book-cover {
@@ -261,10 +279,49 @@ body.dark-theme .review-book-details p {
   color: #AAAAAA;
 }
 
+.review-author-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
+  transition: transform 0.15s ease;
+  transform: scale(1);
+}
+
+.review-author-row:active {
+  transform: scale(0.95);
+  transition: transform 0.08s ease;
+}
+
+.review-author-row .ripple {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+body.dark-theme .review-author-row .ripple {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.review-author-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.review-author-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .review-author-info {
   flex: 1;
   cursor: pointer;
-  margin-bottom: 10px;
 }
 
 .review-author-info strong {
@@ -286,27 +343,6 @@ body.dark-theme .review-author-info strong {
 
 body.dark-theme .review-date {
   color: #AAAAAA;
-}
-
-.review-author-avatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  overflow: hidden;
-  flex-shrink: 0;
-  margin-right: 12px;
-}
-
-.review-author-avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.review-author-row {
-  display: flex;
-  align-items: flex-start;
-  margin-bottom: 10px;
 }
 
 .review-rating {
@@ -375,14 +411,25 @@ body.dark-theme .sidebar-section h3 {
   background: #F5F5F5;
   padding: 4px 12px;
   border-radius: 16px;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 400;
   cursor: pointer;
   text-decoration: none;
   color: #555;
+  transition: none;
 }
 
 body.dark-theme .genre-tag {
+  background: #1A1A1A;
+  color: #CCCCCC;
+}
+
+.genre-tag:hover {
+  background: #F5F5F5;
+  color: #555;
+}
+
+body.dark-theme .genre-tag:hover {
   background: #1A1A1A;
   color: #CCCCCC;
 }
@@ -435,9 +482,5 @@ body.dark-theme .genre-tag {
     width: 100%;
     height: auto;
     aspect-ratio: 2 / 3;
-  }
-  
-  .review-author-row {
-    flex-direction: column;
   }
 }

@@ -148,29 +148,32 @@ export default function Home() {
           <div className="reviews-list">
             {recentReviews.map(review => (
               <div key={review.id} className="home-review-card">
-                <div className="review-book-info">
-                  <div 
-                    className="review-book-cover"
-                    onClick={() => navigate(`/book/${review.book_id}`)}
-                  >
+                <div 
+                  className="review-book-info"
+                  onClick={() => navigate(`/book/${review.book_id}`)}
+                  onMouseDown={createRipple}
+                >
+                  <div className="review-book-cover">
                     <img 
                       src={review.book_cover_url || 'https://via.placeholder.com/48x72?text=No+Cover'} 
                       alt={review.book_title}
                     />
                   </div>
-                  <div 
-                    className="review-book-details"
-                    onClick={() => navigate(`/book/${review.book_id}`)}
-                  >
+                  <div className="review-book-details">
                     <h4>{review.book_title}</h4>
                     <p>{review.book_author}</p>
                   </div>
                 </div>
-               <div className="review-author-row">
+                <div 
+                  className="review-author-row"
+                  onClick={() => navigate(`/user/${review.username}`)}
+                  onMouseDown={createRipple}
+                >
                   <div className="review-author-avatar">
                     <img 
                       src={review.avatar_url || 'https://via.placeholder.com/32x32?text=Avatar'} 
                       alt={review.username}
+                      onError={(e) => { e.target.src = 'https://via.placeholder.com/32x32?text=Avatar'; }}
                     />
                   </div>
                   <div className="review-author-info">
