@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
-import { ArrowLeft, PenLine, ThumbsUp, ThumbsDown } from 'lucide-react';
+import { ArrowLeft, PenLine, ThumbsUp, ThumbsDown, ChevronDown, Check } from 'lucide-react';
 import ReviewModal from '../components/ReviewModal';
 import StarRating from '../components/StarRating';
 import './BookPage.css';
