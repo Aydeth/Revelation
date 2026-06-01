@@ -28,6 +28,7 @@ const tagNames = {
   'classic': 'Классика',
   'psychological': 'Психологический роман',
   'russian': 'Русская литература',
+  'english': 'Английская литература',
   'drama': 'Драма',
   'romance': 'Роман',
   'philosophy': 'Философия',

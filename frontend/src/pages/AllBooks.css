@@ -3,6 +3,21 @@
   padding: 20px 0;
 }
 
+.page-header {
+  margin-bottom: 24px;
+}
+
+.page-header h1 {
+  font-size: 28px;
+  font-weight: 600;
+  color: #222;
+  margin: 0;
+}
+
+body.dark-theme .page-header h1 {
+  color: #E0E0E0;
+}
+
 .search-section {
   margin-bottom: 20px;
 }
@@ -45,24 +60,25 @@ body.dark-theme .search-input {
   position: relative;
   overflow: hidden;
   background-color: transparent;
-  transition: background-color 0.2s ease, transform 0.15s ease;
+  transition: transform 0.15s ease;
   border: none;
   border-radius: 12px;
   transform: scale(1);
   will-change: transform;
 }
 
-.book-card:active {
-  transform: scale(0.95);
-  transition: transform 0.08s ease;
-}
-
+/* Убираем hover-эффект */
 .book-card:hover {
-  background-color: #F9F9F9;
+  background-color: transparent;
 }
 
 body.dark-theme .book-card:hover {
-  background-color: #1A1A1A;
+  background-color: transparent;
+}
+
+.book-card:active {
+  transform: scale(0.95);
+  transition: transform 0.08s ease;
 }
 
 .book-cover {
@@ -208,6 +224,14 @@ body.dark-theme .book-card .ripple {
 @media (max-width: 768px) {
   .feed-container {
     padding: 16px 0;
+  }
+  
+  .page-header {
+    margin-bottom: 16px;
+  }
+  
+  .page-header h1 {
+    font-size: 24px;
   }
   
   .book-card {

@@ -62,14 +62,6 @@ body.dark-theme .home-book-card-large {
   transition: transform 0.08s ease;
 }
 
-.home-book-card-large:hover {
-  background-color: #F9F9F9;
-}
-
-body.dark-theme .home-book-card-large:hover {
-  background-color: #1A1A1A;
-}
-
 .home-book-card-large .ripple {
   background: rgba(0, 0, 0, 0.08);
 }
@@ -156,14 +148,6 @@ body.dark-theme .rating-value {
 .home-book-card-vertical:active {
   transform: scale(0.95);
   transition: transform 0.08s ease;
-}
-
-.home-book-card-vertical:hover {
-  background-color: #F9F9F9;
-}
-
-body.dark-theme .home-book-card-vertical:hover {
-  background-color: #1A1A1A;
 }
 
 .home-book-card-vertical .ripple {

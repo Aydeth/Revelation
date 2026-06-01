@@ -155,14 +155,6 @@ body.dark-theme .dropdown-item {
   color: #E0E0E0;
 }
 
-.dropdown-item:hover {
-  background-color: #F9F9F9;
-}
-
-body.dark-theme .dropdown-item:hover {
-  background-color: #1A1A1A;
-}
-
 .dropdown-item.active {
   color: #003BFF;
   font-weight: 500;
