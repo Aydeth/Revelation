@@ -317,6 +317,7 @@ export default function AdminPanel() {
                 <thead>
                   <tr>
                     <th>ID</th>
+                    <th>Обложка</th>
                     <th>Название</th>
                     <th>Автор</th>
                     <th>Год</th>
@@ -328,6 +329,14 @@ export default function AdminPanel() {
                   {books.map(book => (
                     <tr key={book.id}>
                       <td>{book.id}</td>
+                      <td>
+                        <img 
+                          src={book.cover_url || '/Avatar.png'} 
+                          alt={book.title}
+                          className="admin-book-cover"
+                          onError={(e) => { e.target.src = '/Avatar.png'; }}
+                        />
+                      </td>
                       <td>{book.title}</td>
                       <td>{book.author}</td>
                       <td>{book.publication_year || '—'}</td>
