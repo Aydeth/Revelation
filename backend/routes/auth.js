@@ -269,7 +269,26 @@ router.delete('/admin/users/:id', authMiddleware, isAdmin, async (req, res) => {
       return res.status(400).json({ error: 'Cannot delete yourself' });
     }
     
+    // Получаем все отзывы пользователя для обновления рейтинга книг
+    const userReviews = await pool.query('SELECT book_id FROM reviews WHERE user_id = $1', [id]);
+    
+    // Удаляем пользователя (каскадно удалятся отзывы и статусы)
     await pool.query('DELETE FROM users WHERE id = $1', [id]);
+    
+    // Обновляем рейтинг для каждой книги, у которой были отзывы от этого пользователя
+    for (const review of userReviews.rows) {
+      await pool.query(`
+        UPDATE books 
+        SET rating_avg = (
+          SELECT COALESCE(AVG(rating), 0) FROM reviews WHERE book_id = $1
+        ),
+        rating_count = (
+          SELECT COUNT(*) FROM reviews WHERE book_id = $1
+        )
+        WHERE id = $1
+      `, [review.book_id]);
+    }
+    
     res.json({ success: true });
   } catch (err) {
     console.error('Error deleting user:', err);
