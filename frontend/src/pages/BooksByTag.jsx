@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import StarRating from '../components/StarRating';
 import './AllBooks.css';
@@ -24,37 +24,43 @@ const createRipple = (event) => {
   setTimeout(() => ripple.remove(), 600);
 };
 
-export default function AllBooks() {
-  const [allBooks, setAllBooks] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
+// Маппинг тегов с английского на русский
+const tagNames = {
+  'classic': 'Классика',
+  'psychological': 'Психологический роман',
+  'russian': 'Русская литература',
+  'drama': 'Драма',
+  'romance': 'Роман',
+  'philosophy': 'Философия',
+  'adventure': 'Приключения',
+  'fantasy': 'Фантастика',
+  'detective': 'Детектив'
+};
+
+export default function BooksByTag() {
+  const { tag } = useParams();
+  const navigate = useNavigate();
+  const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [pendingBookId, setPendingBookId] = useState(null);
-  const navigate = useNavigate();
+
+  const displayTagName = tagNames[tag] || tag;
 
   useEffect(() => {
-    const fetchBooks = async () => {
+    const fetchBooksByTag = async () => {
       try {
-        const token = localStorage.getItem('token');
-        const response = await axios.get(`${API_URL}/api/books`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        setAllBooks(response.data);
+        const response = await axios.get(`${API_URL}/api/books/tag/${tag}`);
+        setBooks(response.data);
       } catch (err) {
-        console.error('Error fetching books:', err);
+        console.error('Error fetching books by tag:', err);
+        setBooks([]);
       } finally {
         setLoading(false);
       }
     };
-    fetchBooks();
-  }, []);
-
-  const filteredBooks = allBooks.filter(book => {
-    const searchLower = searchTerm.toLowerCase();
-    return (
-      book.title.toLowerCase().includes(searchLower) ||
-      book.author.toLowerCase().includes(searchLower)
-    );
-  });
+    
+    fetchBooksByTag();
+  }, [tag]);
 
   const handleMouseDown = (bookId, e) => {
     const card = e.currentTarget;
@@ -86,31 +92,38 @@ export default function AllBooks() {
     setPendingBookId(null);
   };
 
-  if (loading) return <div className="loading">Загрузка книг...</div>;
+  if (loading) return <div className="loading">Загрузка...</div>;
 
   return (
     <div className="feed-container">
       <div className="page-header">
-        <h1>Все книги</h1>
+        <h1>{displayTagName}</h1>
       </div>
+
       <div className="search-section">
         <input
           type="text"
           className="search-input"
           placeholder="Поиск по названию или автору..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={(e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const filtered = books.filter(book => 
+              book.title.toLowerCase().includes(searchTerm) ||
+              book.author.toLowerCase().includes(searchTerm)
+            );
+            // Здесь нужно обновить отображаемые книги
+          }}
         />
       </div>
 
       <div className="books-list">
-        {filteredBooks.length === 0 ? (
+        {books.length === 0 ? (
           <div className="empty-library">
             <p className="empty-title">Книги не найдены</p>
-            <p className="empty-subtitle">Попробуйте изменить параметры поиска</p>
+            <p className="empty-subtitle">По тегу "{displayTagName}" нет книг</p>
           </div>
         ) : (
-          filteredBooks.map(book => (
+          books.map(book => (
             <div
               key={book.id}
               className="book-card"

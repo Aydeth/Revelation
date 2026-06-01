@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import StarRating from '../components/StarRating';
 import './Home.css';
@@ -22,6 +22,22 @@ const createRipple = (event) => {
   
   button.appendChild(ripple);
   setTimeout(() => ripple.remove(), 600);
+};
+
+// Функция для преобразования русского тега в английский URL
+const getEnglishTag = (russianTag) => {
+  const mapping = {
+    'Классика': 'classic',
+    'Психологический роман': 'psychological',
+    'Русская литература': 'russian',
+    'Драма': 'drama',
+    'Роман': 'romance',
+    'Философия': 'philosophy',
+    'Приключения': 'adventure',
+    'Фантастика': 'fantasy',
+    'Детектив': 'detective'
+  };
+  return mapping[russianTag] || russianTag.toLowerCase();
 };
 
 export default function Home() {
@@ -184,14 +200,15 @@ export default function Home() {
         <div className="sidebar-section">
           <h3>Поиск по жанрам</h3>
           <div className="genres-list">
-            <div className="genre-tag">Классика</div>
-            <div className="genre-tag">Роман</div>
-            <div className="genre-tag">Драма</div>
-            <div className="genre-tag">Философия</div>
-            <div className="genre-tag">Психология</div>
-            <div className="genre-tag">Приключения</div>
-            <div className="genre-tag">Фантастика</div>
-            <div className="genre-tag">Детектив</div>
+            <Link to="/books/tag/classic" className="genre-tag">Классика</Link>
+            <Link to="/books/tag/psychological" className="genre-tag">Психологический роман</Link>
+            <Link to="/books/tag/russian" className="genre-tag">Русская литература</Link>
+            <Link to="/books/tag/drama" className="genre-tag">Драма</Link>
+            <Link to="/books/tag/romance" className="genre-tag">Роман</Link>
+            <Link to="/books/tag/philosophy" className="genre-tag">Философия</Link>
+            <Link to="/books/tag/adventure" className="genre-tag">Приключения</Link>
+            <Link to="/books/tag/fantasy" className="genre-tag">Фантастика</Link>
+            <Link to="/books/tag/detective" className="genre-tag">Детектив</Link>
           </div>
         </div>
       </aside>

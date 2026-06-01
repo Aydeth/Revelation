@@ -6,6 +6,7 @@ import Profile from './pages/Profile';
 import LoginRegister from './pages/LoginRegister';
 import BookPage from './pages/BookPage';
 import ReadBook from './pages/ReadBook';
+import BooksByTag from './pages/BooksByTag';
 import { useTheme } from './context/ThemeContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import './App.css';
@@ -65,6 +66,7 @@ function AppContent() {
           <Route path="/user/:username" element={user ? <Profile /> : <Navigate to="/login" />} />
           <Route path="/book/:id" element={user ? <BookPage /> : <Navigate to="/login" />} />
           <Route path="/read/:id/:pageNum" element={user ? <ReadBook /> : <Navigate to="/login" />} />
+          <Route path="/books/tag/:tag" element={user ? <BooksByTag /> : <Navigate to="/login" />} />
         </Routes>
       </main>
 

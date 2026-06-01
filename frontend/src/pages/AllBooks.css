@@ -179,6 +179,21 @@ body.dark-theme .book-card .ripple {
   background: rgba(255, 255, 255, 0.15);
 }
 
+.page-header {
+  margin-bottom: 24px;
+}
+
+.page-header h1 {
+  font-size: 28px;
+  font-weight: 600;
+  color: #222;
+  margin: 0;
+}
+
+body.dark-theme .page-header h1 {
+  color: #E0E0E0;
+}
+
 @keyframes ripple-effect {
   to {
     transform: scale(4);

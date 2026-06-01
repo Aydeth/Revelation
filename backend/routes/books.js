@@ -402,4 +402,40 @@ router.get('/reviews/latest', async (req, res) => {
   }
 });
 
+// ============================================
+// 12. ПОЛУЧИТЬ КНИГИ ПО ТЕГУ
+// ============================================
+router.get('/tag/:tag', async (req, res) => {
+  const { tag } = req.params;
+  
+  // Маппинг английских тегов на русские
+  const tagMapping = {
+    'classic': 'Классика',
+    'psychological': 'Психологический роман',
+    'russian': 'Русская литература',
+    'drama': 'Драма',
+    'romance': 'Роман',
+    'philosophy': 'Философия',
+    'adventure': 'Приключения',
+    'fantasy': 'Фантастика',
+    'detective': 'Детектив'
+  };
+  
+  const russianTag = tagMapping[tag] || tag;
+  
+  try {
+    const result = await pool.query(`
+      SELECT id, title, author, cover_url, rating_avg, publication_year
+      FROM books 
+      WHERE tags LIKE $1
+      ORDER BY id
+    `, [`%${russianTag}%`]);
+    
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error fetching books by tag:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 module.exports = router;
