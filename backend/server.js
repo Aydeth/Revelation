@@ -120,33 +120,6 @@ app.get('/api/books/reviews/latest', async (req, res) => {
   }
 });
 
-// Временный маршрут для добавления колонки tags
-app.get('/api/migrate-tags', async (req, res) => {
-  const { Pool } = require('pg');
-  const pool = new Pool({
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    database: process.env.DB_NAME,
-    ssl: { rejectUnauthorized: false }
-  });
-  
-  try {
-    await pool.query('ALTER TABLE books ADD COLUMN IF NOT EXISTS tags TEXT');
-    res.json({ success: true, message: 'Tags column added' });
-  } catch (err) {
-    console.error('Migration error:', err);
-    res.status(500).json({ error: err.message });
-  }
-});
-
-app.post('/api/books/sync', async (req, res) => {
-  const { syncBooks } = require('./utils/bookParser');
-  await syncBooks();
-  res.json({ success: true });
-});
-
 // ============================================
 // Защищённые маршруты (с middleware)
 // ============================================

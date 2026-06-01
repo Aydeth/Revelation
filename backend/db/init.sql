@@ -1,30 +1,16 @@
 -- ============================================
--- 1. ДОБАВЛЕНИЕ НЕДОСТАЮЩИХ КОЛОНОК
+-- 1. ПРИНУДИТЕЛЬНАЯ ОЧИСТКА (удаляем ВСЕ таблицы)
 -- ============================================
-
-ALTER TABLE users ADD COLUMN IF NOT EXISTS avatar_url TEXT;
-ALTER TABLE user_book_status ADD COLUMN IF NOT EXISTS rating INTEGER CHECK (rating >= 1 AND rating <= 5);
-ALTER TABLE books ADD COLUMN IF NOT EXISTS tags TEXT;
-
--- ============================================
--- 2. СОЗДАНИЕ ТАБЛИЦЫ ОТЗЫВОВ
--- ============================================
-
-CREATE TABLE IF NOT EXISTS reviews (
-  id SERIAL PRIMARY KEY,
-  user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-  book_id INTEGER REFERENCES books(id) ON DELETE CASCADE,
-  rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),
-  comment TEXT,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+DROP TABLE IF EXISTS user_book_status CASCADE;
+DROP TABLE IF EXISTS reviews CASCADE;
+DROP TABLE IF EXISTS books CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
 
 -- ============================================
--- 3. СОЗДАНИЕ ОСТАЛЬНЫХ ТАБЛИЦ (если их нет)
+-- 2. СОЗДАНИЕ ТАБЛИЦ ЗАНОВО
 -- ============================================
 
-CREATE TABLE IF NOT EXISTS users (
+CREATE TABLE users (
   id SERIAL PRIMARY KEY,
   username VARCHAR(100) UNIQUE NOT NULL,
   email VARCHAR(255) UNIQUE NOT NULL,
@@ -33,7 +19,7 @@ CREATE TABLE IF NOT EXISTS users (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS books (
+CREATE TABLE books (
   id SERIAL PRIMARY KEY,
   title VARCHAR(255) NOT NULL,
   author VARCHAR(255) NOT NULL,
@@ -47,7 +33,7 @@ CREATE TABLE IF NOT EXISTS books (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS user_book_status (
+CREATE TABLE user_book_status (
   user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
   book_id INTEGER REFERENCES books(id) ON DELETE CASCADE,
   status VARCHAR(20) CHECK (status IN ('read', 'reading', 'want_to_read')),
@@ -55,4 +41,14 @@ CREATE TABLE IF NOT EXISTS user_book_status (
   rating INTEGER CHECK (rating >= 1 AND rating <= 5),
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (user_id, book_id)
+);
+
+CREATE TABLE reviews (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  book_id INTEGER REFERENCES books(id) ON DELETE CASCADE,
+  rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),
+  comment TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
