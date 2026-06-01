@@ -294,7 +294,7 @@ export default function BookPage() {
           {book.tags && book.tags.length > 0 && (
             <div className="book-tags">
               {book.tags.split(',').map((tag, index) => (
-                <span key={index} className="book-tag">{tag}</span>
+                <span key={index} className="book-tag">{tag.trim()}</span>
               ))}
             </div>
           )}

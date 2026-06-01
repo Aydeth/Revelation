@@ -29,7 +29,7 @@ function splitIntoSentences(text) {
 }
 
 // ============================================
-// 1. ПОЛУЧИТЬ ВСЕ КНИГИ (для ленты) - ДУБЛИРУЕТСЯ В SERVER.JS, НО ОСТАВЛЯЕМ ДЛЯ ЗАЩИЩЁННЫХ МАРШРУТОВ
+// 1. ПОЛУЧИТЬ ВСЕ КНИГИ (для ленты)
 // ============================================
 router.get('/', async (req, res) => {
   try {
@@ -46,13 +46,13 @@ router.get('/', async (req, res) => {
 });
 
 // ============================================
-// 2. ПОЛУЧИТЬ КНИГУ ПО ID (без текста) - ДУБЛИРУЕТСЯ В SERVER.JS
+// 2. ПОЛУЧИТЬ КНИГУ ПО ID (без текста)
 // ============================================
 router.get('/:id', async (req, res) => {
   const { id } = req.params;
   try {
     const result = await pool.query(`
-      SELECT id, title, author, description, cover_url, publication_year, rating_avg, rating_count 
+      SELECT id, title, author, description, cover_url, publication_year, rating_avg, rating_count, tags
       FROM books 
       WHERE id = $1
     `, [id]);
@@ -248,7 +248,7 @@ router.get('/:id/progress', async (req, res) => {
 });
 
 // ============================================
-// 8. ПОЛУЧИТЬ ОТЗЫВЫ ДЛЯ КНИГИ (публичный - дублируется в server.js)
+// 8. ПОЛУЧИТЬ ОТЗЫВЫ ДЛЯ КНИГИ
 // ============================================
 router.get('/:id/reviews', async (req, res) => {
   const { id } = req.params;
@@ -367,6 +367,38 @@ router.delete('/:id/reviews', async (req, res) => {
   } catch (err) {
     console.error('Error deleting review:', err);
     res.status(500).json({ error: 'Server error: ' + err.message });
+  }
+});
+
+// ============================================
+// 11. ПОЛУЧИТЬ ПОСЛЕДНИЕ ОТЗЫВЫ ДЛЯ ГЛАВНОЙ СТРАНИЦЫ
+// ============================================
+router.get('/reviews/latest', async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT 
+        r.id,
+        r.rating,
+        r.comment,
+        r.created_at,
+        r.book_id,
+        u.id as user_id,
+        u.username,
+        u.avatar_url,
+        b.title as book_title,
+        b.author as book_author,
+        b.cover_url as book_cover_url
+      FROM reviews r
+      JOIN users u ON r.user_id = u.id
+      JOIN books b ON r.book_id = b.id
+      ORDER BY r.created_at DESC
+      LIMIT 3
+    `);
+    
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error fetching latest reviews:', err);
+    res.status(500).json({ error: 'Server error' });
   }
 });
 
