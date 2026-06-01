@@ -343,7 +343,7 @@ export default function AdminPanel() {
                       <td>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                           <StarRating rating={book.rating_avg} />
-                          <span>({book.rating_count || 0})</span>
+                          <span>{book.rating_avg ? book.rating_avg : 'Нет оценок'}</span>
                         </div>
                       </td>
                       <td>
