@@ -32,6 +32,8 @@ const getEnglishTag = (russianTag) => {
     'Психологический роман': 'psychological',
     'Русская литература': 'russian',
     'Английская литература': 'english',
+    'Древняя литература': 'ancient',
+    'Поэма': 'poem',
     'Драма': 'drama',
     'Роман': 'romance',
     'Философия': 'philosophy',

@@ -158,17 +158,19 @@ app.get('/api/books/tag/:tag', async (req, res) => {
   });
   
   const tagMapping = {
-    'classic': 'Классика',
-    'psychological': 'Психологический роман',
-    'russian': 'Русская литература',
-    'english': 'Английская литература',
-    'drama': 'Драма',
-    'romance': 'Роман',
-    'philosophy': 'Философия',
-    'adventure': 'Приключения',
-    'fantasy': 'Фантастика',
-    'detective': 'Детектив'
-  };
+  'classic': 'Классика',
+  'psychological': 'Психологический роман',
+  'russian': 'Русская литература',
+  'english': 'Английская литература',
+  'ancient': 'Древняя литература',
+  'poem': 'Поэма',
+  'drama': 'Драма',
+  'romance': 'Роман',
+  'philosophy': 'Философия',
+  'adventure': 'Приключения',
+  'fantasy': 'Фантастика',
+  'detective': 'Детектив'
+};
   
   const russianTag = tagMapping[tag] || tag;
   
