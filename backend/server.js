@@ -51,7 +51,7 @@ app.get('/api/books/:id', async (req, res) => {
   const { id } = req.params;
   try {
     const result = await pool.query(`
-      SELECT id, title, author, description, cover_url, publication_year, rating_avg, rating_count 
+      SELECT id, title, author, description, cover_url, publication_year, rating_avg, rating_count, tags
       FROM books 
       WHERE id = $1
     `, [id]);
@@ -139,30 +139,6 @@ app.get('/api/check-tags', async (req, res) => {
       WHERE table_name = 'books'
     `);
     res.json(result.rows);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-app.get('/api/books-debug/:id', async (req, res) => {
-  const { Pool } = require('pg');
-  const pool = new Pool({
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    database: process.env.DB_NAME,
-    ssl: { rejectUnauthorized: false }
-  });
-  
-  const { id } = req.params;
-  try {
-    const result = await pool.query(`
-      SELECT id, title, author, description, cover_url, publication_year, rating_avg, rating_count, tags
-      FROM books 
-      WHERE id = $1
-    `, [id]);
-    res.json(result.rows[0]);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
