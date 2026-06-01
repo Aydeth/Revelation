@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { ArrowLeft, PenLine } from 'lucide-react';
 import ReviewModal from '../components/ReviewModal';
+import StarRating from '../components/StarRating';
 import './BookPage.css';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
@@ -25,20 +26,20 @@ const createRipple = (event) => {
   setTimeout(() => ripple.remove(), 600);
 };
 
-const StarRating = ({ rating }) => {
-  const fullStars = Math.floor(rating || 0);
-  const emptyStars = 5 - fullStars;
-  
-  return (
-    <div className="review-rating">
-      {[...Array(fullStars)].map((_, i) => (
-        <span key={`full-${i}`} className="review-star-filled">★</span>
-      ))}
-      {[...Array(emptyStars)].map((_, i) => (
-        <span key={`empty-${i}`} className="review-star-unfilled">★</span>
-      ))}
-    </div>
-  );
+// Функция для преобразования русского тега в английский URL
+const getEnglishTag = (russianTag) => {
+  const mapping = {
+    'Классика': 'classic',
+    'Психологический роман': 'psychological',
+    'Русская литература': 'russian',
+    'Драма': 'drama',
+    'Роман': 'romance',
+    'Философия': 'philosophy',
+    'Приключения': 'adventure',
+    'Фантастика': 'fantasy',
+    'Детектив': 'detective'
+  };
+  return mapping[russianTag] || russianTag.toLowerCase();
 };
 
 export default function BookPage() {
@@ -60,11 +61,9 @@ export default function BookPage() {
       try {
         const token = localStorage.getItem('token');
         
-        // Загружаем книгу (публичный запрос)
         const bookRes = await axios.get(`${API_URL}/api/books/${id}`);
         setBook(bookRes.data);
         
-        // Загружаем отзывы (публичный запрос)
         try {
           const reviewsRes = await axios.get(`${API_URL}/api/books/${id}/reviews`);
           setReviews(reviewsRes.data);
@@ -73,7 +72,6 @@ export default function BookPage() {
           setReviews([]);
         }
         
-        // Загружаем текущего пользователя
         if (token) {
           try {
             const meRes = await axios.get(`${API_URL}/api/auth/me`, {
@@ -84,7 +82,6 @@ export default function BookPage() {
             console.error('Ошибка загрузки пользователя:', meErr);
           }
           
-          // Загружаем прогресс чтения (требует токен)
           try {
             const progressResponse = await axios.get(`${API_URL}/api/books/${id}/progress`, {
               headers: { Authorization: `Bearer ${token}` }
@@ -98,7 +95,6 @@ export default function BookPage() {
             console.error('Ошибка загрузки прогресса:', progressErr);
           }
           
-          // Загружаем статус книги (требует токен)
           try {
             const statusResponse = await axios.get(`${API_URL}/api/books/${id}/status`, {
               headers: { Authorization: `Bearer ${token}` }
@@ -147,17 +143,14 @@ export default function BookPage() {
     try {
       const token = localStorage.getItem('token');
       
-      // Сохраняем отзыв
       await axios.post(`${API_URL}/api/books/${id}/reviews`,
         { rating, comment },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       
-      // Обновляем список отзывов (публичный)
       const reviewsRes = await axios.get(`${API_URL}/api/books/${id}/reviews`);
       setReviews(reviewsRes.data);
       
-      // Обновляем книгу (публичный)
       const bookRes = await axios.get(`${API_URL}/api/books/${id}`);
       setBook(prev => ({ ...prev, rating_avg: bookRes.data.rating_avg, rating_count: bookRes.data.rating_count }));
       
@@ -176,16 +169,13 @@ export default function BookPage() {
     try {
       const token = localStorage.getItem('token');
       
-      // Удаляем отзыв
       await axios.delete(`${API_URL}/api/books/${id}/reviews`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       
-      // Обновляем список отзывов (публичный)
       const reviewsRes = await axios.get(`${API_URL}/api/books/${id}/reviews`);
       setReviews(reviewsRes.data);
       
-      // Обновляем книгу (публичный)
       const bookRes = await axios.get(`${API_URL}/api/books/${id}`);
       setBook(prev => ({ ...prev, rating_avg: bookRes.data.rating_avg, rating_count: bookRes.data.rating_count }));
       
@@ -216,8 +206,15 @@ export default function BookPage() {
 
   return (
     <div className="book-page">
+      <button 
+        className="back-button"
+        onClick={() => navigate('/')}
+        onMouseDown={createRipple}
+      >
+        <ArrowLeft size={20} />
+      </button>
+      
       <div className="book-content">
-        {/* Левая колонка: обложка + кнопки */}
         <div className="book-left-column">
           <div className="book-cover-large">
             <img 
@@ -244,7 +241,6 @@ export default function BookPage() {
           </button>
         </div>
         
-        {/* Правая колонка: информация о книге */}
         <div className="book-info">
           <h1>{book.title}</h1>
           <h2>{book.author}</h2>
@@ -263,12 +259,23 @@ export default function BookPage() {
               <span className="rating-value">{book.rating_avg || 'Нет оценок'}</span>
             </div>
           </div>
-
+          
+          {/* Теги книги - кликабельные */}
           {book.tags && book.tags.length > 0 && (
             <div className="book-tags">
-              {book.tags.split(',').map((tag, index) => (
-                <span key={index} className="book-tag">{tag.trim()}</span>
-              ))}
+              {book.tags.split(',').map((tag, index) => {
+                const englishTag = getEnglishTag(tag.trim());
+                return (
+                  <Link 
+                    key={index} 
+                    to={`/books/tag/${englishTag}`} 
+                    className="book-tag"
+                    onMouseDown={createRipple}
+                  >
+                    {tag.trim()}
+                  </Link>
+                );
+              })}
             </div>
           )}
           
@@ -306,7 +313,6 @@ export default function BookPage() {
         </div>
       </div>
       
-      {/* Блок отзывов - отдельно после book-content */}
       <div className="book-reviews">
         <h3>Отзывы ({reviews.length})</h3>
         <div className="reviews-list">
