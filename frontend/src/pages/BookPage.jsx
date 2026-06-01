@@ -327,7 +327,6 @@ export default function BookPage() {
                     key={index} 
                     to={`/books/tag/${englishTag}`} 
                     className="book-tag"
-                    onMouseDown={createRipple}
                   >
                     {tag.trim()}
                   </Link>
@@ -351,21 +350,19 @@ export default function BookPage() {
           ) : (
             reviews.map(review => (
               <div key={review.id} className="review-card">
-                <div className="review-author">
-                  <div 
-                    className="review-author-avatar"
-                    onClick={() => navigate(`/user/${review.username}`)}
-                  >
+                <div 
+                  className="review-author review-author-clickable"
+                  onClick={() => navigate(`/user/${review.username}`)}
+                  onMouseDown={createRipple}
+                >
+                  <div className="review-author-avatar">
                     <img 
                       src={review.avatar_url || '/Avatar.png'} 
                       alt={review.username}
                       onError={(e) => { e.target.src = '/Avatar.png'; }}
                     />
                   </div>
-                  <div 
-                    className="review-author-info"
-                    onClick={() => navigate(`/user/${review.username}`)}
-                  >
+                  <div className="review-author-info">
                     <strong>{review.username}</strong>
                     <span className="review-date">
                       {new Date(review.created_at).toLocaleDateString('ru-RU')}
