@@ -355,9 +355,9 @@ export default function BookPage() {
                     onClick={() => navigate(`/user/${review.username}`)}
                   >
                     <img 
-                      src={review.avatar_url || 'https://via.placeholder.com/40x40?text=Avatar'} 
+                      src={review.avatar_url || '/Avatar.png'} 
                       alt={review.username}
-                      onError={(e) => { e.target.src = 'https://via.placeholder.com/40x40?text=Avatar'; }}
+                      onError={(e) => { e.target.src = '/Avatar.png'; }}
                     />
                   </div>
                   <div 

@@ -108,8 +108,9 @@ export default function Profile() {
         <div className="profile-left">
           <div className="profile-avatar">
             <img 
-              src={profileUser.avatar_url || 'https://via.placeholder.com/240x240?text=Avatar'} 
+              src={profileUser.avatar_url || '/Avatar.png'} 
               alt={profileUser.username}
+              onError={(e) => { e.target.src = '/Avatar.png'; }}
             />
           </div>
           <div className="profile-username">
