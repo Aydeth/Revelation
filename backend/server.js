@@ -10,10 +10,10 @@ app.use(express.urlencoded({ extended: true }));
 
 // Статическая папка для загруженных файлов
 app.use('/avatars', express.static(path.join(__dirname, 'data/uploads')));
-app.use('/covers', express.static(path.join(__dirname, 'books/covers')));
 
 const authRoutes = require('./routes/auth');
 const booksRoutes = require('./routes/books');
+const adminRoutes = require('./routes/admin');
 const uploadRoutes = require('./routes/upload');
 const authMiddleware = require('./middleware/auth');
 const { Pool } = require('pg');
@@ -120,77 +120,23 @@ app.get('/api/books/reviews/latest', async (req, res) => {
   }
 });
 
-
-app.get('/api/check-tags', async (req, res) => {
-  const { Pool } = require('pg');
-  const pool = new Pool({
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    database: process.env.DB_NAME,
-    ssl: { rejectUnauthorized: false }
-  });
-  
-  try {
-    const result = await pool.query(`
-      SELECT column_name 
-      FROM information_schema.columns 
-      WHERE table_name = 'books'
-    `);
-    res.json(result.rows);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-/* app.get('/api/make-admin', async (req, res) => {
-  const { Pool } = require('pg');
-  const pool = new Pool({
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    database: process.env.DB_NAME,
-    ssl: { rejectUnauthorized: false }
-  });
-  
-  try {
-    await pool.query('ALTER TABLE users ADD COLUMN IF NOT EXISTS is_admin BOOLEAN DEFAULT FALSE');
-    await pool.query("UPDATE users SET is_admin = TRUE WHERE username = 'admin'");
-    res.json({ success: true, message: "Admin user updated" });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-}); */
-
-// Публичные GET маршруты для книг по тегам
 app.get('/api/books/tag/:tag', async (req, res) => {
   const { tag } = req.params;
-  const { Pool } = require('pg');
-  const pool = new Pool({
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    database: process.env.DB_NAME,
-    ssl: { rejectUnauthorized: false }
-  });
   
   const tagMapping = {
-  'classic': 'Классика',
-  'psychological': 'Психологический роман',
-  'russian': 'Русская литература',
-  'english': 'Английская литература',
-  'ancient': 'Древняя литература',
-  'poem': 'Поэма',
-  'drama': 'Драма',
-  'romance': 'Роман',
-  'philosophy': 'Философия',
-  'adventure': 'Приключения',
-  'fantasy': 'Фантастика',
-  'detective': 'Детектив'
-};
+    'classic': 'Классика',
+    'psychological': 'Психологический роман',
+    'russian': 'Русская литература',
+    'english': 'Английская литература',
+    'ancient': 'Древняя литература',
+    'poem': 'Поэма',
+    'drama': 'Драма',
+    'romance': 'Роман',
+    'philosophy': 'Философия',
+    'adventure': 'Приключения',
+    'fantasy': 'Фантастика',
+    'detective': 'Детектив'
+  };
   
   const russianTag = tagMapping[tag] || tag;
   
@@ -208,6 +154,11 @@ app.get('/api/books/tag/:tag', async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 });
+
+// ============================================
+// Админ-маршруты (требуют авторизации и прав админа)
+// ============================================
+app.use('/api/admin', authMiddleware, adminRoutes);
 
 // ============================================
 // Защищённые маршруты (с middleware)

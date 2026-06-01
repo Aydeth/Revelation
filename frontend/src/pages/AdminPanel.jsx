@@ -46,12 +46,12 @@ export default function AdminPanel() {
       const token = localStorage.getItem('token');
       
       if (activeTab === 'users') {
-        const response = await axios.get(`${API_URL}/api/auth/admin/users`, {
+        const response = await axios.get(`${API_URL}/api/admin/users`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setUsers(response.data);
       } else if (activeTab === 'reviews') {
-        const response = await axios.get(`${API_URL}/api/auth/admin/reviews`, {
+        const response = await axios.get(`${API_URL}/api/admin/reviews`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setReviews(response.data);
@@ -72,7 +72,7 @@ export default function AdminPanel() {
     
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`${API_URL}/api/auth/admin/users/${userId}`, {
+      await axios.delete(`${API_URL}/api/admin/users/${userId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setUsers(users.filter(u => u.id !== userId));
@@ -87,7 +87,7 @@ export default function AdminPanel() {
     
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`${API_URL}/api/auth/admin/reviews/${reviewId}`, {
+      await axios.delete(`${API_URL}/api/admin/reviews/${reviewId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setReviews(reviews.filter(r => r.id !== reviewId));
@@ -102,7 +102,7 @@ export default function AdminPanel() {
     
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`${API_URL}/api/books/admin/books/${bookId}`, {
+      await axios.delete(`${API_URL}/api/admin/books/${bookId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setBooks(books.filter(b => b.id !== bookId));
@@ -117,11 +117,11 @@ export default function AdminPanel() {
     try {
       const token = localStorage.getItem('token');
       const url = editingBook 
-        ? `${API_URL}/api/books/admin/books/${editingBook.id}`
-        : `${API_URL}/api/books/admin/books`;
+        ? `${API_URL}/api/admin/books/${editingBook.id}`
+        : `${API_URL}/api/admin/books`;
       const method = editingBook ? 'put' : 'post';
       
-      const response = await axios[method](url, bookData, {
+      await axios[method](url, bookData, {
         headers: { Authorization: `Bearer ${token}` }
       });
       
