@@ -267,3 +267,13 @@ body.dark-theme .review-delete-btn.confirm {
 body.dark-theme .review-delete-btn .ripple {
   background: rgba(255, 255, 255, 0.15);
 }
+
+.modal-panel,
+.settings-panel {
+  border: 1px solid #DFE2ED;
+}
+
+body.dark-theme .modal-panel,
+body.dark-theme .settings-panel {
+  border: 1px solid #1A1A1A;
+}

@@ -290,13 +290,12 @@ body.dark-theme .rating-stars .star-empty {
 }
 
 .rating-value {
-  font-size: 20px;
-  font-weight: 500;
-  color: #222;
+  font-size: 14px;
+  color: #888;
 }
 
 body.dark-theme .rating-value {
-  color: #E0E0E0;
+  color: #AAAAAA;
 }
 
 .book-tags {
