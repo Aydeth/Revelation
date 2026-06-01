@@ -183,3 +183,23 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`✅ Server running on port ${PORT}`);
 });
+
+app.get('/api/debug-book/:id', async (req, res) => {
+  const { id } = req.params;
+  const { Pool } = require('pg');
+  const pool = new Pool({
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    database: process.env.DB_NAME,
+    ssl: { rejectUnauthorized: false }
+  });
+  
+  try {
+    const result = await pool.query('SELECT id, title, file_path FROM books WHERE id = $1', [id]);
+    res.json(result.rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
