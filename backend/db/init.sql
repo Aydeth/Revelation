@@ -1,10 +1,10 @@
 -- ============================================
 -- 1. ПРИНУДИТЕЛЬНАЯ ОЧИСТКА (удаляем ВСЕ таблицы)
 -- ============================================
-DROP TABLE IF EXISTS user_book_status CASCADE;
-DROP TABLE IF EXISTS reviews CASCADE;
-DROP TABLE IF EXISTS books CASCADE;
-DROP TABLE IF EXISTS users CASCADE;
+-- DROP TABLE IF EXISTS user_book_status CASCADE;
+-- DROP TABLE IF EXISTS reviews CASCADE;
+-- DROP TABLE IF EXISTS books CASCADE;
+-- DROP TABLE IF EXISTS users CASCADE;
 
 -- ============================================
 -- 2. СОЗДАНИЕ ТАБЛИЦ ЗАНОВО

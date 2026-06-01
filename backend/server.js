@@ -120,6 +120,62 @@ app.get('/api/books/reviews/latest', async (req, res) => {
   }
 });
 
+
+app.get('/api/check-tags', async (req, res) => {
+  const { Pool } = require('pg');
+  const pool = new Pool({
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    database: process.env.DB_NAME,
+    ssl: { rejectUnauthorized: false }
+  });
+  
+  try {
+    const result = await pool.query(`
+      SELECT column_name 
+      FROM information_schema.columns 
+      WHERE table_name = 'books'
+    `);
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
+
+
+app.get('/api/add-tags-column', async (req, res) => {
+  const { Pool } = require('pg');
+  const pool = new Pool({
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    database: process.env.DB_NAME,
+    ssl: { rejectUnauthorized: false }
+  });
+  
+  try {
+    await pool.query('ALTER TABLE books ADD COLUMN IF NOT EXISTS tags TEXT');
+    res.json({ success: true, message: 'Tags column added' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
+
+app.post('/api/books/resync', async (req, res) => {
+  const { syncBooks } = require('./utils/bookParser');
+  await syncBooks();
+  res.json({ success: true });
+});
+
+
+
 // ============================================
 // Защищённые маршруты (с middleware)
 // ============================================
