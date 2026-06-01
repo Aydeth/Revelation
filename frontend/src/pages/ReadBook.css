@@ -14,15 +14,15 @@ body.read-mode {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #F9F9F9;
+  background-color: #FFFFFF;
   z-index: 1000;
 }
 
 body.dark-theme .read-container {
-  background-color: #1A1A1A;
+  background-color: #000000;
 }
 
-/* Хедер - анимация */
+/* Хедер */
 .read-header {
   flex-shrink: 0;
   background: #FFFFFF;
@@ -32,28 +32,23 @@ body.dark-theme .read-container {
   justify-content: space-between;
   align-items: center;
   gap: 16px;
-  transition: transform 0.3s ease, opacity 0.3s ease, flex-shrink 0.3s ease;
+  transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
 .read-header.visible {
   transform: translateY(0);
   opacity: 1;
-  flex-shrink: 0;
 }
 
 .read-header.hidden {
   transform: translateY(-100%);
   opacity: 0;
   pointer-events: none;
-  flex-shrink: 0;
-  height: 0;
-  padding: 0;
-  overflow: hidden;
 }
 
 body.dark-theme .read-header {
-  background-color: #2A2A2A;
-  border-bottom-color: #404040;
+  background-color: #000000;
+  border-bottom-color: #1A1A1A;
 }
 
 /* Кнопка "Назад" */
@@ -69,28 +64,22 @@ body.dark-theme .read-header {
   justify-content: center;
   position: relative;
   overflow: hidden;
-}
-
-/* Светлая тема */
-.back-btn {
   color: #003BFF;
   border-color: #DFE2ED;
 }
 
-/* Тёмная тема */
 body.dark-theme .back-btn {
   color: #FFFFFF;
-  border-color: #404040;
+  border-color: #1A1A1A;
 }
 
-/* Убираем изменение цвета при наведении */
 .back-btn:hover {
   border-color: #DFE2ED;
   color: #003BFF;
 }
 
 body.dark-theme .back-btn:hover {
-  border-color: #404040;
+  border-color: #1A1A1A;
   color: #FFFFFF;
 }
 
@@ -128,7 +117,7 @@ body.dark-theme .read-title p {
   color: #AAAAAA;
 }
 
-/* Контент - flex растяжение */
+/* Контент */
 .read-content {
   flex: 1;
   overflow-y: auto;
@@ -140,13 +129,17 @@ body.dark-theme .read-title p {
   transition: flex 0.3s ease, padding 0.3s ease;
 }
 
-/* Когда хедер и футер скрыты - контент занимает всё пространство */
-.read-container:has(.read-header.hidden) .read-content {
-  flex: 1;
-  max-height: 100%;
+.read-content p {
+  margin-bottom: 20px;
+  text-align: justify;
+  color: #333;
 }
 
-/* Кастомный скроллбар - светлая тема */
+body.dark-theme .read-content p {
+  color: #E0E0E0;
+}
+
+/* Кастомный скроллбар */
 .read-content::-webkit-scrollbar {
   width: 8px;
 }
@@ -165,28 +158,16 @@ body.dark-theme .read-title p {
   background: #A8A8A8;
 }
 
-/* Кастомный скроллбар - тёмная тема */
 body.dark-theme .read-content::-webkit-scrollbar-track {
-  background: #2A2A2A;
+  background: #1A1A1A;
 }
 
 body.dark-theme .read-content::-webkit-scrollbar-thumb {
-  background: #555555;
+  background: #444444;
 }
 
 body.dark-theme .read-content::-webkit-scrollbar-thumb:hover {
-  background: #777777;
-}
-
-/* Стили для параграфов */
-.read-content p {
-  margin-bottom: 20px;
-  text-align: justify;
-  color: #333;
-}
-
-body.dark-theme .read-content p {
-  color: #E0E0E0;
+  background: #555555;
 }
 
 /* Классы для динамических настроек */
@@ -208,7 +189,7 @@ body.dark-theme .read-content p {
 .read-content.text-align-right p { text-align: right; }
 .read-content.text-align-justify p { text-align: justify; }
 
-/* Футер - анимация */
+/* Футер */
 .read-footer {
   flex-shrink: 0;
   background: #FFFFFF;
@@ -218,29 +199,23 @@ body.dark-theme .read-content p {
   justify-content: center;
   align-items: center;
   gap: 24px;
-  transition: transform 0.3s ease, opacity 0.3s ease, flex-shrink 0.3s ease, height 0.3s ease, padding 0.3s ease;
+  transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
 .read-footer.visible {
   transform: translateY(0);
   opacity: 1;
-  flex-shrink: 0;
-  height: auto;
 }
 
 .read-footer.hidden {
   transform: translateY(100%);
   opacity: 0;
   pointer-events: none;
-  flex-shrink: 0;
-  height: 0;
-  padding: 0;
-  overflow: hidden;
 }
 
 body.dark-theme .read-footer {
-  background-color: #2A2A2A;
-  border-top-color: #404040;
+  background-color: #000000;
+  border-top-color: #1A1A1A;
 }
 
 .nav-btn, .settings-btn {
@@ -256,22 +231,16 @@ body.dark-theme .read-footer {
   position: relative;
   overflow: hidden;
   transition: none;
-}
-
-/* Светлая тема */
-.nav-btn, .settings-btn {
   color: #1A1A1A;
   border-color: #DFE2ED;
 }
 
-/* Тёмная тема */
 body.dark-theme .nav-btn,
 body.dark-theme .settings-btn {
   color: #E0E0E0;
-  border-color: #404040;
+  border-color: #1A1A1A;
 }
 
-/* Убираем ВСЕ изменения при наведении */
 .nav-btn:hover, .settings-btn:hover {
   border-color: #DFE2ED;
   color: #1A1A1A;
@@ -279,7 +248,7 @@ body.dark-theme .settings-btn {
 
 body.dark-theme .nav-btn:hover,
 body.dark-theme .settings-btn:hover {
-  border-color: #404040;
+  border-color: #1A1A1A;
   color: #E0E0E0;
 }
 
@@ -308,13 +277,6 @@ body.dark-theme .page-info {
   color: #AAAAAA;
 }
 
-/* Загрузка внутри читалки */
-.read-content.loading-content {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 .loader {
   font-size: 16px;
   color: #888;
@@ -333,7 +295,6 @@ body.dark-theme .loader {
   min-height: 300px;
 }
 
-/* Плавное исчезновение контента при смене страницы */
 .read-content {
   transition: opacity 0.15s ease;
 }
@@ -342,7 +303,6 @@ body.dark-theme .loader {
   opacity: 0.5;
 }
 
-/* Адаптив */
 @media (max-width: 768px) {
   .read-header {
     padding: 12px 16px;

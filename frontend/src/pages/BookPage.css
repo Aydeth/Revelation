@@ -173,15 +173,11 @@ body.dark-theme .dropdown-item.active {
 }
 
 .dropdown-item.remove {
-  color: #DC2626;
-}
-
-.dropdown-item.remove:hover {
-  background-color: #FEE2E2;
+  color: #1A1A1A;
 }
 
 body.dark-theme .dropdown-item.remove {
-  color: #DC2626;
+  color: #E0E0E0;
 }
 
 .dropdown-divider {
@@ -272,13 +268,13 @@ body.dark-theme .book-info h2 {
 .rating-badge {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
 }
 
 .rating-stars {
   display: flex;
-  gap: 3px;
-  font-size: 16px;
+  gap: 4px;
+  font-size: 20px;
 }
 
 .rating-stars .star-filled {
@@ -294,12 +290,13 @@ body.dark-theme .rating-stars .star-empty {
 }
 
 .rating-value {
-  font-size: 14px;
-  color: #888;
+  font-size: 20px;
+  font-weight: 500;
+  color: #222;
 }
 
 body.dark-theme .rating-value {
-  color: #AAAAAA;
+  color: #E0E0E0;
 }
 
 .book-tags {
@@ -429,7 +426,7 @@ body.dark-theme .review-date {
 .review-rating {
   margin-bottom: 8px;
   display: flex;
-  gap: 3px;
+  gap: 4px;
   font-size: 16px;
 }
 
@@ -505,6 +502,14 @@ body.dark-theme .review-comment {
   
   .book-tags {
     justify-content: center;
+  }
+  
+  .rating-stars {
+    font-size: 18px;
+  }
+  
+  .rating-value {
+    font-size: 18px;
   }
   
   .review-rating {

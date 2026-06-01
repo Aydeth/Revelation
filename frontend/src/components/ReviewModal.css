@@ -20,7 +20,7 @@
 }
 
 body.dark-theme .review-modal-panel {
-  background: #2A2A2A;
+  background: #000000;
 }
 
 .review-modal-header {
@@ -28,11 +28,11 @@ body.dark-theme .review-modal-panel {
   justify-content: space-between;
   align-items: center;
   padding: 20px 24px;
-  border-bottom: 1px solid #E9E9E9;
+  border-bottom: 1px solid #DFE2ED;
 }
 
 body.dark-theme .review-modal-header {
-  border-bottom-color: #404040;
+  border-bottom-color: #1A1A1A;
 }
 
 .review-modal-header h3 {
@@ -69,7 +69,7 @@ body.dark-theme .review-close-btn {
 }
 
 body.dark-theme .review-close-btn:hover {
-  background: #3A3A3A;
+  background: #1A1A1A;
 }
 
 .review-close-btn .ripple {
@@ -146,8 +146,8 @@ body.dark-theme .review-comment-section label {
 }
 
 body.dark-theme .review-comment-section textarea {
-  background: #1A1A1A;
-  border-color: #404040;
+  background: #000000;
+  border-color: #1A1A1A;
   color: #E0E0E0;
 }
 
@@ -161,11 +161,11 @@ body.dark-theme .review-comment-section textarea {
   justify-content: flex-end;
   gap: 12px;
   padding: 16px 24px 24px;
-  border-top: 1px solid #E9E9E9;
+  border-top: 1px solid #DFE2ED;
 }
 
 body.dark-theme .review-modal-footer {
-  border-top-color: #404040;
+  border-top-color: #1A1A1A;
 }
 
 .review-cancel-btn {
@@ -181,7 +181,7 @@ body.dark-theme .review-modal-footer {
 }
 
 body.dark-theme .review-cancel-btn {
-  border-color: #404040;
+  border-color: #1A1A1A;
   color: #CCCCCC;
 }
 
@@ -211,7 +211,7 @@ body.dark-theme .review-cancel-btn .ripple {
 
 body.dark-theme .review-submit-btn {
   background: #FFFFFF;
-  color: #1A1A1A;
+  color: #000000;
 }
 
 .review-submit-btn:disabled {
@@ -229,7 +229,7 @@ body.dark-theme .review-submit-btn .ripple {
 
 .review-delete-btn {
   background: none;
-  border: 1px solid #dfe2ed;
+  border: 1px solid #DFE2ED;
   padding: 8px 20px;
   border-radius: 8px;
   font-size: 14px;
@@ -240,25 +240,30 @@ body.dark-theme .review-submit-btn .ripple {
   gap: 8px;
   position: relative;
   overflow: hidden;
-  transition: none;
   margin-right: auto;
+}
+
+body.dark-theme .review-delete-btn {
+  border-color: #1A1A1A;
+  color: #CCCCCC;
 }
 
 .review-delete-btn.confirm {
   background-color: #DC2626;
+  border-color: #DC2626;
   color: white;
-}
-
-.review-delete-btn .ripple {
-  background: rgba(0, 0, 0, 0.2);
-}
-
-body.dark-theme .review-delete-btn {
-  border-color: #404040;
-  color: #ccc;
 }
 
 body.dark-theme .review-delete-btn.confirm {
   background-color: #DC2626;
+  border-color: #DC2626;
   color: white;
+}
+
+.review-delete-btn .ripple {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+body.dark-theme .review-delete-btn .ripple {
+  background: rgba(255, 255, 255, 0.15);
 }

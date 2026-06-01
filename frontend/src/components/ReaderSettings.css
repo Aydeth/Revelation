@@ -4,43 +4,25 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 2000;
-  animation: fadeIn 0.2s ease;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
 }
 
 .settings-panel {
-  background-color: #FFFFFF;
+  background: #FFFFFF;
   border-radius: 16px;
   width: 90%;
   max-width: 480px;
   max-height: 80vh;
   overflow-y: auto;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-  animation: slideUp 0.3s ease;
 }
 
 body.dark-theme .settings-panel {
-  background-color: #2A2A2A;
-}
-
-@keyframes slideUp {
-  from {
-    transform: translateY(30px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+  background: #000000;
 }
 
 .settings-header {
@@ -52,7 +34,7 @@ body.dark-theme .settings-panel {
 }
 
 body.dark-theme .settings-header {
-  border-bottom-color: #404040;
+  border-bottom-color: #1A1A1A;
 }
 
 .settings-header h3 {
@@ -81,8 +63,7 @@ body.dark-theme .settings-header h3 {
 }
 
 .close-btn:hover {
-  background-color: #F9F9F9;
-  color: #003BFF;
+  background: #F9F9F9;
 }
 
 body.dark-theme .close-btn {
@@ -90,8 +71,7 @@ body.dark-theme .close-btn {
 }
 
 body.dark-theme .close-btn:hover {
-  background-color: #3A3A3A;
-  color: #FFFFFF;
+  background: #1A1A1A;
 }
 
 .close-btn .ripple {
@@ -148,13 +128,14 @@ body.dark-theme .setting-label {
   gap: 6px;
   position: relative;
   overflow: hidden;
+  color: #1A1A1A;
 }
 
 body.dark-theme .theme-btn,
 body.dark-theme .size-btn,
 body.dark-theme .line-btn,
 body.dark-theme .weight-btn {
-  border-color: #404040;
+  border-color: #1A1A1A;
   color: #E0E0E0;
 }
 
@@ -170,7 +151,7 @@ body.dark-theme .line-btn.active,
 body.dark-theme .weight-btn.active {
   background-color: #FFFFFF;
   border-color: #FFFFFF;
-  color: #1A1A1A;
+  color: #000000;
 }
 
 .theme-btn .ripple, .size-btn .ripple, 
@@ -207,7 +188,7 @@ body.dark-theme .weight-btn .ripple {
 }
 
 body.dark-theme .align-btn {
-  border-color: #404040;
+  border-color: #1A1A1A;
   color: #CCCCCC;
 }
 
@@ -220,7 +201,7 @@ body.dark-theme .align-btn {
 body.dark-theme .align-btn.active {
   background-color: #FFFFFF;
   border-color: #FFFFFF;
-  color: #1A1A1A;
+  color: #000000;
 }
 
 .align-btn .ripple {
@@ -238,7 +219,7 @@ body.dark-theme .align-btn .ripple {
 }
 
 body.dark-theme .setting-divider {
-  background-color: #404040;
+  background-color: #1A1A1A;
 }
 
 .settings-footer {
@@ -247,7 +228,7 @@ body.dark-theme .setting-divider {
 }
 
 body.dark-theme .settings-footer {
-  border-top-color: #404040;
+  border-top-color: #1A1A1A;
 }
 
 .reset-btn {
@@ -270,7 +251,7 @@ body.dark-theme .settings-footer {
 }
 
 body.dark-theme .reset-btn {
-  border-color: #404040;
+  border-color: #1A1A1A;
   color: #CCCCCC;
 }
 

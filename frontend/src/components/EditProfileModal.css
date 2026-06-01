@@ -22,7 +22,7 @@
 }
 
 body.dark-theme .modal-panel {
-  background: #2A2A2A;
+  background: #000000;
 }
 
 .modal-header {
@@ -34,7 +34,7 @@ body.dark-theme .modal-panel {
 }
 
 body.dark-theme .modal-header {
-  border-bottom-color: #404040;
+  border-bottom-color: #1A1A1A;
 }
 
 .modal-header h3 {
@@ -71,7 +71,7 @@ body.dark-theme .close-btn {
 }
 
 body.dark-theme .close-btn:hover {
-  background: #3A3A3A;
+  background: #1A1A1A;
 }
 
 .close-btn .ripple {
@@ -88,7 +88,7 @@ body.dark-theme .close-btn .ripple {
 }
 
 body.dark-theme .modal-field {
-  border-bottom-color: #404040;
+  border-bottom-color: #1A1A1A;
 }
 
 .modal-field label {
@@ -113,8 +113,8 @@ body.dark-theme .modal-field label {
 }
 
 body.dark-theme .modal-field input {
-  background: #1A1A1A;
-  border-color: #404040;
+  background: #000000;
+  border-color: #1A1A1A;
   color: #E0E0E0;
 }
 
@@ -148,6 +148,11 @@ body.dark-theme .avatar-preview img {
   font-size: 14px;
 }
 
+body.dark-theme .modal-error {
+  background: #331111;
+  color: #FF8888;
+}
+
 .modal-actions {
   display: flex;
   justify-content: flex-end;
@@ -171,7 +176,7 @@ body.dark-theme .avatar-preview img {
 }
 
 body.dark-theme .cancel-btn {
-  border-color: #404040;
+  border-color: #1A1A1A;
   color: #CCCCCC;
 }
 
@@ -191,7 +196,7 @@ body.dark-theme .cancel-btn .ripple {
 
 body.dark-theme .save-btn {
   background: #FFFFFF;
-  color: #1A1A1A;
+  color: #000000;
 }
 
 .save-btn .ripple {
