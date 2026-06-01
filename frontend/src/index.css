@@ -18,7 +18,7 @@ body {
 
 /* Тёмная тема */
 body.dark-theme {
-  background-color: #2A2A2A;
+  background-color: #000000;
   color: #E0E0E0;
 }
 
@@ -89,7 +89,7 @@ button:active {
 
 body.dark-theme .btn-primary {
   background-color: #FFFFFF;
-  color: #1A1A1A;
+  color: #000000;
 }
 
 body.dark-theme .btn-primary .ripple {
@@ -98,7 +98,7 @@ body.dark-theme .btn-primary .ripple {
 
 body.dark-theme .btn-outline {
   color: #E0E0E0;
-  border-color: #404040;
+  border-color: #1A1A1A;
 }
 
 body.dark-theme .btn-outline .ripple {
@@ -158,5 +158,5 @@ body.dark-theme .btn-ghost .ripple {
 }
 
 body.dark-theme .star-empty {
-  color: #555555;
+  color: #444444;
 }

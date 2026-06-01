@@ -53,8 +53,8 @@ body.dark-theme .section-header h2 {
 }
 
 body.dark-theme .home-book-card-large {
-  background: #2A2A2A;
-  border-color: #404040;
+  background: #000000;
+  border-color: #1A1A1A;
 }
 
 .home-book-card-large:active {
@@ -67,7 +67,7 @@ body.dark-theme .home-book-card-large {
 }
 
 body.dark-theme .home-book-card-large:hover {
-  background-color: #3A3A3A;
+  background-color: #1A1A1A;
 }
 
 .home-book-card-large .ripple {
@@ -163,7 +163,7 @@ body.dark-theme .rating-value {
 }
 
 body.dark-theme .home-book-card-vertical:hover {
-  background-color: #2A2A2A;
+  background-color: #1A1A1A;
 }
 
 .home-book-card-vertical .ripple {
@@ -188,8 +188,8 @@ body.dark-theme .home-book-card-vertical .ripple {
 }
 
 body.dark-theme .home-book-cover-vertical {
-  background-color: #3A3A3A;
-  border-color: #404040;
+  background-color: #1A1A1A;
+  border-color: #1A1A1A;
 }
 
 .home-book-cover-vertical img {
@@ -341,7 +341,7 @@ body.dark-theme .review-date {
 }
 
 body.dark-theme .review-rating .star-empty {
-  color: #555555;
+  color: #444444;
 }
 
 .review-comment {
@@ -366,8 +366,8 @@ body.dark-theme .review-comment {
 }
 
 body.dark-theme .sidebar-section {
-  background: #2A2A2A;
-  border-color: #404040;
+  background: #000000;
+  border-color: #1A1A1A;
 }
 
 .sidebar-section h3 {
@@ -399,7 +399,7 @@ body.dark-theme .sidebar-section h3 {
 }
 
 body.dark-theme .genre-tag {
-  background: #3A3A3A;
+  background: #1A1A1A;
   color: #CCCCCC;
 }
 
