@@ -132,16 +132,15 @@ body.dark-theme .book-info h2 {
 }
 
 .year-badge {
-  background: #F5F5F5;
-  padding: 4px 12px;
-  border-radius: 20px;
   font-size: 14px;
   color: #555;
+  background: none;
+  padding: 0;
+  border-radius: 0;
 }
 
 body.dark-theme .year-badge {
-  background: #1A1A1A;
-  color: #CCCCCC;
+  color: #AAAAAA;
 }
 
 .rating-badge {
@@ -188,7 +187,7 @@ body.dark-theme .rating-value {
   background: #F5F5F5;
   padding: 4px 12px;
   border-radius: 16px;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 400;
   cursor: pointer;
   text-decoration: none;
@@ -309,6 +308,7 @@ body.dark-theme .book-reviews h3 {
   gap: 12px;
   margin-bottom: 8px;
   cursor: pointer;
+  flex-wrap: wrap;
 }
 
 .review-author-avatar {
@@ -327,16 +327,14 @@ body.dark-theme .book-reviews h3 {
 
 .review-author-info {
   flex: 1;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
   cursor: pointer;
 }
 
 .review-author-info strong {
+  display: block;
   font-size: 14px;
   color: #222;
+  margin-bottom: 4px;
 }
 
 body.dark-theme .review-author-info strong {
@@ -346,6 +344,7 @@ body.dark-theme .review-author-info strong {
 .review-date {
   font-size: 14px;
   color: #888;
+  display: block;
 }
 
 body.dark-theme .review-date {
@@ -434,10 +433,6 @@ body.dark-theme .review-comment {
   
   .book-tags {
     justify-content: center;
-  }
-  
-  .review-author-info {
-    flex-wrap: wrap;
   }
   
   .review-rating {
