@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const https = require('https');
 const { Pool } = require('pg');
 
 const pool = new Pool({
@@ -47,19 +48,13 @@ function parseBookFile(filePath) {
     }
   }
   
-  // Получаем теги (если есть)
-  let tags = '';
-  if (metadata['Теги']) {
-    tags = metadata['Теги'];
-  }
-  
   return {
     title: metadata['Название'] || 'Unknown',
     author: metadata['Автор'] || 'Unknown',
     year: parseInt(metadata['Год']) || null,
     coverUrl: coverUrl,
     description: metadata['Описание'] || null,
-    tags: tags,
+    tags: metadata['Теги'] || '',
     text: text,
     fileName: path.basename(filePath)
   };
@@ -106,10 +101,37 @@ async function syncBooks() {
   }
 }
 
-function getBookText(fileName) {
-  const filePath = path.join(BOOKS_DIR, fileName);
+// Универсальная функция получения текста (работает и с локальными файлами, и с URL)
+async function getBookTextAsync(source) {
+  // Если это URL
+  if (source.startsWith('http://') || source.startsWith('https://')) {
+    return new Promise((resolve, reject) => {
+      https.get(source, (response) => {
+        let data = '';
+        response.on('data', (chunk) => data += chunk);
+        response.on('end', () => {
+          const text = data.replace(/===МЕТАДАННЫЕ===\n[\s\S]*?\n===КОНЕЦ МЕТАДАННЫХ===\n/, '');
+          resolve(text);
+        });
+        response.on('error', reject);
+      }).on('error', reject);
+    });
+  }
+  
+  // Если это локальный файл
+  const filePath = path.join(BOOKS_DIR, source);
   const content = fs.readFileSync(filePath, 'utf-8');
   return content.replace(/===МЕТАДАННЫЕ===\n[\s\S]*?\n===КОНЕЦ МЕТАДАННЫХ===\n/, '');
 }
 
-module.exports = { syncBooks, getBookText, parseBookFile };
+// Старая синхронная функция для совместимости (не используется, но оставляем)
+function getBookText(source) {
+  if (source.startsWith('http')) {
+    throw new Error('Use getBookTextAsync for URL');
+  }
+  const filePath = path.join(BOOKS_DIR, source);
+  const content = fs.readFileSync(filePath, 'utf-8');
+  return content.replace(/===МЕТАДАННЫЕ===\n[\s\S]*?\n===КОНЕЦ МЕТАДАННЫХ===\n/, '');
+}
+
+module.exports = { syncBooks, getBookText, getBookTextAsync, parseBookFile };

@@ -87,7 +87,8 @@ router.get('/:id/page/:pageNum', async (req, res) => {
     }
     
     const book = bookResult.rows[0];
-    const fullText = getBookText(book.file_path);
+    const { getBookTextAsync } = require('../utils/bookParser');
+    const fullText = await getBookTextAsync(book.file_path);
     
     const sentences = splitIntoSentences(fullText);
     const totalSentences = sentences.length;
