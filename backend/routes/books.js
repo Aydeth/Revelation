@@ -284,6 +284,8 @@ router.get('/:id/reviews', async (req, res) => {
       ORDER BY r.created_at DESC
     `, [id]);
     
+    console.log('📝 Returning reviews with likes:', result.rows.map(r => ({ id: r.id, likes: r.likes, dislikes: r.dislikes })));
+    
     res.json(result.rows);
   } catch (err) {
     console.error('Error fetching reviews:', err);
