@@ -343,3 +343,24 @@ app.post('/api/debug-react', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+app.get('/api/sql-test', async (req, res) => {
+  const { Pool } = require('pg');
+  const pool = new Pool({
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    database: process.env.DB_NAME,
+    ssl: { rejectUnauthorized: false }
+  });
+  
+  try {
+    const result = await pool.query(`
+      SELECT id, likes, dislikes FROM reviews WHERE book_id = 1
+    `);
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
