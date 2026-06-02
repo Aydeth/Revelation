@@ -52,7 +52,6 @@ export default function Home() {
         const reviewsRes = await axios.get(`${API_URL}/api/books/reviews/latest`);
         setRecentReviews(reviewsRes.data);
         
-        // Загружаем реакции пользователя на отзывы
         if (token && reviewsRes.data.length > 0) {
           const reactionsMap = {};
           for (const review of reviewsRes.data) {
@@ -87,15 +86,21 @@ export default function Home() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       
-      // Обновляем отзыв в списке
       setRecentReviews(prev => prev.map(review => 
         review.id === reviewId 
           ? { ...review, likes: response.data.likes, dislikes: response.data.dislikes }
           : review
       ));
       
-      // Обновляем реакцию пользователя
-      setUserReactions(prev => ({ ...prev, [reviewId]: reaction }));
+      setUserReactions(prev => {
+        const current = prev[reviewId];
+        if (current === reaction) {
+          return { ...prev, [reviewId]: null };
+        } else {
+          return { ...prev, [reviewId]: reaction };
+        }
+      });
+      
     } catch (err) {
       console.error('Error posting reaction:', err);
     } finally {
@@ -177,28 +182,28 @@ export default function Home() {
           <div className="reviews-list">
             {recentReviews.map(review => (
               <div key={review.id} className="home-review-card">
-                <div className="review-book-info">
-                  <div 
-                    className="review-book-cover"
-                    onClick={() => navigate(`/book/${review.book_id}`)}
-                    onMouseDown={createRipple}
-                  >
+                <div 
+                  className="review-book-info"
+                  onClick={() => navigate(`/book/${review.book_id}`)}
+                  onMouseDown={createRipple}
+                >
+                  <div className="review-book-cover">
                     <img 
                       src={review.book_cover_url || 'https://via.placeholder.com/48x72?text=No+Cover'} 
                       alt={review.book_title}
                     />
                   </div>
-                  <div 
-                    className="review-book-details"
-                    onClick={() => navigate(`/book/${review.book_id}`)}
-                    onMouseDown={createRipple}
-                  >
+                  <div className="review-book-details">
                     <h4>{review.book_title}</h4>
                     <p>{review.book_author}</p>
                   </div>
                 </div>
                 
-                <div className="review-author-row">
+                <div 
+                  className="review-author-row"
+                  onClick={() => navigate(`/user/${review.username}`)}
+                  onMouseDown={createRipple}
+                >
                   <div className="review-author-avatar">
                     <img 
                       src={review.avatar_url || '/Avatar.png'} 

@@ -207,7 +207,7 @@ body.dark-theme .home-book-info-vertical p {
   color: #AAAAAA;
 }
 
-/* Карточки отзывов */
+/* Карточки отзывов на главной */
 .reviews-list {
   display: flex;
   flex-direction: column;
@@ -227,7 +227,7 @@ body.dark-theme .home-book-info-vertical p {
   cursor: pointer;
   position: relative;
   overflow: hidden;
-  border-radius: 12px;
+  border-radius: 0 12px 12px 0;
   transition: transform 0.15s ease;
   transform: scale(1);
 }
@@ -279,6 +279,7 @@ body.dark-theme .review-book-details p {
   color: #AAAAAA;
 }
 
+/* Кликабельный блок автора отзыва на главной */
 .review-author-row {
   display: flex;
   align-items: center;
@@ -375,17 +376,12 @@ body.dark-theme .review-comment {
   color: #CCCCCC;
 }
 
-/* Лайки и дизлайки в отзывах */
 .review-reactions {
   display: flex;
-  gap: 16px;
+  gap: 8px;
   margin-top: 12px;
-  padding-top: 8px;
-  border-top: 1px solid #DFE2ED;
-}
-
-body.dark-theme .review-reactions {
-  border-top-color: #1A1A1A;
+  padding-top: 0;
+  border-top: none;
 }
 
 .reaction-btn {
@@ -414,11 +410,6 @@ body.dark-theme .reaction-btn {
 
 body.dark-theme .reaction-btn.active {
   color: #FFFFFF;
-}
-
-.reaction-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
 }
 
 .reaction-btn .ripple {
@@ -533,6 +524,6 @@ body.dark-theme .genre-tag {
   }
   
   .review-reactions {
-    gap: 12px;
+    gap: 6px;
   }
 }

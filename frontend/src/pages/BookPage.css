@@ -30,7 +30,6 @@
   display: block;
 }
 
-/* Контейнер для кнопки "Читать книгу" с дропдауном */
 .read-button-container {
   display: flex;
   width: 260px;
@@ -113,7 +112,6 @@ body.dark-theme .read-button-dropdown .ripple {
   background: rgba(0, 0, 0, 0.2);
 }
 
-/* Выпадающее меню */
 .dropdown-menu {
   position: absolute;
   top: 100%;
@@ -290,7 +288,6 @@ body.dark-theme .rating-value {
   color: #AAAAAA;
 }
 
-/* Теги книги - без анимаций */
 .book-tags {
   display: flex;
   flex-wrap: wrap;
@@ -318,56 +315,6 @@ body.dark-theme .book-tag {
 
 .book-tag:active {
   transform: none;
-}
-
-.book-actions {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 32px;
-  flex-wrap: wrap;
-}
-
-.status-btn {
-  background: none;
-  border: 1px solid #DFE2ED;
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-size: 14px;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  transition: none;
-  color: #1A1A1A;
-  border-color: #DFE2ED;
-}
-
-body.dark-theme .status-btn {
-  color: #E0E0E0;
-  border-color: #1A1A1A;
-}
-
-.status-btn.active {
-  background-color: #003BFF;
-  border-color: #003BFF;
-  color: white;
-}
-
-body.dark-theme .status-btn.active {
-  background-color: #FFFFFF;
-  border-color: #FFFFFF;
-  color: #000000;
-}
-
-.status-btn .ripple {
-  background: rgba(0, 0, 0, 0.1);
-}
-
-body.dark-theme .status-btn .ripple {
-  background: rgba(255, 255, 255, 0.15);
-}
-
-body.dark-theme .status-btn.active .ripple {
-  background: rgba(0, 0, 0, 0.2);
 }
 
 .book-description {
@@ -431,6 +378,10 @@ body.dark-theme .book-reviews h3 {
   border-radius: 12px;
   transition: transform 0.15s ease;
   transform: scale(1);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
 }
 
 .review-author-clickable:active {
@@ -444,14 +395,6 @@ body.dark-theme .book-reviews h3 {
 
 body.dark-theme .review-author-clickable .ripple {
   background: rgba(255, 255, 255, 0.15);
-}
-
-/* Базовые стили review-author */
-.review-author {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 8px;
 }
 
 .review-author-avatar {
@@ -523,30 +466,12 @@ body.dark-theme .review-comment {
   color: #CCCCCC;
 }
 
-.no-reviews {
-  text-align: center;
-  padding: 40px;
-  color: #888;
-  font-size: 14px;
-}
-
-.loading {
-  text-align: center;
-  padding: 60px;
-  color: #888;
-}
-
-/* Лайки и дизлайки */
 .review-reactions {
   display: flex;
-  gap: 16px;
+  gap: 8px;
   margin-top: 12px;
-  padding-top: 8px;
-  border-top: 1px solid #DFE2ED;
-}
-
-body.dark-theme .review-reactions {
-  border-top-color: #1A1A1A;
+  padding-top: 0;
+  border-top: none;
 }
 
 .reaction-btn {
@@ -577,17 +502,25 @@ body.dark-theme .reaction-btn.active {
   color: #FFFFFF;
 }
 
-.reaction-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
 .reaction-btn .ripple {
   background: rgba(0, 0, 0, 0.08);
 }
 
 body.dark-theme .reaction-btn .ripple {
   background: rgba(255, 255, 255, 0.15);
+}
+
+.no-reviews {
+  text-align: center;
+  padding: 40px;
+  color: #888;
+  font-size: 14px;
+}
+
+.loading {
+  text-align: center;
+  padding: 60px;
+  color: #888;
 }
 
 @media (max-width: 768px) {
@@ -638,5 +571,9 @@ body.dark-theme .reaction-btn .ripple {
   
   .review-rating {
     font-size: 14px;
+  }
+  
+  .review-reactions {
+    gap: 6px;
   }
 }
