@@ -8,16 +8,16 @@
 /* Хедер */
 .app-header {
   background-color: #FFFFFF;
-  border-bottom: 1px solid #E9E9E9;
+  /* border-bottom: 1px solid #E9E9E9; — УДАЛИЛИ */
   position: sticky;
   top: 0;
   z-index: 100;
-  transition: background-color 0.2s ease, border-color 0.2s ease;
+  transition: background-color 0.2s ease;
 }
 
 body.dark-theme .app-header {
   background-color: #000000;
-  border-bottom-color: #1A1A1A;
+  /* border-bottom-color: #1A1A1A; — УДАЛИЛИ */
 }
 
 .header-container {
@@ -37,8 +37,8 @@ body.dark-theme .app-header {
 }
 
 .logo-img {
-  height: 48px;
-  width: 48px;
+  height: 64px;
+  width: auto;
   vertical-align: middle;
   transition: opacity 0.2s;
   display: block;
@@ -231,8 +231,7 @@ body.dark-theme .footer-link .ripple {
   }
   
   .logo-img {
-    height: 40px;
-    width: 40px;
+    height: 48px;
   }
   
   .theme-toggle-btn,
