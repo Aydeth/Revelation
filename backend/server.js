@@ -304,3 +304,42 @@ app.get('/api/reset-db', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+app.post('/api/debug-react', async (req, res) => {
+  const { Pool } = require('pg');
+  const pool = new Pool({
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    database: process.env.DB_NAME,
+    ssl: { rejectUnauthorized: false }
+  });
+  
+  try {
+    // Проверяем структуру таблицы reviews
+    const columns = await pool.query(`
+      SELECT column_name, data_type 
+      FROM information_schema.columns 
+      WHERE table_name = 'reviews'
+    `);
+    
+    // Проверяем структуру таблицы review_reactions
+    const reactionsTable = await pool.query(`
+      SELECT column_name, data_type 
+      FROM information_schema.columns 
+      WHERE table_name = 'review_reactions'
+    `);
+    
+    // Проверяем есть ли отзывы
+    const reviews = await pool.query('SELECT id, likes, dislikes FROM reviews LIMIT 5');
+    
+    res.json({
+      columns: columns.rows,
+      reactionsTable: reactionsTable.rows,
+      reviews: reviews.rows
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
