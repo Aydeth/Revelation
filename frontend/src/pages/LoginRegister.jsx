@@ -24,6 +24,12 @@ const createRipple = (event) => {
   setTimeout(() => ripple.remove(), 600);
 };
 
+// Функция проверки email
+const isValidEmail = (email) => {
+  const emailRegex = /^[^\s@]+@([^\s@.,]+\.)+[^\s@.,]{2,}$/;
+  return emailRegex.test(email);
+};
+
 export default function LoginRegister() {
   const [isLogin, setIsLogin] = useState(true);
   const [username, setUsername] = useState('');
@@ -37,6 +43,13 @@ export default function LoginRegister() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    
+    // Проверка email при регистрации
+    if (!isLogin && !isValidEmail(email)) {
+      setError('Введите корректный email (например, name@example.com)');
+      return;
+    }
+    
     setLoading(true);
     
     try {
@@ -49,7 +62,6 @@ export default function LoginRegister() {
         throw new Error('Invalid token received');
       }
       
-      // Если при регистрации нет аватарки, добавляем стандартную
       if (!isLogin && !response.data.user.avatar_url) {
         response.data.user.avatar_url = '/Avatar.png';
       }
