@@ -34,9 +34,6 @@ body.dark-theme .section-header h2 {
   color: #E0E0E0;
 }
 
-/* ============================================
-   КАРУСЕЛЬ ДЛЯ "ПОСЛЕДНЕЕ" И "ЛУЧШЕЕ"
-   ============================================ */
 .books-carousel-wrapper {
   position: relative;
   overflow: hidden;
@@ -53,25 +50,36 @@ body.dark-theme .section-header h2 {
   -webkit-overflow-scrolling: touch;
   padding: 4px 0 12px 0;
   scrollbar-width: thin;
+  scrollbar-color: #C1C1C1 #F1F1F1;
 }
 
-/* Кастомный скроллбар для карусели */
 .books-carousel::-webkit-scrollbar {
-  height: 6px;
+  height: 8px;
+  -webkit-appearance: none;
 }
 
 .books-carousel::-webkit-scrollbar-track {
   background: #F1F1F1;
-  border-radius: 3px;
+  border-radius: 4px;
 }
 
 .books-carousel::-webkit-scrollbar-thumb {
   background: #C1C1C1;
-  border-radius: 3px;
+  border-radius: 4px;
 }
 
 .books-carousel::-webkit-scrollbar-thumb:hover {
   background: #A8A8A8;
+}
+
+.books-carousel::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+body.dark-theme .books-carousel {
+  scrollbar-color: #444444 #1A1A1A;
 }
 
 body.dark-theme .books-carousel::-webkit-scrollbar-track {
@@ -86,7 +94,10 @@ body.dark-theme .books-carousel::-webkit-scrollbar-thumb:hover {
   background: #555555;
 }
 
-/* Карточки книг в карусели */
+body.dark-theme .books-carousel::-webkit-scrollbar-button {
+  display: none;
+}
+
 .home-book-card-carousel {
   flex: 0 0 140px;
   cursor: pointer;
@@ -182,9 +193,6 @@ body.dark-theme .rating-value {
   color: #AAAAAA;
 }
 
-/* ============================================
-   ОТЗЫВЫ
-   ============================================ */
 .reviews-list {
   display: flex;
   flex-direction: column;
@@ -396,9 +404,6 @@ body.dark-theme .reaction-btn .ripple {
   background: rgba(255, 255, 255, 0.15);
 }
 
-/* ============================================
-   БОКОВАЯ ПАНЕЛЬ
-   ============================================ */
 .sidebar-section {
   background: #FFFFFF;
   border: 1px solid #DFE2ED;
@@ -447,9 +452,6 @@ body.dark-theme .genre-tag {
   color: #CCCCCC;
 }
 
-/* ============================================
-   ОБЩИЙ RIPPLE
-   ============================================ */
 .ripple {
   position: absolute;
   background: rgba(0, 0, 0, 0.08);
@@ -464,65 +466,4 @@ body.dark-theme .genre-tag {
     transform: scale(4);
     opacity: 0;
   }
-}
-
-/* ============================================
-   КАРУСЕЛЬ - КАСТОМНЫЙ СКРОЛЛБАР
-   ============================================ */
-.books-carousel-wrapper {
-  position: relative;
-  overflow: hidden;
-  margin: 0 -20px;
-  padding: 0 20px;
-}
-
-/* Контейнер карусели с кастомным скроллбаром */
-.books-carousel {
-  display: flex;
-  gap: 16px;
-  overflow-x: auto;
-  overflow-y: hidden;
-  scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch;
-  padding: 4px 0 12px 0;
-  
-  /* Скрываем стандартный скроллбар для Firefox */
-  scrollbar-width: thin;
-  scrollbar-color: #C1C1C1 #F1F1F1;
-}
-
-/* Стили для Webkit-браузеров (Chrome, Safari, Edge) */
-.books-carousel::-webkit-scrollbar {
-  height: 8px; /* Как в читалке */
-}
-
-.books-carousel::-webkit-scrollbar-track {
-  background: #F1F1F1;
-  border-radius: 4px;
-}
-
-.books-carousel::-webkit-scrollbar-thumb {
-  background: #C1C1C1;
-  border-radius: 4px;
-}
-
-.books-carousel::-webkit-scrollbar-thumb:hover {
-  background: #A8A8A8;
-}
-
-/* Тёмная тема */
-body.dark-theme .books-carousel {
-  scrollbar-color: #444444 #1A1A1A;
-}
-
-body.dark-theme .books-carousel::-webkit-scrollbar-track {
-  background: #1A1A1A;
-}
-
-body.dark-theme .books-carousel::-webkit-scrollbar-thumb {
-  background: #444444;
-}
-
-body.dark-theme .books-carousel::-webkit-scrollbar-thumb:hover {
-  background: #555555;
 }

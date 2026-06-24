@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Link, Navigate } from 'react-router-dom';
-import { Sun, Moon, UserCog } from 'lucide-react';
+import { Sun, Moon, UserCog, Compass, Library, User } from 'lucide-react';
 import Home from './pages/Home';
 import AllBooks from './pages/AllBooks';
 import BooksByTag from './pages/BooksByTag';
@@ -42,7 +42,6 @@ function AppContent() {
     if (isTelegram) {
       const tg = window.Telegram.WebApp;
       
-      // Устанавливаем цвета в зависимости от темы
       if (theme === 'dark') {
         tg.setHeaderColor('#000000');
         tg.setBackgroundColor('#000000');
@@ -53,10 +52,7 @@ function AppContent() {
         tg.setBottomBarColor('#ffffff');
       }
       
-      // Расширяем приложение на весь экран
       tg.expand();
-      
-      // Уведомляем, что приложение готово
       tg.ready();
     }
   }, [theme, isTelegram]);
@@ -69,7 +65,6 @@ function AppContent() {
     <div className="app-wrapper">
       {user && (
         <>
-          {/* Плавающие кнопки в правом верхнем углу */}
           <div className="floating-header">
             <div className="floating-actions">
               <button 
@@ -104,12 +99,15 @@ function AppContent() {
           <nav className={`app-footer ${isTelegram ? 'telegram-footer' : ''}`}>
             <div className="footer-container">
               <Link to="/" className="footer-link" onMouseDown={createRipple}>
+                <Compass size={20} />
                 <span>Главная</span>
               </Link>
               <Link to="/books" className="footer-link" onMouseDown={createRipple}>
+                <Library size={20} />
                 <span>Все книги</span>
               </Link>
               <Link to={`/user/${user.username}`} className="footer-link" onMouseDown={createRipple}>
+                <User size={20} />
                 <span>Профиль</span>
               </Link>
             </div>
