@@ -383,7 +383,7 @@ body.dark-theme .status-btn.active .ripple {
   margin-bottom: 12px;
   font-weight: 500;
   color: #222;
-  text-align: center;
+  text-align: left; /* Изменено с center на left */
 }
 
 body.dark-theme .book-description h3 {
@@ -393,7 +393,7 @@ body.dark-theme .book-description h3 {
 .book-description p {
   line-height: 1.6;
   color: #555;
-  text-align: center;
+  text-align: left; /* Изменено с center на left */
 }
 
 body.dark-theme .book-description p {

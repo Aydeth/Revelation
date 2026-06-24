@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
-import { ThumbsUp, ThumbsDown } from 'lucide-react';
+import { ThumbsUp, ThumbsDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import StarRating from '../components/StarRating';
 import './Home.css';
 
@@ -33,6 +33,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [userReactions, setUserReactions] = useState({});
   const [reactionLoading, setReactionLoading] = useState({});
+  const carouselRef = useRef(null);
 
   useEffect(() => {
     const fetchHomeData = async () => {
@@ -41,7 +42,7 @@ export default function Home() {
         
         const booksRes = await axios.get(`${API_URL}/api/books`);
         const allBooks = booksRes.data;
-        const recent = [...allBooks].slice(-3).reverse();
+        const recent = [...allBooks].slice(-6).reverse(); // Больше книг для карусели
         setRecentBooks(recent);
         
         const topRated = [...allBooks]
@@ -108,42 +109,74 @@ export default function Home() {
     }
   };
 
+  const scrollCarousel = (direction) => {
+    if (carouselRef.current) {
+      const scrollAmount = 200; // Ширина карточки + gap
+      carouselRef.current.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth'
+      });
+    }
+  };
+
   if (loading) return <div className="loading">Загрузка...</div>;
 
   return (
     <div className="home-page">
       <div className="home-main">
+        {/* Блок "Последнее" с каруселью */}
         <section className="home-section">
           <div className="section-header">
             <h2>Последнее</h2>
           </div>
-          <div className="books-grid-large">
-            {recentBooks.map(book => (
-              <div 
-                key={book.id} 
-                className="home-book-card-large"
-                onClick={() => navigate(`/book/${book.id}`)}
-                onMouseDown={createRipple}
-              >
-                <div className="home-book-cover-large">
-                  <img 
-                    src={book.cover_url || 'https://via.placeholder.com/200x300?text=No+Cover'} 
-                    alt={book.title}
-                  />
+          <div className="books-carousel-wrapper">
+            {recentBooks.length > 0 && (
+              <>
+                <button 
+                  className="carousel-scroll-btn left"
+                  onClick={() => scrollCarousel('left')}
+                >
+                  <ChevronLeft size={18} />
+                </button>
+                <div className="books-carousel" ref={carouselRef}>
+                  {recentBooks.map(book => (
+                    <div 
+                      key={book.id} 
+                      className="home-book-card-carousel"
+                      onClick={() => navigate(`/book/${book.id}`)}
+                      onMouseDown={createRipple}
+                    >
+                      <div className="home-book-cover-carousel">
+                        <img 
+                          src={book.cover_url || 'https://via.placeholder.com/140x210?text=No+Cover'} 
+                          alt={book.title}
+                        />
+                      </div>
+                      <div className="home-book-info">
+                        <h3>{book.title}</h3>
+                        <p>{book.author}</p>
+                        <div className="home-book-rating">
+                          <div className="home-rating-stars">
+                            <StarRating rating={book.rating_avg} />
+                          </div>
+                          <span className="rating-value">{book.rating_avg || 'Нет оценок'}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-                <div className="home-book-info">
-                  <h3>{book.title}</h3>
-                  <p>{book.author}</p>
-                  <div className="home-book-rating">
-                    <StarRating rating={book.rating_avg} />
-                    <span className="rating-value">{book.rating_avg || 'Нет оценок'}</span>
-                  </div>
-                </div>
-              </div>
-            ))}
+                <button 
+                  className="carousel-scroll-btn right"
+                  onClick={() => scrollCarousel('right')}
+                >
+                  <ChevronRight size={18} />
+                </button>
+              </>
+            )}
           </div>
         </section>
 
+        {/* Блок "Лучшее" остаётся как был */}
         <section className="home-section">
           <div className="section-header">
             <h2>Лучшее</h2>
@@ -175,6 +208,7 @@ export default function Home() {
           </div>
         </section>
 
+        {/* Блок "Оценивают" остаётся как был */}
         <section className="home-section">
           <div className="section-header">
             <h2>Оценивают</h2>
@@ -260,16 +294,13 @@ export default function Home() {
           <div className="genres-list">
             <Link to="/books/tag/classic" className="genre-tag">Классика</Link>
             <Link to="/books/tag/poem" className="genre-tag">Поэма</Link>
-            <Link to="/books/tag/drama" className="genre-tag">Драма</Link>
-            <Link to="/books/tag/philosophy" className="genre-tag">Философия</Link>
-            <Link to="/books/tag/russian" className="genre-tag">Русская литература</Link>
-            <Link to="/books/tag/english" className="genre-tag">Английская литература</Link>
-            <Link to="/books/tag/german" className="genre-tag">Немецкая литература</Link>
-            <Link to="/books/tag/japanese" className="genre-tag">Японская литература</Link>
-            <Link to="/books/tag/italian" className="genre-tag">Итальянская литература</Link>
             <Link to="/books/tag/ancient" className="genre-tag">Древняя литература</Link>
             <Link to="/books/tag/psychological" className="genre-tag">Психологический роман</Link>
+            <Link to="/books/tag/russian" className="genre-tag">Русская литература</Link>
+            <Link to="/books/tag/english" className="genre-tag">Английская литература</Link>
+            <Link to="/books/tag/drama" className="genre-tag">Драма</Link>
             <Link to="/books/tag/romance" className="genre-tag">Роман</Link>
+            <Link to="/books/tag/philosophy" className="genre-tag">Философия</Link>
             <Link to="/books/tag/adventure" className="genre-tag">Приключения</Link>
             <Link to="/books/tag/fantasy" className="genre-tag">Фантастика</Link>
             <Link to="/books/tag/detective" className="genre-tag">Детектив</Link>
