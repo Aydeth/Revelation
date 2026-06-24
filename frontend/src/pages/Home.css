@@ -35,7 +35,7 @@ body.dark-theme .section-header h2 {
 }
 
 /* ============================================
-   КАРУСЕЛЬ ДЛЯ "ПОСЛЕДНЕЕ"
+   КАРУСЕЛЬ ДЛЯ "ПОСЛЕДНЕЕ" И "ЛУЧШЕЕ"
    ============================================ */
 .books-carousel-wrapper {
   position: relative;
@@ -55,6 +55,7 @@ body.dark-theme .section-header h2 {
   scrollbar-width: thin;
 }
 
+/* Кастомный скроллбар для карусели */
 .books-carousel::-webkit-scrollbar {
   height: 6px;
 }
@@ -69,6 +70,10 @@ body.dark-theme .section-header h2 {
   border-radius: 3px;
 }
 
+.books-carousel::-webkit-scrollbar-thumb:hover {
+  background: #A8A8A8;
+}
+
 body.dark-theme .books-carousel::-webkit-scrollbar-track {
   background: #1A1A1A;
 }
@@ -77,6 +82,11 @@ body.dark-theme .books-carousel::-webkit-scrollbar-thumb {
   background: #444444;
 }
 
+body.dark-theme .books-carousel::-webkit-scrollbar-thumb:hover {
+  background: #555555;
+}
+
+/* Карточки книг в карусели */
 .home-book-card-carousel {
   flex: 0 0 140px;
   cursor: pointer;
@@ -170,140 +180,6 @@ body.dark-theme .home-book-card-carousel .home-book-info p {
 
 body.dark-theme .rating-value {
   color: #AAAAAA;
-}
-
-/* Кнопки навигации карусели */
-.carousel-scroll-btn {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid #DFE2ED;
-  border-radius: 50%;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  z-index: 2;
-  transition: background 0.2s;
-  color: #1A1A1A;
-}
-
-body.dark-theme .carousel-scroll-btn {
-  background: rgba(0, 0, 0, 0.8);
-  border-color: #1A1A1A;
-  color: #E0E0E0;
-}
-
-.carousel-scroll-btn:hover {
-  background: #FFFFFF;
-}
-
-body.dark-theme .carousel-scroll-btn:hover {
-  background: #1A1A1A;
-}
-
-.carousel-scroll-btn.left {
-  left: 4px;
-}
-
-.carousel-scroll-btn.right {
-  right: 4px;
-}
-
-/* ============================================
-   КАРТОЧКИ "ЛУЧШЕЕ" (вертикальный список)
-   ============================================ */
-.books-list-vertical {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-
-.home-book-card-vertical {
-  display: flex;
-  padding: 16px 0;
-  gap: 16px;
-  align-items: flex-start;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  background-color: transparent;
-  transition: transform 0.15s ease;
-  border: none;
-  border-radius: 12px;
-  transform: scale(1);
-}
-
-.home-book-card-vertical:active {
-  transform: scale(0.95);
-  transition: transform 0.08s ease;
-}
-
-.home-book-card-vertical .ripple {
-  background: rgba(0, 0, 0, 0.08);
-}
-
-body.dark-theme .home-book-card-vertical .ripple {
-  background: rgba(255, 255, 255, 0.15);
-}
-
-.home-book-cover-vertical {
-  width: 60px;
-  height: 90px;
-  background-color: #F5F5F5;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 4px;
-  overflow: hidden;
-  flex-shrink: 0;
-  border: 1px solid #E9E9E9;
-}
-
-body.dark-theme .home-book-cover-vertical {
-  background-color: #1A1A1A;
-  border-color: #1A1A1A;
-}
-
-.home-book-cover-vertical img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.home-book-info-vertical {
-  flex: 1;
-}
-
-.home-book-info-vertical h3 {
-  font-size: 16px;
-  font-weight: 500;
-  margin-bottom: 4px;
-  color: #222;
-}
-
-body.dark-theme .home-book-info-vertical h3 {
-  color: #E0E0E0;
-}
-
-.home-book-info-vertical p {
-  color: #666666;
-  margin-bottom: 6px;
-  font-size: 14px;
-}
-
-body.dark-theme .home-book-info-vertical p {
-  color: #AAAAAA;
-}
-
-.home-book-info-vertical .home-book-rating {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 6px;
 }
 
 /* ============================================
