@@ -162,10 +162,10 @@ body.dark-theme .rating-value {
   justify-content: center;
   cursor: pointer;
   z-index: 2;
-  transition: all 0.2s;
   color: #1A1A1A;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
   backdrop-filter: blur(4px);
+  transition: none;
 }
 
 body.dark-theme .carousel-btn {
@@ -175,12 +175,11 @@ body.dark-theme .carousel-btn {
 }
 
 .carousel-btn:hover {
-  background: #FFFFFF;
-  transform: translateY(-50%) scale(1.05);
+  background: rgba(255, 255, 255, 0.85);
 }
 
 body.dark-theme .carousel-btn:hover {
-  background: #1A1A1A;
+  background: rgba(0, 0, 0, 0.8);
 }
 
 .carousel-btn.left {

@@ -34,10 +34,11 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [userReactions, setUserReactions] = useState({});
   const [reactionLoading, setReactionLoading] = useState({});
-  const carouselRefs = {
-    recent: useRef(null),
-    topRated: useRef(null)
-  };
+  
+  const recentCarouselRef = useRef(null);
+  const topRatedCarouselRef = useRef(null);
+  const [recentScrollState, setRecentScrollState] = useState({ canScrollLeft: false, canScrollRight: false });
+  const [topRatedScrollState, setTopRatedScrollState] = useState({ canScrollLeft: false, canScrollRight: false });
 
   useEffect(() => {
     const fetchHomeData = async () => {
@@ -113,15 +114,35 @@ export default function Home() {
     }
   };
 
-  const scrollCarousel = (ref, direction) => {
+  const checkScroll = (ref, setState) => {
+    if (!ref.current) return;
+    const { scrollLeft, scrollWidth, clientWidth } = ref.current;
+    setState({
+      canScrollLeft: scrollLeft > 5,
+      canScrollRight: scrollLeft < scrollWidth - clientWidth - 5
+    });
+  };
+
+  const scrollCarousel = (ref, setState, direction) => {
     if (ref.current) {
-      const scrollAmount = 156; // Ширина карточки + gap
-      ref.current.scrollBy({
-        left: direction === 'left' ? -scrollAmount : scrollAmount,
+      const scrollAmount = 156;
+      const newScrollLeft = ref.current.scrollLeft + (direction === 'left' ? -scrollAmount : scrollAmount);
+      ref.current.scrollTo({
+        left: newScrollLeft,
         behavior: 'smooth'
       });
+      setTimeout(() => checkScroll(ref, setState), 200);
     }
   };
+
+  useEffect(() => {
+    if (!loading) {
+      setTimeout(() => {
+        checkScroll(recentCarouselRef, setRecentScrollState);
+        checkScroll(topRatedCarouselRef, setTopRatedScrollState);
+      }, 100);
+    }
+  }, [loading, recentBooks, topRatedBooks]);
 
   if (loading) return <div className="loading">Загрузка...</div>;
 
@@ -133,13 +154,16 @@ export default function Home() {
             <h2>Последнее</h2>
           </div>
           <div className="books-carousel-wrapper">
-            <button 
-              className="carousel-btn left"
-              onClick={() => scrollCarousel(carouselRefs.recent, 'left')}
-            >
-              <ChevronLeft size={20} />
-            </button>
-            <div className="books-carousel" ref={carouselRefs.recent}>
+            {recentScrollState.canScrollLeft && (
+              <button 
+                className="carousel-btn left"
+                onClick={() => scrollCarousel(recentCarouselRef, setRecentScrollState, 'left')}
+                onMouseDown={createRipple}
+              >
+                <ChevronLeft size={20} />
+              </button>
+            )}
+            <div className="books-carousel" ref={recentCarouselRef} onScroll={() => checkScroll(recentCarouselRef, setRecentScrollState)}>
               {recentBooks.map(book => (
                 <div 
                   key={book.id} 
@@ -171,12 +195,15 @@ export default function Home() {
                 </div>
               ))}
             </div>
-            <button 
-              className="carousel-btn right"
-              onClick={() => scrollCarousel(carouselRefs.recent, 'right')}
-            >
-              <ChevronRight size={20} />
-            </button>
+            {recentScrollState.canScrollRight && (
+              <button 
+                className="carousel-btn right"
+                onClick={() => scrollCarousel(recentCarouselRef, setRecentScrollState, 'right')}
+                onMouseDown={createRipple}
+              >
+                <ChevronRight size={20} />
+              </button>
+            )}
           </div>
         </section>
 
@@ -185,13 +212,16 @@ export default function Home() {
             <h2>Лучшее</h2>
           </div>
           <div className="books-carousel-wrapper">
-            <button 
-              className="carousel-btn left"
-              onClick={() => scrollCarousel(carouselRefs.topRated, 'left')}
-            >
-              <ChevronLeft size={20} />
-            </button>
-            <div className="books-carousel" ref={carouselRefs.topRated}>
+            {topRatedScrollState.canScrollLeft && (
+              <button 
+                className="carousel-btn left"
+                onClick={() => scrollCarousel(topRatedCarouselRef, setTopRatedScrollState, 'left')}
+                onMouseDown={createRipple}
+              >
+                <ChevronLeft size={20} />
+              </button>
+            )}
+            <div className="books-carousel" ref={topRatedCarouselRef} onScroll={() => checkScroll(topRatedCarouselRef, setTopRatedScrollState)}>
               {topRatedBooks.map(book => (
                 <div 
                   key={book.id} 
@@ -223,12 +253,15 @@ export default function Home() {
                 </div>
               ))}
             </div>
-            <button 
-              className="carousel-btn right"
-              onClick={() => scrollCarousel(carouselRefs.topRated, 'right')}
-            >
-              <ChevronRight size={20} />
-            </button>
+            {topRatedScrollState.canScrollRight && (
+              <button 
+                className="carousel-btn right"
+                onClick={() => scrollCarousel(topRatedCarouselRef, setTopRatedScrollState, 'right')}
+                onMouseDown={createRipple}
+              >
+                <ChevronRight size={20} />
+              </button>
+            )}
           </div>
         </section>
 
