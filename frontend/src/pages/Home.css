@@ -212,7 +212,7 @@ body.dark-theme .rating-value {
   cursor: pointer;
   position: relative;
   overflow: hidden;
-  border-radius: 12px;
+  border-radius: 0 12px 12px 0;
   transition: transform 0.15s ease;
   transform: scale(1);
 }
