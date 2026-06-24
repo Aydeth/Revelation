@@ -37,8 +37,8 @@ body.dark-theme .section-header h2 {
 .books-carousel-wrapper {
   position: relative;
   overflow: hidden;
-  margin: 0 -20px;
-  padding: 0 20px;
+  margin: 0 -16px;
+  padding: 0 16px;
 }
 
 .books-carousel {
