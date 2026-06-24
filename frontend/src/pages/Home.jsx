@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { ThumbsUp, ThumbsDown } from 'lucide-react';
@@ -34,6 +34,22 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [userReactions, setUserReactions] = useState({});
   const [reactionLoading, setReactionLoading] = useState({});
+  
+  // Refs для каруселей
+  const recentCarouselRef = useRef(null);
+  const topRatedCarouselRef = useRef(null);
+
+  // Обработка скролла колёсиком для карусели
+  const handleWheelScroll = (e, carouselRef) => {
+    if (!carouselRef.current) return;
+    
+    // Предотвращаем вертикальный скролл страницы
+    e.preventDefault();
+    
+    // Прокручиваем карусель горизонтально
+    const delta = e.deltaY || e.deltaX;
+    carouselRef.current.scrollLeft += delta;
+  };
 
   useEffect(() => {
     const fetchHomeData = async () => {
@@ -119,7 +135,11 @@ export default function Home() {
             <h2>Последнее</h2>
           </div>
           <div className="books-carousel-wrapper">
-            <div className="books-carousel">
+            <div 
+              className="books-carousel" 
+              ref={recentCarouselRef}
+              onWheel={(e) => handleWheelScroll(e, recentCarouselRef)}
+            >
               {recentBooks.map(book => (
                 <div 
                   key={book.id} 
@@ -159,7 +179,11 @@ export default function Home() {
             <h2>Лучшее</h2>
           </div>
           <div className="books-carousel-wrapper">
-            <div className="books-carousel">
+            <div 
+              className="books-carousel" 
+              ref={topRatedCarouselRef}
+              onWheel={(e) => handleWheelScroll(e, topRatedCarouselRef)}
+            >
               {topRatedBooks.map(book => (
                 <div 
                   key={book.id} 
