@@ -148,11 +148,12 @@ body.dark-theme .rating-value {
   color: #AAAAAA;
 }
 
+/* Кнопки карусели — без прозрачности и без анимаций */
 .carousel-btn {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background: rgba(255, 255, 255, 0.85);
+  background: #FFFFFF;
   border: 1px solid #DFE2ED;
   border-radius: 50%;
   width: 32px;
@@ -163,23 +164,25 @@ body.dark-theme .rating-value {
   cursor: pointer;
   z-index: 2;
   color: #1A1A1A;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-  backdrop-filter: blur(4px);
-  transition: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
 }
 
 body.dark-theme .carousel-btn {
-  background: rgba(0, 0, 0, 0.8);
-  border-color: #1A1A1A;
+  background: #1A1A1A;
+  border-color: #333333;
   color: #E0E0E0;
 }
 
 .carousel-btn:hover {
-  background: rgba(255, 255, 255, 0.85);
+  background: #FFFFFF;
 }
 
 body.dark-theme .carousel-btn:hover {
-  background: rgba(0, 0, 0, 0.8);
+  background: #1A1A1A;
+}
+
+.carousel-btn:active {
+  transform: translateY(-50%);
 }
 
 .carousel-btn.left {
