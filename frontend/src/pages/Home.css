@@ -465,3 +465,64 @@ body.dark-theme .genre-tag {
     opacity: 0;
   }
 }
+
+/* ============================================
+   КАРУСЕЛЬ - КАСТОМНЫЙ СКРОЛЛБАР
+   ============================================ */
+.books-carousel-wrapper {
+  position: relative;
+  overflow: hidden;
+  margin: 0 -20px;
+  padding: 0 20px;
+}
+
+/* Контейнер карусели с кастомным скроллбаром */
+.books-carousel {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  padding: 4px 0 12px 0;
+  
+  /* Скрываем стандартный скроллбар для Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: #C1C1C1 #F1F1F1;
+}
+
+/* Стили для Webkit-браузеров (Chrome, Safari, Edge) */
+.books-carousel::-webkit-scrollbar {
+  height: 8px; /* Как в читалке */
+}
+
+.books-carousel::-webkit-scrollbar-track {
+  background: #F1F1F1;
+  border-radius: 4px;
+}
+
+.books-carousel::-webkit-scrollbar-thumb {
+  background: #C1C1C1;
+  border-radius: 4px;
+}
+
+.books-carousel::-webkit-scrollbar-thumb:hover {
+  background: #A8A8A8;
+}
+
+/* Тёмная тема */
+body.dark-theme .books-carousel {
+  scrollbar-color: #444444 #1A1A1A;
+}
+
+body.dark-theme .books-carousel::-webkit-scrollbar-track {
+  background: #1A1A1A;
+}
+
+body.dark-theme .books-carousel::-webkit-scrollbar-thumb {
+  background: #444444;
+}
+
+body.dark-theme .books-carousel::-webkit-scrollbar-thumb:hover {
+  background: #555555;
+}
