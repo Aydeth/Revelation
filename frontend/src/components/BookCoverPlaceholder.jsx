@@ -1,7 +1,5 @@
 export default function BookCoverPlaceholder({ title, author, id }) {
-  // Генерируем случайный градиент на основе ID книги
   const generateGradient = (seed) => {
-    // Фиксированные яркие цвета
     const colors = [
       ['#c9ccff', '#a659ff'],
       ['#ffd4a8', '#ff6b6b'],
@@ -13,14 +11,9 @@ export default function BookCoverPlaceholder({ title, author, id }) {
       ['#ffd1dc', '#ff6f91']
     ];
     
-    const index = seed % colors.length;
-    const color1 = colors[index][0];
-    const color2 = colors[index][1];
-    
-    return `linear-gradient(0deg, ${color1} 0%, ${color2} 100%)`;
+    const index = (id || 0) % colors.length;
+    return `linear-gradient(0deg, ${colors[index][0]} 0%, ${colors[index][1]} 100%)`;
   };
-
-  const gradient = generateGradient(id || 0);
 
   return (
     <div 
@@ -28,17 +21,18 @@ export default function BookCoverPlaceholder({ title, author, id }) {
       style={{
         width: '100%',
         height: '100%',
-        background: gradient,
+        background: generateGradient(id || 0),
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: '12px',
+        padding: '8px',
         textAlign: 'center',
         borderRadius: 'inherit'
       }}
     >
       <div 
+        className="placeholder-title"
         style={{
           fontSize: '14px',
           fontWeight: '600',
@@ -55,6 +49,7 @@ export default function BookCoverPlaceholder({ title, author, id }) {
         {title}
       </div>
       <div 
+        className="placeholder-author"
         style={{
           fontSize: '11px',
           color: 'rgba(0, 0, 0, 0.5)',

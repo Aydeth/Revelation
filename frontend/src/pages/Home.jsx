@@ -114,7 +114,6 @@ export default function Home() {
   return (
     <div className="home-page">
       <div className="home-main">
-        {/* Блок "Последнее" с каруселью */}
         <section className="home-section">
           <div className="section-header">
             <h2>Последнее</h2>
@@ -155,7 +154,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Блок "Лучшее" с каруселью */}
         <section className="home-section">
           <div className="section-header">
             <h2>Лучшее</h2>
@@ -196,7 +194,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Блок "Оценивают" */}
         <section className="home-section">
           <div className="section-header">
             <h2>Оценивают</h2>
@@ -210,10 +207,15 @@ export default function Home() {
                   onMouseDown={createRipple}
                 >
                   <div className="review-book-cover">
-                    <img 
-                      src={review.book_cover_url || 'https://via.placeholder.com/48x72?text=No+Cover'} 
-                      alt={review.book_title}
-                    />
+                    {review.book_cover_url ? (
+                      <img src={review.book_cover_url} alt={review.book_title} />
+                    ) : (
+                      <BookCoverPlaceholder 
+                        title={review.book_title} 
+                        author={review.book_author} 
+                        id={review.book_id} 
+                      />
+                    )}
                   </div>
                   <div className="review-book-details">
                     <h4>{review.book_title}</h4>
