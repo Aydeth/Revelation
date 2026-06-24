@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { ThumbsUp, ThumbsDown } from 'lucide-react';
@@ -34,6 +34,9 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [userReactions, setUserReactions] = useState({});
   const [reactionLoading, setReactionLoading] = useState({});
+  
+  // Refs для drag-скролла
+  const carouselRefs = useRef({});
 
   useEffect(() => {
     const fetchHomeData = async () => {
@@ -77,6 +80,60 @@ export default function Home() {
     
     fetchHomeData();
   }, []);
+
+  // Drag-скролл для каруселей
+  useEffect(() => {
+    const carousels = document.querySelectorAll('.books-carousel');
+    
+    carousels.forEach(carousel => {
+      let isDown = false;
+      let startX;
+      let scrollLeft;
+      
+      const onMouseDown = (e) => {
+        isDown = true;
+        carousel.classList.add('dragging');
+        startX = e.pageX - carousel.offsetLeft;
+        scrollLeft = carousel.scrollLeft;
+        carousel.style.cursor = 'grabbing';
+      };
+      
+      const onMouseLeave = () => {
+        isDown = false;
+        carousel.classList.remove('dragging');
+        carousel.style.cursor = 'grab';
+      };
+      
+      const onMouseUp = () => {
+        isDown = false;
+        carousel.classList.remove('dragging');
+        carousel.style.cursor = 'grab';
+      };
+      
+      const onMouseMove = (e) => {
+        if (!isDown) return;
+        e.preventDefault();
+        const x = e.pageX - carousel.offsetLeft;
+        const walk = (x - startX) * 1.5;
+        carousel.scrollLeft = scrollLeft - walk;
+      };
+      
+      carousel.addEventListener('mousedown', onMouseDown);
+      carousel.addEventListener('mouseleave', onMouseLeave);
+      carousel.addEventListener('mouseup', onMouseUp);
+      carousel.addEventListener('mousemove', onMouseMove);
+      
+      // Устанавливаем cursor: grab по умолчанию
+      carousel.style.cursor = 'grab';
+      
+      return () => {
+        carousel.removeEventListener('mousedown', onMouseDown);
+        carousel.removeEventListener('mouseleave', onMouseLeave);
+        carousel.removeEventListener('mouseup', onMouseUp);
+        carousel.removeEventListener('mousemove', onMouseMove);
+      };
+    });
+  }, [recentBooks, topRatedBooks]); // Перезапускаем при изменении данных
 
   const handleReaction = async (reviewId, reaction) => {
     setReactionLoading(prev => ({ ...prev, [reviewId]: true }));
