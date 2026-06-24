@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { ThumbsUp, ThumbsDown } from 'lucide-react';
+import { ThumbsUp, ThumbsDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import StarRating from '../components/StarRating';
 import BookCoverPlaceholder from '../components/BookCoverPlaceholder';
 import './Home.css';
@@ -34,17 +34,9 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [userReactions, setUserReactions] = useState({});
   const [reactionLoading, setReactionLoading] = useState({});
-  
-  const recentCarouselRef = useRef(null);
-  const topRatedCarouselRef = useRef(null);
-
-  // Простой обработчик скролла колёсиком
-  const handleWheelScroll = (e, carouselRef) => {
-    if (!carouselRef.current) return;
-    
-    e.preventDefault(); // Блокируем скролл страницы
-    const delta = e.deltaY || e.deltaX || 0;
-    carouselRef.current.scrollLeft += delta;
+  const carouselRefs = {
+    recent: useRef(null),
+    topRated: useRef(null)
   };
 
   useEffect(() => {
@@ -121,6 +113,16 @@ export default function Home() {
     }
   };
 
+  const scrollCarousel = (ref, direction) => {
+    if (ref.current) {
+      const scrollAmount = 156; // Ширина карточки + gap
+      ref.current.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth'
+      });
+    }
+  };
+
   if (loading) return <div className="loading">Загрузка...</div>;
 
   return (
@@ -131,11 +133,13 @@ export default function Home() {
             <h2>Последнее</h2>
           </div>
           <div className="books-carousel-wrapper">
-            <div 
-              className="books-carousel" 
-              ref={recentCarouselRef}
-              onWheel={(e) => handleWheelScroll(e, recentCarouselRef)}
+            <button 
+              className="carousel-btn left"
+              onClick={() => scrollCarousel(carouselRefs.recent, 'left')}
             >
+              <ChevronLeft size={20} />
+            </button>
+            <div className="books-carousel" ref={carouselRefs.recent}>
               {recentBooks.map(book => (
                 <div 
                   key={book.id} 
@@ -167,6 +171,12 @@ export default function Home() {
                 </div>
               ))}
             </div>
+            <button 
+              className="carousel-btn right"
+              onClick={() => scrollCarousel(carouselRefs.recent, 'right')}
+            >
+              <ChevronRight size={20} />
+            </button>
           </div>
         </section>
 
@@ -175,11 +185,13 @@ export default function Home() {
             <h2>Лучшее</h2>
           </div>
           <div className="books-carousel-wrapper">
-            <div 
-              className="books-carousel" 
-              ref={topRatedCarouselRef}
-              onWheel={(e) => handleWheelScroll(e, topRatedCarouselRef)}
+            <button 
+              className="carousel-btn left"
+              onClick={() => scrollCarousel(carouselRefs.topRated, 'left')}
             >
+              <ChevronLeft size={20} />
+            </button>
+            <div className="books-carousel" ref={carouselRefs.topRated}>
               {topRatedBooks.map(book => (
                 <div 
                   key={book.id} 
@@ -211,6 +223,12 @@ export default function Home() {
                 </div>
               ))}
             </div>
+            <button 
+              className="carousel-btn right"
+              onClick={() => scrollCarousel(carouselRefs.topRated, 'right')}
+            >
+              <ChevronRight size={20} />
+            </button>
           </div>
         </section>
 

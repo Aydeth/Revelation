@@ -44,7 +44,7 @@ body.dark-theme .section-header h2 {
   overflow-y: hidden;
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
-  padding: 4px 0 12px 0;
+  padding: 4px 0 8px 0;
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
@@ -146,6 +146,57 @@ body.dark-theme .home-book-card-carousel .home-book-info p {
 
 body.dark-theme .rating-value {
   color: #AAAAAA;
+}
+
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid #DFE2ED;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 2;
+  transition: all 0.2s;
+  color: #1A1A1A;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(4px);
+}
+
+body.dark-theme .carousel-btn {
+  background: rgba(0, 0, 0, 0.8);
+  border-color: #1A1A1A;
+  color: #E0E0E0;
+}
+
+.carousel-btn:hover {
+  background: #FFFFFF;
+  transform: translateY(-50%) scale(1.05);
+}
+
+body.dark-theme .carousel-btn:hover {
+  background: #1A1A1A;
+}
+
+.carousel-btn.left {
+  left: 4px;
+}
+
+.carousel-btn.right {
+  right: 4px;
+}
+
+.carousel-btn .ripple {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+body.dark-theme .carousel-btn .ripple {
+  background: rgba(255, 255, 255, 0.15);
 }
 
 .reviews-list {
