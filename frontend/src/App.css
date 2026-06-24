@@ -4,149 +4,76 @@
   flex-direction: column;
   min-height: 100vh;
   background-color: #FFFFFF;
+  padding-top: 60px; /* Отступ для плавающих кнопок */
 }
 
 body.dark-theme .app-wrapper {
   background-color: #000000;
 }
 
-/* Хедер */
-.app-header {
-  background-color: #FFFFFF;
-  border-bottom: 1px solid #E9E9E9;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  transition: background-color 0.2s ease, border-color 0.2s ease;
+/* Плавающий хедер */
+.floating-header {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 1000;
 }
 
-body.dark-theme .app-header {
-  background-color: #000000;
-  border-bottom-color: #1A1A1A;
-}
-
-.header-container {
-  max-width: 480px;
-  margin: 0 auto;
-  padding: 16px 20px;
+.floating-actions {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+  padding: 8px;
+  border-radius: 16px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-.logo-link {
-  display: inline-block;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
+body.dark-theme .floating-actions {
+  background: rgba(0, 0, 0, 0.85);
+  border-color: rgba(255, 255, 255, 0.08);
 }
 
-.logo-img {
-  height: 48px;
-  width: auto;
-  vertical-align: middle;
-  transition: opacity 0.2s;
-  display: block;
-}
-
-.logo-img:hover {
-  opacity: 0.8;
-}
-
-.logo-link .ripple {
-  background: rgba(0, 0, 0, 0.1);
-}
-
-body.dark-theme .logo-link .ripple {
-  background: rgba(255, 255, 255, 0.15);
-}
-
-/* Правая группа кнопок */
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-/* Кнопка переключения темы */
-.theme-toggle-btn {
+.theme-toggle-btn-floating,
+.admin-link-floating {
   background: none;
-  border: 1px solid #DFE2ED;
-  width: 44px;
-  height: 44px;
-  border-radius: 44px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: none;
-  position: relative;
-  overflow: hidden;
-  color: #1A1A1A;
-  border-color: #DFE2ED;
-}
-
-body.dark-theme .theme-toggle-btn {
-  color: #E0E0E0;
-  border-color: #1A1A1A;
-}
-
-.theme-toggle-btn:hover {
-  border-color: #DFE2ED;
-  color: #1A1A1A;
-}
-
-body.dark-theme .theme-toggle-btn:hover {
-  border-color: #1A1A1A;
-  color: #E0E0E0;
-}
-
-.theme-toggle-btn .ripple {
-  background: rgba(0, 0, 0, 0.1);
-}
-
-body.dark-theme .theme-toggle-btn .ripple {
-  background: rgba(255, 255, 255, 0.15);
-}
-
-/* Кнопка админ-панели */
-.admin-link {
-  background: none;
-  border: 1px solid #DFE2ED;
-  width: 44px;
-  height: 44px;
-  border-radius: 44px;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 40px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #1A1A1A;
-  text-decoration: none;
   position: relative;
   overflow: hidden;
   transition: none;
 }
 
-body.dark-theme .admin-link {
-  color: #E0E0E0;
-  border-color: #1A1A1A;
-}
-
-.admin-link:hover {
-  border-color: #DFE2ED;
-  color: #1A1A1A;
-}
-
-body.dark-theme .admin-link:hover {
-  border-color: #1A1A1A;
+body.dark-theme .theme-toggle-btn-floating,
+body.dark-theme .admin-link-floating {
   color: #E0E0E0;
 }
 
-.admin-link .ripple {
-  background: rgba(0, 0, 0, 0.1);
+.theme-toggle-btn-floating:hover,
+.admin-link-floating:hover {
+  background: rgba(0, 0, 0, 0.05);
 }
 
-body.dark-theme .admin-link .ripple {
+body.dark-theme .theme-toggle-btn-floating:hover,
+body.dark-theme .admin-link-floating:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.theme-toggle-btn-floating .ripple,
+.admin-link-floating .ripple {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+body.dark-theme .theme-toggle-btn-floating .ripple,
+body.dark-theme .admin-link-floating .ripple {
   background: rgba(255, 255, 255, 0.15);
 }
 
@@ -155,7 +82,7 @@ body.dark-theme .admin-link .ripple {
   flex: 1;
   max-width: 480px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 16px;
   width: 100%;
 }
 
@@ -174,28 +101,29 @@ body.dark-theme .app-footer {
   border-top-color: #1A1A1A;
 }
 
+/* Для Telegram — убираем лишние отступы */
+.telegram-footer {
+  border-top: none;
+}
+
 .footer-container {
   max-width: 480px;
   margin: 0 auto;
   display: flex;
   justify-content: space-around;
-  padding: 12px 20px;
+  padding: 12px 16px;
 }
 
 .footer-link {
   color: #333333;
   text-decoration: none;
   font-weight: 500;
-  padding: 8px 16px;
+  padding: 8px 12px;
   border-radius: 8px;
   position: relative;
   overflow: hidden;
   transition: none;
   cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
   font-size: 14px;
 }
 
@@ -224,5 +152,3 @@ body.dark-theme .footer-link .ripple {
   padding: 60px;
   color: #888888;
 }
-
-/* Убираем все медиа-запросы для единого мобильного вида */

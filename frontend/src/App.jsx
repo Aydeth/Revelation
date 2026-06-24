@@ -1,5 +1,6 @@
+import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Link, Navigate } from 'react-router-dom';
-import { Sun, Moon, Compass, Library, User, UserCog } from 'lucide-react';
+import { Sun, Moon, UserCog } from 'lucide-react';
 import Home from './pages/Home';
 import AllBooks from './pages/AllBooks';
 import BooksByTag from './pages/BooksByTag';
@@ -11,9 +12,6 @@ import AdminPanel from './pages/AdminPanel';
 import { useTheme } from './context/ThemeContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import './App.css';
-
-import LightIcon from './assets/Icon.svg';
-import DarkIcon from './assets/DarkIcon.svg';
 
 const createRipple = (event) => {
   const button = event.currentTarget;
@@ -37,65 +35,86 @@ function AppContent() {
   const { user, loading, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
 
+  // Определяем, запущено ли приложение в Telegram
+  const isTelegram = window.Telegram?.WebApp !== undefined;
+
+  useEffect(() => {
+    if (isTelegram) {
+      const tg = window.Telegram.WebApp;
+      
+      // Устанавливаем цвета в зависимости от темы
+      if (theme === 'dark') {
+        tg.setHeaderColor('#000000');
+        tg.setBackgroundColor('#000000');
+        tg.setBottomBarColor('#000000');
+      } else {
+        tg.setHeaderColor('#ffffff');
+        tg.setBackgroundColor('#ffffff');
+        tg.setBottomBarColor('#ffffff');
+      }
+      
+      // Расширяем приложение на весь экран
+      tg.expand();
+      
+      // Уведомляем, что приложение готово
+      tg.ready();
+    }
+  }, [theme, isTelegram]);
+
   if (loading) {
     return <div className="loading">Загрузка...</div>;
   }
 
-  const logoSrc = theme === 'light' ? LightIcon : DarkIcon;
-
   return (
     <div className="app-wrapper">
       {user && (
-        <header className="app-header">
-          <div className="header-container">
-            <Link to="/" className="logo-link" onMouseDown={createRipple}>
-              <img src={logoSrc} alt="Logo" className="logo-img" />
-            </Link>
-            <div className="header-right">
-              <button onClick={toggleTheme} className="theme-toggle-btn" onMouseDown={createRipple}>
+        <>
+          {/* Плавающие кнопки в правом верхнем углу */}
+          <div className="floating-header">
+            <div className="floating-actions">
+              <button 
+                onClick={toggleTheme} 
+                className="theme-toggle-btn-floating" 
+                onMouseDown={createRipple}
+              >
                 {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
               </button>
               {user?.is_admin && (
-                <Link to="/admin" className="admin-link" onMouseDown={createRipple}>
+                <Link to="/admin" className="admin-link-floating" onMouseDown={createRipple}>
                   <UserCog size={20} />
                 </Link>
               )}
             </div>
           </div>
-        </header>
-      )}
 
-      <main className="app-main">
-        <Routes>
-          <Route path="/login" element={<LoginRegister />} />
-          <Route path="/" element={user ? <Home /> : <Navigate to="/login" />} />
-          <Route path="/books" element={user ? <AllBooks /> : <Navigate to="/login" />} />
-          <Route path="/books/tag/:tag" element={user ? <BooksByTag /> : <Navigate to="/login" />} />
-          <Route path="/profile" element={user ? <Profile /> : <Navigate to="/login" />} />
-          <Route path="/user/:username" element={user ? <Profile /> : <Navigate to="/login" />} />
-          <Route path="/book/:id" element={user ? <BookPage /> : <Navigate to="/login" />} />
-          <Route path="/read/:id/:pageNum" element={user ? <ReadBook /> : <Navigate to="/login" />} />
-          <Route path="/admin" element={user?.is_admin ? <AdminPanel /> : <Navigate to="/" />} />
-        </Routes>
-      </main>
+          <main className="app-main">
+            <Routes>
+              <Route path="/login" element={<LoginRegister />} />
+              <Route path="/" element={user ? <Home /> : <Navigate to="/login" />} />
+              <Route path="/books" element={user ? <AllBooks /> : <Navigate to="/login" />} />
+              <Route path="/books/tag/:tag" element={user ? <BooksByTag /> : <Navigate to="/login" />} />
+              <Route path="/profile" element={user ? <Profile /> : <Navigate to="/login" />} />
+              <Route path="/user/:username" element={user ? <Profile /> : <Navigate to="/login" />} />
+              <Route path="/book/:id" element={user ? <BookPage /> : <Navigate to="/login" />} />
+              <Route path="/read/:id/:pageNum" element={user ? <ReadBook /> : <Navigate to="/login" />} />
+              <Route path="/admin" element={user?.is_admin ? <AdminPanel /> : <Navigate to="/" />} />
+            </Routes>
+          </main>
 
-      {user && (
-        <nav className="app-footer">
-          <div className="footer-container">
-            <Link to="/" className="footer-link" onMouseDown={createRipple}>
-              <Compass size={20} />
-              <span>Главная</span>
-            </Link>
-            <Link to="/books" className="footer-link" onMouseDown={createRipple}>
-              <Library size={20} />
-              <span>Все книги</span>
-            </Link>
-            <Link to={`/user/${user.username}`} className="footer-link" onMouseDown={createRipple}>
-              <User size={20} />
-              <span>Профиль</span>
-            </Link>
-          </div>
-        </nav>
+          <nav className={`app-footer ${isTelegram ? 'telegram-footer' : ''}`}>
+            <div className="footer-container">
+              <Link to="/" className="footer-link" onMouseDown={createRipple}>
+                <span>Главная</span>
+              </Link>
+              <Link to="/books" className="footer-link" onMouseDown={createRipple}>
+                <span>Все книги</span>
+              </Link>
+              <Link to={`/user/${user.username}`} className="footer-link" onMouseDown={createRipple}>
+                <span>Профиль</span>
+              </Link>
+            </div>
+          </nav>
+        </>
       )}
     </div>
   );
