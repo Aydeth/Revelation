@@ -1,11 +1,10 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { ThumbsUp, ThumbsDown } from 'lucide-react';
 import StarRating from '../components/StarRating';
 import BookCoverPlaceholder from '../components/BookCoverPlaceholder';
 import './Home.css';
-
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
@@ -170,7 +169,7 @@ export default function Home() {
                   onClick={() => navigate(`/book/${book.id}`)}
                   onMouseDown={createRipple}
                 >
-                  <div className="home-book-card-carousel">
+                  <div className="home-book-cover-carousel">
                     {book.cover_url ? (
                       <img src={book.cover_url} alt={book.title} />
                     ) : (
