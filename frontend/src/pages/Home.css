@@ -374,3 +374,19 @@ body.dark-theme .reaction-btn .ripple {
     opacity: 0;
   }
 }
+
+
+/* Добавь в конец файла */
+
+.books-carousel.dragging {
+  cursor: grabbing;
+  user-select: none;
+}
+
+.books-carousel.dragging .home-book-card-carousel {
+  pointer-events: none;
+}
+
+.books-carousel {
+  cursor: grab;
+}

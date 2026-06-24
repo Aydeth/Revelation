@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { ThumbsUp, ThumbsDown } from 'lucide-react';
@@ -34,8 +34,6 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [userReactions, setUserReactions] = useState({});
   const [reactionLoading, setReactionLoading] = useState({});
-  
-  const carouselRefs = useRef([]);
 
   useEffect(() => {
     const fetchHomeData = async () => {
@@ -80,69 +78,6 @@ export default function Home() {
     fetchHomeData();
   }, []);
 
-  // Инициализация drag-скролла после рендера
-  useEffect(() => {
-    const carousels = document.querySelectorAll('.books-carousel');
-    
-    carousels.forEach(carousel => {
-      let isDown = false;
-      let startX;
-      let scrollLeft;
-      
-      const onMouseDown = (e) => {
-        // Игнорируем клики по карточкам (чтобы не мешать навигации)
-        if (e.target.closest('.home-book-card-carousel')) {
-          return;
-        }
-        isDown = true;
-        startX = e.pageX - carousel.offsetLeft;
-        scrollLeft = carousel.scrollLeft;
-        carousel.style.cursor = 'grabbing';
-        carousel.style.userSelect = 'none';
-      };
-      
-      const onMouseLeave = () => {
-        if (isDown) {
-          isDown = false;
-          carousel.style.cursor = 'grab';
-          carousel.style.userSelect = '';
-        }
-      };
-      
-      const onMouseUp = () => {
-        if (isDown) {
-          isDown = false;
-          carousel.style.cursor = 'grab';
-          carousel.style.userSelect = '';
-        }
-      };
-      
-      const onMouseMove = (e) => {
-        if (!isDown) return;
-        e.preventDefault();
-        const x = e.pageX - carousel.offsetLeft;
-        const walk = (x - startX) * 1.5;
-        carousel.scrollLeft = scrollLeft - walk;
-      };
-      
-      // Добавляем события
-      carousel.addEventListener('mousedown', onMouseDown);
-      carousel.addEventListener('mouseleave', onMouseLeave);
-      carousel.addEventListener('mouseup', onMouseUp);
-      carousel.addEventListener('mousemove', onMouseMove);
-      
-      // Устанавливаем курсор
-      carousel.style.cursor = 'grab';
-      
-      return () => {
-        carousel.removeEventListener('mousedown', onMouseDown);
-        carousel.removeEventListener('mouseleave', onMouseLeave);
-        carousel.removeEventListener('mouseup', onMouseUp);
-        carousel.removeEventListener('mousemove', onMouseMove);
-      };
-    });
-  }, [recentBooks, topRatedBooks]);
-
   const handleReaction = async (reviewId, reaction) => {
     setReactionLoading(prev => ({ ...prev, [reviewId]: true }));
     try {
@@ -184,7 +119,7 @@ export default function Home() {
             <h2>Последнее</h2>
           </div>
           <div className="books-carousel-wrapper">
-            <div className="books-carousel">
+            <div className="books-carousel" id="carousel-recent">
               {recentBooks.map(book => (
                 <div 
                   key={book.id} 
@@ -224,7 +159,7 @@ export default function Home() {
             <h2>Лучшее</h2>
           </div>
           <div className="books-carousel-wrapper">
-            <div className="books-carousel">
+            <div className="books-carousel" id="carousel-top">
               {topRatedBooks.map(book => (
                 <div 
                   key={book.id} 
