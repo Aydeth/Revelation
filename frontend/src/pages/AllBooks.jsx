@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import StarRating from '../components/StarRating';
+import BookCoverPlaceholder from '../components/BookCoverPlaceholder';
 import './AllBooks.css';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
@@ -122,7 +123,11 @@ export default function AllBooks() {
                 {book.cover_url ? (
                   <img src={book.cover_url} alt={book.title} />
                 ) : (
-                  <div className="cover-placeholder">{book.title[0]}</div>
+                  <BookCoverPlaceholder 
+                    title={book.title} 
+                    author={book.author} 
+                    id={book.id} 
+                  />
                 )}
               </div>
               <div className="book-main">

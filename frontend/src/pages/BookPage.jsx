@@ -4,6 +4,7 @@ import axios from 'axios';
 import { PenLine, ThumbsUp, ThumbsDown, ChevronDown, Check } from 'lucide-react';
 import ReviewModal from '../components/ReviewModal';
 import StarRating from '../components/StarRating';
+import BookCoverPlaceholder from '../components/BookCoverPlaceholder';
 import './BookPage.css';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
@@ -282,10 +283,15 @@ export default function BookPage() {
       <div className="book-content">
         <div className="book-left-column">
           <div className="book-cover-large">
-            <img 
-              src={book.cover_url || 'https://via.placeholder.com/300x450?text=No+Cover'} 
-              alt={book.title}
-            />
+            {book.cover_url ? (
+              <img src={book.cover_url} alt={book.title} />
+            ) : (
+              <BookCoverPlaceholder 
+                title={book.title} 
+                author={book.author} 
+                id={book.id} 
+              />
+            )}
           </div>
           
           <div className="read-button-container">

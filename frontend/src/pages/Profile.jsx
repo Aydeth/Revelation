@@ -4,6 +4,7 @@ import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import EditProfileModal from '../components/EditProfileModal';
 import StarRating from '../components/StarRating';
+import BookCoverPlaceholder from '../components/BookCoverPlaceholder';
 import './Profile.css';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
@@ -171,10 +172,15 @@ export default function Profile() {
                     onMouseDown={createRipple}
                   >
                     <div className="shelf-book-cover">
-                      <img 
-                        src={book.cover_url || 'https://via.placeholder.com/80x120?text=No+Cover'} 
-                        alt={book.title}
-                      />
+                      {book.cover_url ? (
+                        <img src={book.cover_url} alt={book.title} />
+                      ) : (
+                        <BookCoverPlaceholder 
+                          title={book.title} 
+                          author={book.author} 
+                          id={book.id} 
+                        />
+                      )}
                     </div>
                     <div className="shelf-book-info">
                       <h4>{book.title}</h4>

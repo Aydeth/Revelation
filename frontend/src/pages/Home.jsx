@@ -3,7 +3,9 @@ import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { ThumbsUp, ThumbsDown } from 'lucide-react';
 import StarRating from '../components/StarRating';
+import BookCoverPlaceholder from '../components/BookCoverPlaceholder';
 import './Home.css';
+
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
@@ -128,10 +130,15 @@ export default function Home() {
                   onMouseDown={createRipple}
                 >
                   <div className="home-book-cover-carousel">
-                    <img 
-                      src={book.cover_url || 'https://via.placeholder.com/140x210?text=No+Cover'} 
-                      alt={book.title}
-                    />
+                    {book.cover_url ? (
+                      <img src={book.cover_url} alt={book.title} />
+                    ) : (
+                      <BookCoverPlaceholder 
+                        title={book.title} 
+                        author={book.author} 
+                        id={book.id} 
+                      />
+                    )}
                   </div>
                   <div className="home-book-info">
                     <h3>{book.title}</h3>
@@ -163,11 +170,16 @@ export default function Home() {
                   onClick={() => navigate(`/book/${book.id}`)}
                   onMouseDown={createRipple}
                 >
-                  <div className="home-book-cover-carousel">
-                    <img 
-                      src={book.cover_url || 'https://via.placeholder.com/140x210?text=No+Cover'} 
-                      alt={book.title}
-                    />
+                  <div className="home-book-card-carousel">
+                    {book.cover_url ? (
+                      <img src={book.cover_url} alt={book.title} />
+                    ) : (
+                      <BookCoverPlaceholder 
+                        title={book.title} 
+                        author={book.author} 
+                        id={book.id} 
+                      />
+                    )}
                   </div>
                   <div className="home-book-info">
                     <h3>{book.title}</h3>
