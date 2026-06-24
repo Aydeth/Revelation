@@ -1,9 +1,16 @@
+/* Обёртка приложения */
 .app-wrapper {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  background-color: #FFFFFF;
 }
 
+body.dark-theme .app-wrapper {
+  background-color: #000000;
+}
+
+/* Хедер */
 .app-header {
   background-color: #FFFFFF;
   border-bottom: 1px solid #E9E9E9;
@@ -19,7 +26,7 @@ body.dark-theme .app-header {
 }
 
 .header-container {
-  max-width: 1080px;
+  max-width: 480px;
   margin: 0 auto;
   padding: 16px 20px;
   display: flex;
@@ -54,12 +61,14 @@ body.dark-theme .logo-link .ripple {
   background: rgba(255, 255, 255, 0.15);
 }
 
+/* Правая группа кнопок */
 .header-right {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
+/* Кнопка переключения темы */
 .theme-toggle-btn {
   background: none;
   border: 1px solid #DFE2ED;
@@ -100,6 +109,7 @@ body.dark-theme .theme-toggle-btn .ripple {
   background: rgba(255, 255, 255, 0.15);
 }
 
+/* Кнопка админ-панели */
 .admin-link {
   background: none;
   border: 1px solid #DFE2ED;
@@ -140,14 +150,16 @@ body.dark-theme .admin-link .ripple {
   background: rgba(255, 255, 255, 0.15);
 }
 
+/* Основной контент */
 .app-main {
   flex: 1;
-  max-width: 1080px;
+  max-width: 480px;
   margin: 0 auto;
   padding: 0 20px;
   width: 100%;
 }
 
+/* Футер */
 .app-footer {
   background-color: #FFFFFF;
   border-top: 1px solid #E9E9E9;
@@ -163,7 +175,7 @@ body.dark-theme .app-footer {
 }
 
 .footer-container {
-  max-width: 1080px;
+  max-width: 480px;
   margin: 0 auto;
   display: flex;
   justify-content: space-around;
@@ -213,35 +225,4 @@ body.dark-theme .footer-link .ripple {
   color: #888888;
 }
 
-@media (max-width: 768px) {
-  .app-main {
-    padding: 0 16px;
-  }
-  
-  .header-container {
-    padding: 12px 16px;
-  }
-  
-  .logo-img {
-    height: 40px;
-  }
-  
-  .theme-toggle-btn,
-  .admin-link {
-    width: 40px;
-    height: 40px;
-  }
-  
-  .header-right {
-    gap: 8px;
-  }
-  
-  .footer-container {
-    padding: 10px 16px;
-  }
-  
-  .footer-link {
-    padding: 6px 12px;
-    font-size: 12px;
-  }
-}
+/* Убираем все медиа-запросы для единого мобильного вида */

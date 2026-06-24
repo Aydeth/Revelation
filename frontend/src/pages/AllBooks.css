@@ -8,7 +8,7 @@
 }
 
 .page-header h1 {
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 600;
   color: #222;
   margin: 0;
@@ -53,8 +53,8 @@ body.dark-theme .search-input {
 
 .book-card {
   display: flex;
-  padding: 20px 0;
-  gap: 25px;
+  padding: 16px 0;
+  gap: 16px;
   align-items: flex-start;
   cursor: pointer;
   position: relative;
@@ -67,23 +67,14 @@ body.dark-theme .search-input {
   will-change: transform;
 }
 
-/* Убираем hover-эффект */
-.book-card:hover {
-  background-color: transparent;
-}
-
-body.dark-theme .book-card:hover {
-  background-color: transparent;
-}
-
 .book-card:active {
   transform: scale(0.95);
   transition: transform 0.08s ease;
 }
 
 .book-cover {
-  width: 80px;
-  height: 120px;
+  width: 60px;
+  height: 90px;
   background-color: #F5F5F5;
   display: flex;
   align-items: center;
@@ -127,7 +118,7 @@ body.dark-theme .cover-placeholder {
 }
 
 .book-title {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 500;
   margin-bottom: 4px;
   color: #222;
@@ -221,51 +212,4 @@ body.dark-theme .book-card .ripple {
   font-size: 14px;
 }
 
-@media (max-width: 768px) {
-  .feed-container {
-    padding: 16px 0;
-  }
-  
-  .page-header {
-    margin-bottom: 16px;
-  }
-  
-  .page-header h1 {
-    font-size: 24px;
-  }
-  
-  .book-card {
-    gap: 15px;
-    padding: 15px 0;
-  }
-  
-  .book-card:active {
-    transform: scale(0.95);
-  }
-  
-  .book-cover {
-    width: 60px;
-    height: 90px;
-  }
-  
-  .book-title {
-    font-size: 16px;
-  }
-  
-  .book-author {
-    font-size: 13px;
-  }
-  
-  .search-input {
-    padding: 10px 14px;
-    font-size: 14px;
-  }
-  
-  .rating-stars {
-    font-size: 14px;
-  }
-  
-  .rating-value {
-    font-size: 12px;
-  }
-}
+/* Убираем все медиа-запросы */

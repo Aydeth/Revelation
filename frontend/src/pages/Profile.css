@@ -1,24 +1,25 @@
 .profile-page {
   margin: 0 auto;
-  padding: 20px;
+  padding: 20px 0;
 }
 
 .profile-container {
   display: flex;
-  gap: 48px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
 }
 
 .profile-left {
   flex-shrink: 0;
-  width: 260px;
-  text-align: left;
+  width: 100%;
+  max-width: 240px;
+  text-align: center;
 }
 
 .profile-avatar {
   margin-bottom: 16px;
   width: 100%;
-  max-width: 240px;
 }
 
 .profile-avatar img {
@@ -71,7 +72,7 @@ body.dark-theme .profile-joined {
 body.dark-theme .edit-profile-btn,
 body.dark-theme .logout-btn {
   color: #E0E0E0;
-  border-color: #404040;
+  border-color: #1A1A1A;
 }
 
 .edit-profile-btn:hover, .logout-btn:hover {
@@ -82,7 +83,7 @@ body.dark-theme .logout-btn {
 
 body.dark-theme .edit-profile-btn:hover,
 body.dark-theme .logout-btn:hover {
-  border-color: #404040 !important;
+  border-color: #1A1A1A !important;
   color: #E0E0E0 !important;
 }
 
@@ -98,6 +99,7 @@ body.dark-theme .logout-btn .ripple {
 .profile-right {
   flex: 1;
   min-width: 200px;
+  width: 100%;
 }
 
 .profile-shelves {
@@ -106,6 +108,7 @@ body.dark-theme .logout-btn .ripple {
 
 .shelves-tabs {
   display: flex;
+  justify-content: center;
   gap: 8px;
   margin-bottom: 24px;
   padding-bottom: 8px;
@@ -115,7 +118,7 @@ body.dark-theme .logout-btn .ripple {
   background: none;
   border: none;
   padding: 8px 16px;
-  font-size: 16px;
+  font-size: 14px;
   cursor: pointer;
   color: #888;
   position: relative;
@@ -152,14 +155,14 @@ body.dark-theme .shelf-tab .ripple {
 
 .shelf-book-card {
   display: flex;
-  padding: 20px 0;
-  gap: 25px;
+  padding: 16px 0;
+  gap: 16px;
   align-items: flex-start;
   cursor: pointer;
   position: relative;
   overflow: hidden;
   background-color: transparent;
-  transition: background-color 0.2s ease, transform 0.15s ease;
+  transition: transform 0.15s ease;
   border: none;
   border-radius: 12px;
   transform: scale(1);
@@ -173,8 +176,8 @@ body.dark-theme .shelf-tab .ripple {
 }
 
 .shelf-book-cover {
-  width: 80px;
-  height: 120px;
+  width: 60px;
+  height: 90px;
   background-color: #F5F5F5;
   display: flex;
   align-items: center;
@@ -186,8 +189,8 @@ body.dark-theme .shelf-tab .ripple {
 }
 
 body.dark-theme .shelf-book-cover {
-  background-color: #3A3A3A;
-  border-color: #404040;
+  background-color: #1A1A1A;
+  border-color: #1A1A1A;
 }
 
 .shelf-book-cover img {
@@ -201,7 +204,7 @@ body.dark-theme .shelf-book-cover {
 }
 
 .shelf-book-info h4 {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 500;
   margin-bottom: 4px;
   color: #222;
@@ -228,12 +231,30 @@ body.dark-theme .shelf-book-info p {
   margin-top: 6px;
 }
 
-.rating-value {
+.shelf-book-stars {
+  display: flex;
+  gap: 3px;
+  font-size: 16px;
+}
+
+.shelf-book-stars-filled {
+  color: #F1C40F;
+}
+
+.shelf-book-stars-empty {
+  color: #DFE2ED;
+}
+
+body.dark-theme .shelf-book-stars-empty {
+  color: #555555;
+}
+
+.shelf-book-rating span {
   font-size: 14px;
   color: #888;
 }
 
-body.dark-theme .rating-value {
+body.dark-theme .shelf-book-rating span {
   color: #AAAAAA;
 }
 
@@ -258,63 +279,4 @@ body.dark-theme .shelf-book-card .ripple {
   color: #888;
 }
 
-.star-filled {
-  color: #F1C40F;
-  font-size: 16px;
-}
-
-.star-empty {
-  color: #DFE2ED;
-  font-size: 16px;
-}
-
-body.dark-theme .star-empty {
-  color: #555555;
-}
-
-@media (max-width: 768px) {
-  .profile-container {
-    flex-direction: column;
-    align-items: center;
-    gap: 32px;
-  }
-  
-  .profile-left {
-    width: 220px;
-    text-align: center;
-  }
-  
-  .profile-username {
-    text-align: center;
-  }
-  
-  .profile-right {
-    width: 100%;
-  }
-  
-  .shelves-tabs {
-    justify-content: center;
-  }
-  
-  .shelf-book-card {
-    gap: 15px;
-    padding: 15px 0;
-  }
-  
-  .shelf-book-card:active {
-    transform: scale(0.95);
-  }
-  
-  .shelf-book-cover {
-    width: 60px;
-    height: 90px;
-  }
-  
-  .shelf-book-info h4 {
-    font-size: 16px;
-  }
-  
-  .rating-value {
-    font-size: 12px;
-  }
-}
+/* Убираем все медиа-запросы */

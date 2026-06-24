@@ -1,18 +1,18 @@
 .home-page {
-  max-width: 1200px;
+  max-width: 100%;
   margin: 0 auto;
   padding: 20px 0;
   display: flex;
+  flex-direction: column;
   gap: 40px;
 }
 
 .home-main {
-  flex: 1;
+  width: 100%;
 }
 
 .home-sidebar {
-  width: 280px;
-  flex-shrink: 0;
+  width: 100%;
 }
 
 .home-section {
@@ -37,8 +37,8 @@ body.dark-theme .section-header h2 {
 /* Крупные карточки книг (Последнее) */
 .books-grid-large {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
 }
 
 .home-book-card-large {
@@ -83,11 +83,11 @@ body.dark-theme .home-book-card-large .ripple {
 }
 
 .home-book-card-large .home-book-info {
-  padding: 16px;
+  padding: 12px;
 }
 
 .home-book-card-large h3 {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
   margin-bottom: 4px;
   color: #222;
@@ -123,6 +123,7 @@ body.dark-theme .rating-value {
   color: #AAAAAA;
 }
 
+/* Карточки книг (Лучшее) */
 .books-list-vertical {
   display: flex;
   flex-direction: column;
@@ -131,8 +132,8 @@ body.dark-theme .rating-value {
 
 .home-book-card-vertical {
   display: flex;
-  padding: 20px 0;
-  gap: 25px;
+  padding: 16px 0;
+  gap: 16px;
   align-items: flex-start;
   cursor: pointer;
   position: relative;
@@ -158,8 +159,8 @@ body.dark-theme .home-book-card-vertical .ripple {
 }
 
 .home-book-cover-vertical {
-  width: 80px;
-  height: 120px;
+  width: 60px;
+  height: 90px;
   background-color: #F5F5F5;
   display: flex;
   align-items: center;
@@ -186,7 +187,7 @@ body.dark-theme .home-book-cover-vertical {
 }
 
 .home-book-info-vertical h3 {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 500;
   margin-bottom: 4px;
   color: #222;
@@ -206,6 +207,7 @@ body.dark-theme .home-book-info-vertical p {
   color: #AAAAAA;
 }
 
+/* Карточки отзывов */
 .reviews-list {
   display: flex;
   flex-direction: column;
@@ -225,7 +227,7 @@ body.dark-theme .home-book-info-vertical p {
   cursor: pointer;
   position: relative;
   overflow: hidden;
-  border-radius: 0 12px 12px 0;
+  border-radius: 12px;
   transition: transform 0.15s ease;
   transform: scale(1);
 }
@@ -417,6 +419,7 @@ body.dark-theme .reaction-btn .ripple {
   background: rgba(255, 255, 255, 0.15);
 }
 
+/* Боковая панель - жанры */
 .sidebar-section {
   background: #FFFFFF;
   border: 1px solid #DFE2ED;
@@ -452,7 +455,7 @@ body.dark-theme .sidebar-section h3 {
   background: #F5F5F5;
   padding: 4px 12px;
   border-radius: 16px;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 400;
   cursor: pointer;
   text-decoration: none;
@@ -481,45 +484,4 @@ body.dark-theme .genre-tag {
   }
 }
 
-@media (max-width: 900px) {
-  .home-page {
-    flex-direction: column;
-  }
-  
-  .home-sidebar {
-    width: 100%;
-  }
-  
-  .books-grid-large {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  
-  .genres-list {
-    flex-direction: row;
-    flex-wrap: wrap;
-  }
-}
-
-@media (max-width: 600px) {
-  .books-grid-large {
-    grid-template-columns: 1fr;
-  }
-  
-  .home-book-card-vertical {
-    flex-direction: column;
-  }
-  
-  .home-book-cover-vertical {
-    width: 100%;
-    height: auto;
-    aspect-ratio: 2 / 3;
-  }
-  
-  .review-author-row {
-    flex-wrap: wrap;
-  }
-  
-  .review-reactions {
-    gap: 6px;
-  }
-}
+/* Убираем все медиа-запросы */
