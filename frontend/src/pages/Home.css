@@ -4,27 +4,23 @@
   padding: 20px 0;
   display: flex;
   flex-direction: column;
-  gap: 40px;
+  gap: 20px;
 }
 
 .home-main {
   width: 100%;
 }
 
-.home-sidebar {
-  width: 100%;
-}
-
 .home-section {
-  margin-bottom: 48px;
+  margin-bottom: 32px;
 }
 
 .section-header {
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .section-header h2 {
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 600;
   color: #222;
   margin: 0;
@@ -49,52 +45,11 @@ body.dark-theme .section-header h2 {
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
   padding: 4px 0 12px 0;
-  scrollbar-width: thin;
-  scrollbar-color: #C1C1C1 #F1F1F1;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 .books-carousel::-webkit-scrollbar {
-  height: 8px;
-  -webkit-appearance: none;
-}
-
-.books-carousel::-webkit-scrollbar-track {
-  background: #F1F1F1;
-  border-radius: 4px;
-}
-
-.books-carousel::-webkit-scrollbar-thumb {
-  background: #C1C1C1;
-  border-radius: 4px;
-}
-
-.books-carousel::-webkit-scrollbar-thumb:hover {
-  background: #A8A8A8;
-}
-
-.books-carousel::-webkit-scrollbar-button {
-  display: none;
-  width: 0;
-  height: 0;
-}
-
-body.dark-theme .books-carousel {
-  scrollbar-color: #444444 #1A1A1A;
-}
-
-body.dark-theme .books-carousel::-webkit-scrollbar-track {
-  background: #1A1A1A;
-}
-
-body.dark-theme .books-carousel::-webkit-scrollbar-thumb {
-  background: #444444;
-}
-
-body.dark-theme .books-carousel::-webkit-scrollbar-thumb:hover {
-  background: #555555;
-}
-
-body.dark-theme .books-carousel::-webkit-scrollbar-button {
   display: none;
 }
 
@@ -402,54 +357,6 @@ body.dark-theme .reaction-btn.active {
 
 body.dark-theme .reaction-btn .ripple {
   background: rgba(255, 255, 255, 0.15);
-}
-
-.sidebar-section {
-  background: #FFFFFF;
-  border: 1px solid #DFE2ED;
-  border-radius: 16px;
-  padding: 20px;
-  position: sticky;
-  top: 20px;
-}
-
-body.dark-theme .sidebar-section {
-  background: #000000;
-  border-color: #1A1A1A;
-}
-
-.sidebar-section h3 {
-  font-size: 20px;
-  font-weight: 600;
-  margin-bottom: 20px;
-  color: #222;
-}
-
-body.dark-theme .sidebar-section h3 {
-  color: #E0E0E0;
-}
-
-.genres-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.genre-tag {
-  background: #F5F5F5;
-  padding: 4px 12px;
-  border-radius: 16px;
-  font-size: 14px;
-  font-weight: 400;
-  cursor: pointer;
-  text-decoration: none;
-  color: #555;
-  transition: none;
-}
-
-body.dark-theme .genre-tag {
-  background: #1A1A1A;
-  color: #CCCCCC;
 }
 
 .ripple {
