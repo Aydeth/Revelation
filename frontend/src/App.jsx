@@ -41,15 +41,19 @@ function AppContent() {
   useEffect(() => {
     if (isTelegram) {
       const tg = window.Telegram.WebApp;
+      const version = tg.version || '6.0';
       
-      if (theme === 'dark') {
-        tg.setHeaderColor('#000000');
-        tg.setBackgroundColor('#000000');
-        tg.setBottomBarColor('#000000');
-      } else {
-        tg.setHeaderColor('#ffffff');
-        tg.setBackgroundColor('#ffffff');
-        tg.setBottomBarColor('#ffffff');
+      // Проверяем версию перед вызовом методов
+      if (tg.isVersionAtLeast('6.1')) {
+        if (theme === 'dark') {
+          tg.setHeaderColor('#000000');
+          tg.setBackgroundColor('#000000');
+          tg.setBottomBarColor('#000000');
+        } else {
+          tg.setHeaderColor('#ffffff');
+          tg.setBackgroundColor('#ffffff');
+          tg.setBottomBarColor('#ffffff');
+        }
       }
       
       tg.expand();
@@ -63,7 +67,7 @@ function AppContent() {
 
   return (
     <div className="app-wrapper">
-      {user && (
+      {user ? (
         <>
           <div className="floating-header">
             <div className="floating-actions">
@@ -84,14 +88,13 @@ function AppContent() {
 
           <main className="app-main">
             <Routes>
-              <Route path="/login" element={<LoginRegister />} />
-              <Route path="/" element={user ? <Home /> : <Navigate to="/login" />} />
-              <Route path="/books" element={user ? <AllBooks /> : <Navigate to="/login" />} />
-              <Route path="/books/tag/:tag" element={user ? <BooksByTag /> : <Navigate to="/login" />} />
-              <Route path="/profile" element={user ? <Profile /> : <Navigate to="/login" />} />
-              <Route path="/user/:username" element={user ? <Profile /> : <Navigate to="/login" />} />
-              <Route path="/book/:id" element={user ? <BookPage /> : <Navigate to="/login" />} />
-              <Route path="/read/:id/:pageNum" element={user ? <ReadBook /> : <Navigate to="/login" />} />
+              <Route path="/" element={<Home />} />
+              <Route path="/books" element={<AllBooks />} />
+              <Route path="/books/tag/:tag" element={<BooksByTag />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/user/:username" element={<Profile />} />
+              <Route path="/book/:id" element={<BookPage />} />
+              <Route path="/read/:id/:pageNum" element={<ReadBook />} />
               <Route path="/admin" element={user?.is_admin ? <AdminPanel /> : <Navigate to="/" />} />
             </Routes>
           </main>
@@ -113,6 +116,11 @@ function AppContent() {
             </div>
           </nav>
         </>
+      ) : (
+        <Routes>
+          <Route path="/login" element={<LoginRegister />} />
+          <Route path="*" element={<Navigate to="/login" />} />
+        </Routes>
       )}
     </div>
   );
