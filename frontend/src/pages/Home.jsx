@@ -35,20 +35,61 @@ export default function Home() {
   const [userReactions, setUserReactions] = useState({});
   const [reactionLoading, setReactionLoading] = useState({});
   
-  // Refs для каруселей
   const recentCarouselRef = useRef(null);
   const topRatedCarouselRef = useRef(null);
+  const isScrollingRef = useRef(false);
+  const scrollTimeoutRef = useRef(null);
 
-  // Обработка скролла колёсиком для карусели
+  // Плавный скролл карусели
+  const smoothScroll = (carouselRef, delta) => {
+    if (!carouselRef.current) return;
+    
+    const element = carouselRef.current;
+    const maxScroll = element.scrollWidth - element.clientWidth;
+    const targetScroll = element.scrollLeft + delta;
+    
+    // Ограничиваем скролл
+    const clampedScroll = Math.max(0, Math.min(targetScroll, maxScroll));
+    
+    // Плавная анимация
+    if (isScrollingRef.current) {
+      cancelAnimationFrame(isScrollingRef.current);
+    }
+    
+    const startScroll = element.scrollLeft;
+    const distance = clampedScroll - startScroll;
+    const duration = 200; // мс
+    const startTime = performance.now();
+    
+    const animateScroll = (currentTime) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      
+      // easeOutQuart для плавности
+      const easeOut = 1 - Math.pow(1 - progress, 3);
+      const currentScroll = startScroll + distance * easeOut;
+      
+      element.scrollLeft = currentScroll;
+      
+      if (progress < 1) {
+        isScrollingRef.current = requestAnimationFrame(animateScroll);
+      } else {
+        isScrollingRef.current = false;
+      }
+    };
+    
+    isScrollingRef.current = requestAnimationFrame(animateScroll);
+  };
+
+  // Обработка скролла колёсиком
   const handleWheelScroll = (e, carouselRef) => {
     if (!carouselRef.current) return;
     
-    // Предотвращаем вертикальный скролл страницы
     e.preventDefault();
+    e.stopPropagation();
     
-    // Прокручиваем карусель горизонтально
-    const delta = e.deltaY || e.deltaX;
-    carouselRef.current.scrollLeft += delta;
+    const delta = e.deltaY || e.deltaX || 0;
+    smoothScroll(carouselRef, delta);
   };
 
   useEffect(() => {
@@ -92,6 +133,18 @@ export default function Home() {
     };
     
     fetchHomeData();
+  }, []);
+
+  // Очистка анимаций при размонтировании
+  useEffect(() => {
+    return () => {
+      if (isScrollingRef.current) {
+        cancelAnimationFrame(isScrollingRef.current);
+      }
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+    };
   }, []);
 
   const handleReaction = async (reviewId, reaction) => {
