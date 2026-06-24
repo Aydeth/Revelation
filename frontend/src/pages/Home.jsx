@@ -35,8 +35,7 @@ export default function Home() {
   const [userReactions, setUserReactions] = useState({});
   const [reactionLoading, setReactionLoading] = useState({});
   
-  // Refs для drag-скролла
-  const carouselRefs = useRef({});
+  const carouselRefs = useRef([]);
 
   useEffect(() => {
     const fetchHomeData = async () => {
@@ -81,7 +80,7 @@ export default function Home() {
     fetchHomeData();
   }, []);
 
-  // Drag-скролл для каруселей
+  // Инициализация drag-скролла после рендера
   useEffect(() => {
     const carousels = document.querySelectorAll('.books-carousel');
     
@@ -91,23 +90,31 @@ export default function Home() {
       let scrollLeft;
       
       const onMouseDown = (e) => {
+        // Игнорируем клики по карточкам (чтобы не мешать навигации)
+        if (e.target.closest('.home-book-card-carousel')) {
+          return;
+        }
         isDown = true;
-        carousel.classList.add('dragging');
         startX = e.pageX - carousel.offsetLeft;
         scrollLeft = carousel.scrollLeft;
         carousel.style.cursor = 'grabbing';
+        carousel.style.userSelect = 'none';
       };
       
       const onMouseLeave = () => {
-        isDown = false;
-        carousel.classList.remove('dragging');
-        carousel.style.cursor = 'grab';
+        if (isDown) {
+          isDown = false;
+          carousel.style.cursor = 'grab';
+          carousel.style.userSelect = '';
+        }
       };
       
       const onMouseUp = () => {
-        isDown = false;
-        carousel.classList.remove('dragging');
-        carousel.style.cursor = 'grab';
+        if (isDown) {
+          isDown = false;
+          carousel.style.cursor = 'grab';
+          carousel.style.userSelect = '';
+        }
       };
       
       const onMouseMove = (e) => {
@@ -118,12 +125,13 @@ export default function Home() {
         carousel.scrollLeft = scrollLeft - walk;
       };
       
+      // Добавляем события
       carousel.addEventListener('mousedown', onMouseDown);
       carousel.addEventListener('mouseleave', onMouseLeave);
       carousel.addEventListener('mouseup', onMouseUp);
       carousel.addEventListener('mousemove', onMouseMove);
       
-      // Устанавливаем cursor: grab по умолчанию
+      // Устанавливаем курсор
       carousel.style.cursor = 'grab';
       
       return () => {
@@ -133,7 +141,7 @@ export default function Home() {
         carousel.removeEventListener('mousemove', onMouseMove);
       };
     });
-  }, [recentBooks, topRatedBooks]); // Перезапускаем при изменении данных
+  }, [recentBooks, topRatedBooks]);
 
   const handleReaction = async (reviewId, reaction) => {
     setReactionLoading(prev => ({ ...prev, [reviewId]: true }));
