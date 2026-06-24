@@ -1,3 +1,35 @@
+/* ============================================
+   ПОДКЛЮЧЕНИЕ ЛОКАЛЬНОГО ШРИФТА
+   ============================================ */
+
+@font-face {
+  font-family: 'Euclid Circular B';
+  src: url('./assets/fonts/Euclid Circular B Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Euclid Circular B';
+  src: url('./assets/fonts/Euclid Circular B Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Euclid Circular B';
+  src: url('./assets/fonts/Euclid Circular B Bold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ============================================
+   ГЛОБАЛЬНЫЕ СТИЛИ
+   ============================================ */
+
 * {
   margin: 0;
   padding: 0;
@@ -5,7 +37,7 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-family: 'Euclid Circular B', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   background-color: #FFFFFF;
   color: #333333;
   line-height: 1.5;
@@ -16,10 +48,15 @@ body {
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
+/* Тёмная тема */
 body.dark-theme {
   background-color: #000000;
   color: #E0E0E0;
 }
+
+/* ============================================
+   КНОПКИ
+   ============================================ */
 
 button {
   font-family: inherit;
@@ -33,6 +70,10 @@ button {
 button:active {
   transform: none;
 }
+
+/* ============================================
+   ОСТАЛЬНЫЕ СТИЛИ (светлая/тёмная тема, ripple и т.д.)
+   ============================================ */
 
 .btn-primary {
   background-color: #003BFF;
@@ -127,6 +168,7 @@ body.dark-theme .btn-ghost .ripple {
   color: #888888;
 }
 
+/* Глобальные стили для звёзд */
 .star-filled {
   color: #F1C40F;
   font-size: 16px;
